@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSVデータアップローダー</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+    </style>
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.10.3/dist/cdn.min.js"></script>
+</head>
+<body>
+
+    <div class="min-h-screen flex items-center justify-center p-4 sm:p-6">
+        <div x-data="uploader()" class="w-full max-w-2xl bg-white p-6 sm:p-10 rounded-3xl shadow-lg border border-gray-200">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">TSVデータアップロード</h1>
+            <p class="text-center text-gray-600 mb-8">日付と券売機のトランザクションログファイル (.tsv) を選択してください。</p>
+
+            <!-- フォーム -->
+            <form @submit.prevent="submitForm" class="space-y-6">
+                <!-- 日付選択 -->
+                <div>
+                    <label for="date" class="block text-sm font-medium text-gray-700 mb-2">処理対象日</label>
+                    <input type="date" id="date" x-model="formData.date" required
+                        class="mt-1 block w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+                </div>
+
+                <!-- ファイルアップロードゾーン -->
+                <div>
+                    <label for="files" class="block text-sm font-medium text-gray-700 mb-2">TSVファイルを選択</label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer"
+                         @dragover.prevent @drop.prevent="handleDrop($event)"
+                         x-on:click="$refs.fileInput.click()">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                <path d="M28 8H12a2 2 0 00-2 2v20m36-8V12a2 2 0 00-2-2h-12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M42 22v10a2 2 0 01-2 2H12a2 2 0 01-2-2V10a2 2 0 012-2h12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M10 24l8-8 8 8m0-8l8 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="flex text-sm text-gray-600">
+                                <span class="relative rounded-md font-semibold text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                    ファイルをアップロード
+                                </span>
+                                <input id="files" name="files[]" type="file" multiple class="sr-only" x-ref="fileInput" @change="handleFileChange($event)">
+                                <p class="pl-1">またはドラッグ＆ドロップ</p>
+                            </div>
+                            <p class="text-xs text-gray-500" x-text="fileStatus"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- フォーム送信ボタン -->
+                <div>
+                    <button type="submit" :disabled="isLoading"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out disabled:bg-blue-300">
+                        <span x-show="!isLoading">アップロードして処理</span>
+                        <svg x-show="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+            <!-- 結果とエラーメッセージの表示 -->
+            <div class="mt-8">
+                <div x-show="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative" role="alert">
+                    <strong class="font-bold">エラー！</strong>
+                    <span class="block sm:inline" x-text="errorMessage"></span>
+                </div>
+
+                <div x-show="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative" role="alert">
+                    <strong class="font-bold">成功！</strong>
+                    <span class="block sm:inline" x-text="successMessage"></span>
+                </div>
+
+                <div x-show="responseData" class="mt-6 bg-gray-100 p-4 rounded-lg overflow-x-auto">
+                    <h2 class="text-lg font-bold text-gray-800 mb-2">集計データ (JSON)</h2>
+                    <pre class="whitespace-pre-wrap text-sm text-gray-800" x-text="JSON.stringify(responseData, null, 2)"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * 2つのDateオブジェクトが同じ日付を指しているか比較します。
+         * 時間は無視します。
+         * @param {Date} d1
+         * @param {Date} d2
+         * @returns {boolean}
+         */
+        const isSameDay = (d1, d2) => {
+            return d1.getFullYear() === d2.getFullYear() &&
+                   d1.getMonth() === d2.getMonth() &&
+                   d1.getDate() === d2.getDate();
+        };
+
+        /**
+         * この関数は、単一のTSVファイルを処理し、集計データを返します。
+         * GoのバックエンドロジックをJavaScriptに移植したものです。
+         * @param {File} file 処理するファイル
+         * @param {string} processDateStr 処理対象日 (YYYY-MM-DD形式)
+         * @returns {Promise<object>} 集計結果を含むPromise
+         */
+        function processFileOnFrontend(file, processDateStr) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                    try {
+                        const content = event.target.result;
+                        const lines = content.split('\n');
+                        if (lines.length < 2) {
+                            throw new Error('ファイルが空であるか、ヘッダーしか含まれていません。');
+                        }
+
+                        // `processDateStr`から日付部分のみを考慮したDateオブジェクトを作成
+                        const processDate = new Date(processDateStr);
+                        processDate.setHours(0, 0, 0, 0); // タイムゾーンのずれを防ぐため、時刻をリセット
+
+                        const dictSoldProducts = {};
+                        const paymentStats = {};
+                        const colCategoryRngs = [
+                            { BumonID: "入浴", CategoryStart: 1, CategoryEnd: 100, CategoryName: "入浴券" },
+                            { BumonID: "入浴", CategoryStart: 150, CategoryEnd: 200, CategoryName: "入浴セット券" },
+                            { BumonID: "飲食", CategoryStart: 201, CategoryEnd: 300, CategoryName: "食事" },
+                            { BumonID: "エステ", CategoryStart: 301, CategoryEnd: 400, CategoryName: "エステ" }
+                        ];
+
+                        const getCategoryName = (bumonID, menuCode) => {
+                            for (const elem of colCategoryRngs) {
+                                if (elem.BumonID === bumonID && menuCode >= elem.CategoryStart && menuCode <= elem.CategoryEnd) {
+                                    return elem.CategoryName;
+                                }
+                            }
+                            return "";
+                        };
+
+                        const updateSoldProducts = (intBumon, strBumon, hanbaiMaisuu, menuCode, tekiyouKakaku, menuMei, kessaiKingaku, factor) => {
+                            const key = `${strBumon}_${String(menuCode).padStart(3, '0')}`;
+                            if (dictSoldProducts[key]) {
+                                dictSoldProducts[key].uriageKingaku += kessaiKingaku * factor;
+                                dictSoldProducts[key].hanbaiMaisuu += hanbaiMaisuu * factor;
+                            } else {
+                                const newProduct = {
+                                    bumon: intBumon,
+                                    bumonName: strBumon,
+                                    uriageKingaku: kessaiKingaku,
+                                    hanbaiMaisuu: hanbaiMaisuu,
+                                    productID: menuCode,
+                                    menuName: menuMei,
+                                    tekiyouKakaku: tekiyouKakaku,
+                                    makanaiKubun: menuMei.includes("まかない") ? "まかない" : "実売上",
+                                    date: processDateStr,
+                                    category: getCategoryName(strBumon, menuCode),
+                                };
+                                dictSoldProducts[key] = newProduct;
+                            }
+                        };
+                        
+                        // ヘッダーをスキップ
+                        for (let i = 1; i < lines.length; i++) {
+                            const line = lines[i].trim();
+                            if (line === '' || !line.startsWith("2")) {
+                                continue;
+                            }
+                            
+                            const fields = line.split(',');
+                            
+                            const GOUKI = 2;
+                            const TORIHIKI_KUBUN = 3;
+                            const TORIHIKIKAISHIHIDUKE = 6;
+                            const HANBAI_MAISUU = 16;
+                            const TEKIYOU_KAKAKU = 18;
+                            const KESSAI_KINGAKU = 19;
+                            const MENU_CODE = 21;
+                            const MENU_MEI = 22;
+                            const KAADO_KESSAI = 56;
+                            
+                            const fileDateStr = fields[TORIHIKIKAISHIHIDUKE];
+                            const parsedFileDate = new Date(fileDateStr);
+                            if (!isSameDay(parsedFileDate, processDate)) {
+                                throw new Error(`ファイルの日付 ${fileDateStr} が選択された日付と一致しません。`);
+                            }
+                            
+                            const vendingmachineNo = parseInt(fields[GOUKI]);
+                            const torihikiKubun = parseInt(fields[TORIHIKI_KUBUN]);
+                            const kessaiKingaku = parseInt(fields[KESSAI_KINGAKU]);
+                            const hanbaiMaisuu = parseInt(fields[HANBAI_MAISUU]);
+                            const menuCode = parseInt(fields[MENU_CODE]);
+                            const tekiyouKakaku = parseInt(fields[TEKIYOU_KAKAKU]);
+                            const menuMei = fields[MENU_MEI];
+                            const kaadoKessai = parseInt(fields[KAADO_KESSAI]);
+                            
+                            let bumon = "";
+                            let intBumon = 0;
+                            switch (vendingmachineNo) {
+                                case 1: case 2: intBumon = 1; bumon = "入浴"; break;
+                                case 3: case 4: intBumon = 2; bumon = "飲食"; break;
+                                case 5: intBumon = 3; bumon = "エステ"; break;
+                            }
+                            
+                            const factor = (torihikiKubun === 1) ? -1 : 1;
+                            updateSoldProducts(intBumon, bumon, hanbaiMaisuu, menuCode, tekiyouKakaku, menuMei, kessaiKingaku, factor);
+                            
+                            if (!paymentStats[vendingmachineNo]) {
+                                paymentStats[vendingmachineNo] = { vendingMachineNo: vendingmachineNo, GenkinGrossMaisuu: 0, GenkinGrossKingaku: 0, GenkinSeisanMaisuu: 0, GenkinSeisanKingaku: 0, QrcodeGrossMaisuu: 0, QrcodeGrossKingaku: 0, QrcodeSeisanMaisuu: 0, QrcodeSeisanKingaku: 0, DenshimaneeGrossMaisuu: 0, DenshimaneeGrossKingaku: 0 };
+                            }
+                            
+                            switch (kaadoKessai) {
+                                case 0: // 現金
+                                    if (factor === 1) {
+                                        paymentStats[vendingmachineNo].GenkinGrossKingaku += kessaiKingaku;
+                                        paymentStats[vendingmachineNo].GenkinGrossMaisuu += hanbaiMaisuu;
+                                    } else {
+                                        paymentStats[vendingmachineNo].GenkinSeisanKingaku += kessaiKingaku;
+                                        paymentStats[vendingmachineNo].GenkinSeisanMaisuu += hanbaiMaisuu;
+                                    }
+                                    break;
+                                case 5: // QRコード
+                                    if (factor === 1) {
+                                        paymentStats[vendingmachineNo].QrcodeGrossKingaku += kessaiKingaku;
+                                        paymentStats[vendingmachineNo].QrcodeGrossMaisuu += hanbaiMaisuu;
+                                    } else {
+                                        paymentStats[vendingmachineNo].QrcodeSeisanKingaku += kessaiKingaku;
+                                        paymentStats[vendingmachineNo].QrcodeSeisanMaisuu += hanbaiMaisuu;
+                                    }
+                                    break;
+                                case 7: // 電子マネー
+                                    if (factor === 1) {
+                                        paymentStats[vendingmachineNo].DenshimaneeGrossKingaku += kessaiKingaku;
+                                        paymentStats[vendingmachineNo].DenshimaneeGrossMaisuu += hanbaiMaisuu;
+                                    } else {
+                                        throw new Error("電子マネーの精算データは存在しないはずです。");
+                                    }
+                                    break;
+                            }
+                        }
+
+                        // 最終的な集計をまとめる
+                        const summary = {};
+                        const getHanbaiMaisuu = (key) => dictSoldProducts[key] ? dictSoldProducts[key].hanbaiMaisuu : 0;
+                        summary["大人入浴券枚数"] = getHanbaiMaisuu("入浴_051") + getHanbaiMaisuu("入浴_155");
+                        summary["大人入浴セット券枚数"] = getHanbaiMaisuu("入浴_054");
+                        summary["小人入浴券枚数"] = getHanbaiMaisuu("入浴_052") + getHanbaiMaisuu("入浴_156");
+                        summary["感謝祭招待券回収"] = getHanbaiMaisuu("入浴_053") + getHanbaiMaisuu("入浴_157");
+                        summary["6回数券売数"] = getHanbaiMaisuu("入浴_057");
+                        summary["回数券売数"] = getHanbaiMaisuu("入浴_055");
+                        
+                        resolve({
+                            paymentStats,
+                            soldProducts: dictSoldProducts,
+                            summary
+                        });
+                        
+                    } catch (e) {
+                        reject(e);
+                    }
+                };
+
+                reader.onerror = function() {
+                    reject(new Error("ファイルの読み込み中にエラーが発生しました。"));
+                };
+
+                reader.readAsText(file, 'Shift_JIS'); // TSVファイルがShift-JISの場合を想定
+            });
+        }
+    
+        function uploader() {
+            return {
+                formData: {
+                    date: '',
+                    files: null,
+                },
+                fileStatus: 'ファイルが選択されていません。',
+                isLoading: false,
+                errorMessage: '',
+                successMessage: '',
+                responseData: null,
+
+                handleFileChange(event) {
+                    this.formData.files = event.target.files;
+                    this.updateFileStatus();
+                },
+                handleDrop(event) {
+                    this.formData.files = event.dataTransfer.files;
+                    this.updateFileStatus();
+                },
+                updateFileStatus() {
+                    if (this.formData.files && this.formData.files.length > 0) {
+                        this.fileStatus = `${this.formData.files.length} ファイルが選択されました。`;
+                    } else {
+                        this.fileStatus = 'ファイルが選択されていません。';
+                    }
+                },
+
+                async submitForm() {
+                    this.isLoading = true;
+                    this.errorMessage = '';
+                    this.successMessage = '';
+                    this.responseData = null;
+
+                    if (!this.formData.date) {
+                        this.errorMessage = '日付を選択してください。';
+                        this.isLoading = false;
+                        return;
+                    }
+
+                    if (!this.formData.files || this.formData.files.length === 0) {
+                        this.errorMessage = 'ファイルをアップロードしてください。';
+                        this.isLoading = false;
+                        return;
+                    }
+                    
+                    try {
+                        let combinedData = {
+                            paymentStats: {},
+                            soldProducts: {},
+                            summary: {
+                                "大人入浴券枚数": 0,
+                                "大人入浴セット券枚数": 0,
+                                "小人入浴券枚数": 0,
+                                "感謝祭招待券回収": 0,
+                                "6回数券売数": 0,
+                                "回数券売数": 0,
+                            }
+                        };
+                        
+                        for (const file of this.formData.files) {
+                            const result = await processFileOnFrontend(file, this.formData.date);
+                            
+                            // 各ファイルの集計結果を統合
+                            for (const key in result.paymentStats) {
+                                if (!combinedData.paymentStats[key]) {
+                                    combinedData.paymentStats[key] = result.paymentStats[key];
+                                } else {
+                                    // 既存のpaymentStatsに新しい値を加算
+                                    const existing = combinedData.paymentStats[key];
+                                    const newStats = result.paymentStats[key];
+                                    existing.GenkinGrossMaisuu += newStats.GenkinGrossMaisuu;
+                                    existing.GenkinGrossKingaku += newStats.GenkinGrossKingaku;
+                                    existing.GenkinSeisanMaisuu += newStats.GenkinSeisanMaisuu;
+                                    existing.GenkinSeisanKingaku += newStats.GenkinSeisanKingaku;
+                                    existing.QrcodeGrossMaisuu += newStats.QrcodeGrossMaisuu;
+                                    existing.QrcodeGrossKingaku += newStats.QrcodeGrossKingaku;
+                                    existing.QrcodeSeisanMaisuu += newStats.QrcodeSeisanMaisuu;
+                                    existing.QrcodeSeisanKingaku += newStats.QrcodeSeisanKingaku;
+                                    existing.DenshimaneeGrossMaisuu += newStats.DenshimaneeGrossMaisuu;
+                                    existing.DenshimaneeGrossKingaku += newStats.DenshimaneeGrossKingaku;
+                                }
+                            }
+                            
+                            for (const key in result.soldProducts) {
+                                if (!combinedData.soldProducts[key]) {
+                                    combinedData.soldProducts[key] = result.soldProducts[key];
+                                } else {
+                                    const existing = combinedData.soldProducts[key];
+                                    const newProduct = result.soldProducts[key];
+                                    existing.uriageKingaku += newProduct.uriageKingaku;
+                                    existing.hanbaiMaisuu += newProduct.hanbaiMaisuu;
+                                }
+                            }
+                            
+                            for (const key in result.summary) {
+                                combinedData.summary[key] += result.summary[key];
+                            }
+                        }
+
+                        this.successMessage = 'データが正常に処理されました！';
+                        this.responseData = combinedData;
+
+                    } catch (error) {
+                        console.error('Processing error:', error);
+                        this.errorMessage = error.message || 'ファイルの処理中に予期せぬエラーが発生しました。';
+                    } finally {
+                        this.isLoading = false;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

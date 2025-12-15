@@ -1,0 +1,134 @@
+{{define "sales-data.html"}}
+    <div id="sales-data-panel">
+        <div id="mode-panel" style="background-color: {{.Color}};">
+            {{.Mode}}
+        </div>
+
+        <div>
+            <input type="text" name="ID" id="ID" value="{{.Record.ID}}" />
+            <input type="text" name="Date" id="Date" value="{{.Record.Date}}" />
+        </div>
+        
+        <div id="kenbaiki">
+            <div class="kenbaikiCol">
+                <input type="text" disabled class="label" value="&nbsp;" />
+                <input type="text" disabled class="label" value="現金枚数" />
+                <input type="text" disabled class="label" value="現金金額" />
+                <input type="text" disabled class="label" value="現金精算件数" />
+                <input type="text" disabled class="label" value="現金精算金額" />
+                <input type="text" disabled class="label" value="現金未精算件数" />
+                <input type="text" disabled class="label" value="現金未精算金額" />
+                <input type="text" disabled class="label" value="QR件数" />
+                <input type="text" disabled class="label" value="QR金額" />
+                <input type="text" disabled class="label" value="QR精算件数" />
+                <input type="text" disabled class="label" value="QR精算金額" />
+                <input type="text" disabled class="label" value="電子マネ件数" />
+                <input type="text" disabled class="label" value="電子マネ金額" />
+                <input type="text" disabled class="label" value="電子マネ精算件数" />
+                <input type="text" disabled class="label" value="電子マネ精算金額" />
+            </div>
+            <div class="kenbaikiCol">
+                <input type="text" disabled class="label" value="1号機" />
+                <input type="number" class="numCell" name="Machine1CashCount" id="Machine1CashCount" value="{{.Record.Machine1CashCount}}" />
+                <input type="number" class="numCell" name="Machine1CashAmount" id="Machine1CashAmount" value="{{.Record.Machine1CashAmount}}" />
+                <input type="number" class="numCell" name="Machine1SettleCount" id="Machine1SettleCount" value="{{.Record.Machine1SettleCount}}" />
+                <input type="number" class="numCell" name="Machine1SettleAmount" id="Machine1SettleAmount" value="{{.Record.Machine1SettleAmount}}" />
+                <input type="number" class="numCell" name="Machine1UnsettledCount" id="Machine1UnsettledCount" value="{{.Record.Machine1UnsettledCount}}" />
+                <input type="number" class="numCell" name="Machine1UnsettledAmount" id="Machine1UnsettledAmount" value="{{.Record.Machine1UnsettledAmount}}" />
+                <input type="number" class="numCell" name="Machine1QrCount" id="Machine1QrCount" value="{{.Record.Machine1QrCount}}" />
+                <input type="number" class="numCell" name="Machine1QrAmount" id="Machine1QrAmount" value="{{.Record.Machine1QrAmount}}" />
+                <input type="number" class="numCell" name="Machine1QrSettleCount" id="Machine1QrSettleCount" value="{{.Record.Machine1QrSettleCount}}" />
+                <input type="number" class="numCell" name="Machine1QrSettleAmount" id="Machine1QrSettleAmount" value="{{.Record.Machine1QrSettleAmount}}" />
+                <input type="number" class="numCell" name="Machine1ECount" id="Machine1ECount" value="{{.Record.Machine1ECount}}" />
+                <input type="number" class="numCell" name="Machine1EAmount" id="Machine1EAmount" value="{{.Record.Machine1EAmount}}" />
+                <input type="number" class="numCell" name="Machine1ESettleCount" id="Machine1ESettleCount" value="{{.Record.Machine1ESettleCount}}" />
+                <input type="number" class="numCell" name="Machine1ESettleAmount" id="Machine1ESettleAmount" value="{{.Record.Machine1ESettleAmount}}" />
+            </div>
+            <div class="kenbaikiCol">
+                <input type="text" disabled class="label" value="2号機" />
+                <input type="number" class="numCell" name="Machine2CashCount" id="Machine2CashCount" value="{{.Record.Machine2CashCount}}" />
+                <input type="number" class="numCell" name="Machine2CashAmount" id="Machine2CashAmount" value="{{.Record.Machine2CashAmount}}" />
+                <input type="number" class="numCell" name="Machine2SettleCount" id="Machine2SettleCount" value="{{.Record.Machine2SettleCount}}" />
+                <input type="number" class="numCell" name="Machine2SettleAmount" id="Machine2SettleAmount" value="{{.Record.Machine2SettleAmount}}" />
+                <input type="number" class="numCell" name="Machine2UnsettledCount" id="Machine2UnsettledCount" value="{{.Record.Machine2UnsettledCount}}" />
+                <input type="number" class="numCell" name="Machine2UnsettledAmount" id="Machine2UnsettledAmount" value="{{.Record.Machine2UnsettledAmount}}" />
+                <input type="number" class="numCell" name="Machine2QrCount" id="Machine2QrCount" value="{{.Record.Machine2QrCount}}" />
+                <input type="number" class="numCell" name="Machine2QrAmount" id="Machine2QrAmount" value="{{.Record.Machine2QrAmount}}" />
+                <input type="number" class="numCell" name="Machine2QrSettleCount" id="Machine2QrSettleCount" value="{{.Record.Machine2QrSettleCount}}" />
+                <input type="number" class="numCell" name="Machine2QrSettleAmount" id="Machine2QrSettleAmount" value="{{.Record.Machine2QrSettleAmount}}" />
+                <input type="number" class="numCell" name="Machine2ECount" id="Machine2ECount" value="{{.Record.Machine2ECount}}" />
+                <input type="number" class="numCell" name="Machine2EAmount" id="Machine2EAmount" value="{{.Record.Machine2EAmount}}" />
+                <input type="number" class="numCell" name="Machine2ESettleCount" id="Machine2ESettleCount" value="{{.Record.Machine2ESettleCount}}" />
+                <input type="number" class="numCell" name="Machine2ESettleAmount" id="Machine2ESettleAmount" value="{{.Record.Machine2ESettleAmount}}" />
+            </div>
+            <div class="kenbaikiCol">
+                <input type="text" disabled class="label" value="3号機" />
+                <input type="number" class="numCell" name="Machine3CashCount" id="Machine3CashCount" value="{{.Record.Machine3CashCount}}" />
+                <input type="number" class="numCell" name="Machine3CashAmount" id="Machine3CashAmount" value="{{.Record.Machine3CashAmount}}" />
+                <input type="number" class="numCell" name="Machine3SettleCount" id="Machine3SettleCount" value="{{.Record.Machine3SettleCount}}" />
+                <input type="number" class="numCell" name="Machine3SettleAmount" id="Machine3SettleAmount" value="{{.Record.Machine3SettleAmount}}" />
+                <input type="number" class="numCell" name="Machine3UnsettledCount" id="Machine3UnsettledCount" value="{{.Record.Machine3UnsettledCount}}" />
+                <input type="number" class="numCell" name="Machine3UnsettledAmount" id="Machine3UnsettledAmount" value="{{.Record.Machine3UnsettledAmount}}" />
+                <input type="number" class="numCell" name="Machine3QrCount" id="Machine3QrCount" value="{{.Record.Machine3QrCount}}" />
+                <input type="number" class="numCell" name="Machine3QrAmount" id="Machine3QrAmount" value="{{.Record.Machine3QrAmount}}" />
+                <input type="number" class="numCell" name="Machine3QrSettleCount" id="Machine3QrSettleCount" value="{{.Record.Machine3QrSettleCount}}" />
+                <input type="number" class="numCell" name="Machine3QrSettleAmount" id="Machine3QrSettleAmount" value="{{.Record.Machine3QrSettleAmount}}" />
+                <input type="number" class="numCell" name="Machine3ECount" id="Machine3ECount" value="{{.Record.Machine3ECount}}" />
+                <input type="number" class="numCell" name="Machine3EAmount" id="Machine3EAmount" value="{{.Record.Machine3EAmount}}" />
+                <input type="number" class="numCell" name="Machine3ESettleCount" id="Machine3ESettleCount" value="{{.Record.Machine3ESettleCount}}" />
+                <input type="number" class="numCell" name="Machine3ESettleAmount" id="Machine3ESettleAmount" value="{{.Record.Machine3ESettleAmount}}" />
+            </div>
+            <div class="kenbaikiCol">
+                <input type="text" disabled class="label" value="4号機" />
+                <input type="number" class="numCell" name="Machine4CashCount" id="Machine4CashCount" value="{{.Record.Machine4CashCount}}" />
+                <input type="number" class="numCell" name="Machine4CashAmount" id="Machine4CashAmount" value="{{.Record.Machine4CashAmount}}" />
+                <input type="number" class="numCell" name="Machine4SettleCount" id="Machine4SettleCount" value="{{.Record.Machine4SettleCount}}" />
+                <input type="number" class="numCell" name="Machine4SettleAmount" id="Machine4SettleAmount" value="{{.Record.Machine4SettleAmount}}" />
+                <input type="number" class="numCell" name="Machine4UnsettledCount" id="Machine4UnsettledCount" value="{{.Record.Machine4UnsettledCount}}" />
+                <input type="number" class="numCell" name="Machine4UnsettledAmount" id="Machine4UnsettledAmount" value="{{.Record.Machine4UnsettledAmount}}" />
+                <input type="number" class="numCell" name="Machine4QrCount" id="Machine4QrCount" value="{{.Record.Machine4QrCount}}" />
+                <input type="number" class="numCell" name="Machine4QrAmount" id="Machine4QrAmount" value="{{.Record.Machine4QrAmount}}" />
+                <input type="number" class="numCell" name="Machine4QrSettleCount" id="Machine4QrSettleCount" value="{{.Record.Machine4QrSettleCount}}" />
+                <input type="number" class="numCell" name="Machine4QrSettleAmount" id="Machine4QrSettleAmount" value="{{.Record.Machine4QrSettleAmount}}" />
+                <input type="number" class="numCell" name="Machine4ECount" id="Machine4ECount" value="{{.Record.Machine4ECount}}" />
+                <input type="number" class="numCell" name="Machine4EAmount" id="Machine4EAmount" value="{{.Record.Machine4EAmount}}" />
+                <input type="number" class="numCell" name="Machine4ESettleCount" id="Machine4ESettleCount" value="{{.Record.Machine4ESettleCount}}" />
+                <input type="number" class="numCell" name="Machine4ESettleAmount" id="Machine4ESettleAmount" value="{{.Record.Machine4ESettleAmount}}" />
+            </div>
+            <div class="kenbaikiCol">
+                <input type="text" disabled class="label" value="5号機" />
+                <input type="number" class="numCell" name="Machine5CashCount" id="Machine5CashCount" value="{{.Record.Machine5CashCount}}" />
+                <input type="number" class="numCell" name="Machine5CashAmount" id="Machine5CashAmount" value="{{.Record.Machine5CashAmount}}" />
+                <input type="number" class="numCell" name="Machine5SettleCount" id="Machine5SettleCount" value="{{.Record.Machine5SettleCount}}" />
+                <input type="number" class="numCell" name="Machine5SettleAmount" id="Machine5SettleAmount" value="{{.Record.Machine5SettleAmount}}" />
+                <input type="number" class="numCell" name="Machine5UnsettledCount" id="Machine5UnsettledCount" value="{{.Record.Machine5UnsettledCount}}" />
+                <input type="number" class="numCell" name="Machine5UnsettledAmount" id="Machine5UnsettledAmount" value="{{.Record.Machine5UnsettledAmount}}" />
+                <input type="number" class="numCell" name="Machine5QrCount" id="Machine5QrCount" value="{{.Record.Machine5QrCount}}" />
+                <input type="number" class="numCell" name="Machine5QrAmount" id="Machine5QrAmount" value="{{.Record.Machine5QrAmount}}" />
+                <input type="number" class="numCell" name="Machine5QrSettleCount" id="Machine5QrSettleCount" value="{{.Record.Machine5QrSettleCount}}" />
+                <input type="number" class="numCell" name="Machine5QrSettleAmount" id="Machine5QrSettleAmount" value="{{.Record.Machine5QrSettleAmount}}" />
+                <input type="number" class="numCell" name="Machine5ECount" id="Machine5ECount" value="{{.Record.Machine5ECount}}" />
+                <input type="number" class="numCell" name="Machine5EAmount" id="Machine5EAmount" value="{{.Record.Machine5EAmount}}" />
+                <input type="number" class="numCell" name="Machine5ESettleCount" id="Machine5ESettleCount" value="{{.Record.Machine5ESettleCount}}" />
+                <input type="number" class="numCell" name="Machine5ESettleAmount" id="Machine5ESettleAmount" value="{{.Record.Machine5ESettleAmount}}" />
+            </div>
+            <div class="kenbaikiCol">
+                <input type="text" class="numCell" disabled class="label" value="合計" />
+                <input type="number" class="numCell" disabled id="CashCountTotal" />
+                <input type="number" class="numCell" disabled id="CashAmountTotal" />
+                <input type="number" class="numCell" disabled id="SettleCountTotal" />
+                <input type="number" class="numCell" disabled id="SettleAmountTotal" />
+                <input type="number" class="numCell" disabled id="UnsettledCountTotal" />
+                <input type="number" class="numCell" disabled id="UnsettledAmountTotal" />
+                <input type="number" class="numCell" disabled id="QrCountTotal" />
+                <input type="number" class="numCell" disabled id="QrAmountTotal" />
+                <input type="number" class="numCell" disabled id="QrSettleCountTotal" />
+                <input type="number" class="numCell" disabled id="QrSettleAmountTotal" />
+                <input type="number" class="numCell" disabled id="ECountTotal" />
+                <input type="number" class="numCell" disabled id="EAmountTotal" />
+                <input type="number" class="numCell" disabled id="ESettleCountTotal" />
+                <input type="number" class="numCell" disabled id="ESettleAmountTotal" />
+            </div>
+        </div>
+    </div>
+{{end}}

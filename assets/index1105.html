@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日報データビューア</title>
+    <!-- Alpine Plugins -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.10.2/dist/cdn.min.js"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        input[type="text"]:focus, input[type="text"]:focus, input[type="date"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* blue-500 with opacity */
+        }
+        .numCell {
+            text-align: right;
+            background-color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <a href="/api/menubetsuuriage?start_date=2025/8/30&end_date=2025/8/30">メニュー別売上</a>
+
+    <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-4xl" x-data="dailyReport()">
+        <!-- ローディングインジケータ -->
+        <div x-show="loading" class="text-center text-xl font-semibold text-gray-700 py-10">
+            データをロード中...
+        </div>
+
+        <!-- エラーメッセージ -->
+        <div x-show="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">エラー！</strong>
+            <span class="block sm:inline" x-model="formattedData.Record.error"></span>
+        </div>
+
+        <!-- データ表示部分 -->
+        <div x-show="!loading && !error" x-cloak>
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">日報詳細</h1>
+
+            
+            <!-- Date Picker -->
+            <div class="flex items-center justify-center mb-6">
+                <label for="report-date" class="block text-sm font-medium text-gray-700 mr-2">日付を選択:</label>
+                <input type="date" id="report-date" x-model="selectedDate" class="rounded-md border-gray-300 shadow-sm border p-2">
+            </div>
+
+            <!-- ID and Date -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="id" class="block text-sm font-medium text-gray-700">ID</label>
+                    <input type="text" id="id" x-model="formattedData.Record.ID" readonly class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50 border p-2">
+                </div>
+                <div>
+                    <label for="date" class="block text-sm font-medium text-gray-700">日付</label>
+                    <input type="text" id="date" x-model="data.Date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+            </div>
+
+            <!-- Weather and Staff -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div>
+                    <label for="weatherCode" class="block text-sm font-medium text-gray-700">天気コード</label>
+                    <input type="text" id="weatherCode" x-model="formattedData.Record.WeatherCode" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <div>
+                    <label for="weatherStatus" class="block text-sm font-medium text-gray-700">天気状況</label>
+                    <input type="text" id="weatherStatus" x-model="data.WeatherStatus" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <div>
+                    <label for="weatherMark" class="block text-sm font-medium text-gray-700">天気マーク</label>
+                    <input type="text" id="weatherMark" x-model="data.WeatherMark" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <div>
+                    <label for="staffName" class="block text-sm font-medium text-gray-700">担当</label>
+                    <input type="text" id="staffName" x-model="data.StaffName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+            </div>
+
+
+        <div class="table-responsive rounded-lg overflow-hidden border border-gray-200">
+            <table class="w-full min-w-max border-black md:min-w-0 border-collapse">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">種類</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">1号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">2号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">3号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">4号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">5号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">合計</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <!-- 現金枚数 (Cash Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金枚数</td>
+                        <td>
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CashCount" id="Machine1CashCount" :value="formattedData.Record.Machine1CashCount" @input="updateRecord('Machine1CashCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1CashCount" tabindex="1" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CashCount" id="Machine2CashCount" :value="formattedData.Record.Machine2CashCount" @input="updateRecord('Machine2CashCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2CashCount" tabindex="16" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CashCount" id="Machine3CashCount" :value="formattedData.Record.Machine3CashCount" @input="updateRecord('Machine3CashCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3CashCount" tabindex="31" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CashCount" id="Machine4CashCount" :value="formattedData.Record.Machine4CashCount" @input="updateRecord('Machine4CashCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4CashCount" tabindex="46" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CashCount" id="Machine5CashCount" :value="formattedData.Record.Machine5CashCount" @input="updateRecord('Machine5CashCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5CashCount" tabindex="61" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="CashCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金金額 (Cash Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金金額</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CashAmount" id="Machine1CashAmount"  x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1CashAmount" tabindex="2" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CashAmount" id="Machine2CashAmount" :value="formattedData.Record.Machine2CashAmount" @input="updateRecord('Machine2CashAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2CashAmount" tabindex="17" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CashAmount" id="Machine3CashAmount" :value="formattedData.Record.Machine3CashAmount" @input="updateRecord('Machine3CashAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3CashAmount" tabindex="32" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CashAmount" id="Machine4CashAmount" :value="formattedData.Record.Machine4CashAmount" @input="updateRecord('Machine4CashAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4CashAmount" tabindex="47" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CashAmount" id="Machine5CashAmount" :value="formattedData.Record.Machine5CashAmount" @input="updateRecord('Machine5CashAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5CashAmount" tabindex="62" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="CashAmountTotal" :value="CashAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金精算件数 (Cash Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金精算件数</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1SettleCount" id="Machine1SettleCount" :value="formattedData.Record.Machine1SettleCount" @input="updateRecord('Machine1SettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1SettleCount" tabindex="3" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2SettleCount" id="Machine2SettleCount" :value="formattedData.Record.Machine2SettleCount" @input="updateRecord('Machine2SettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2SettleCount" tabindex="18" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3SettleCount" id="Machine3SettleCount" :value="formattedData.Record.Machine3SettleCount" @input="updateRecord('Machine3SettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3SettleCount" tabindex="33" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4SettleCount" id="Machine4SettleCount" :value="formattedData.Record.Machine4SettleCount" @input="updateRecord('Machine4SettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4SettleCount" tabindex="48" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5SettleCount" id="Machine5SettleCount" :value="formattedData.Record.Machine5SettleCount" @input="updateRecord('Machine5SettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5SettleCount" tabindex="63" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="SettleCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金精算金額 (Cash Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金精算金額</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1SettleAmount" id="Machine1SettleAmount" :value="formattedData.Record.Machine1SettleAmount" @input="updateRecord('Machine1SettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1SettleAmount" tabindex="4" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2SettleAmount" id="Machine2SettleAmount" :value="formattedData.Record.Machine2SettleAmount" @input="updateRecord('Machine2SettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2SettleAmount" tabindex="19" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3SettleAmount" id="Machine3SettleAmount" :value="formattedData.Record.Machine3SettleAmount" @input="updateRecord('Machine3SettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3SettleAmount" tabindex="34" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4SettleAmount" id="Machine4SettleAmount" :value="formattedData.Record.Machine4SettleAmount" @input="updateRecord('Machine4SettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4SettleAmount" tabindex="49" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5SettleAmount" id="Machine5SettleAmount" :value="formattedData.Record.Machine5SettleAmount" @input="updateRecord('Machine5SettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5SettleAmount" tabindex="64" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="SettleAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金未精算件数 (Cash Unsettled Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金未精算件数</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1UnsettledCount" id="Machine1UnsettledCount" :value="formattedData.Record.Machine1UnsettledCount" @input="updateRecord('Machine1UnsettledCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1UnsettledCount" tabindex="5" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2UnsettledCount" id="Machine2UnsettledCount" :value="formattedData.Record.Machine2UnsettledCount" @input="updateRecord('Machine2UnsettledCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2UnsettledCount" tabindex="20" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3UnsettledCount" id="Machine3UnsettledCount" :value="formattedData.Record.Machine3UnsettledCount" @input="updateRecord('Machine3UnsettledCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3UnsettledCount" tabindex="35" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4UnsettledCount" id="Machine4UnsettledCount" :value="formattedData.Record.Machine4UnsettledCount" @input="updateRecord('Machine4UnsettledCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4UnsettledCount" tabindex="50" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5UnsettledCount" id="Machine5UnsettledCount" :value="formattedData.Record.Machine5UnsettledCount" @input="updateRecord('Machine5UnsettledCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5UnsettledCount" tabindex="65" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="UnsettledCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金未精算金額 (Cash Unsettled Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金未精算金額</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1UnsettledAmount" id="Machine1UnsettledAmount" :value="formattedData.Record.Machine1UnsettledAmount" @input="updateRecord('Machine1UnsettledAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1UnsettledAmount" tabindex="6" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2UnsettledAmount" id="Machine2UnsettledAmount" :value="formattedData.Record.Machine2UnsettledAmount" @input="updateRecord('Machine2UnsettledAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2UnsettledAmount" tabindex="21" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3UnsettledAmount" id="Machine3UnsettledAmount" :value="formattedData.Record.Machine3UnsettledAmount" @input="updateRecord('Machine3UnsettledAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3UnsettledAmount" tabindex="36" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4UnsettledAmount" id="Machine4UnsettledAmount" :value="formattedData.Record.Machine4UnsettledAmount" @input="updateRecord('Machine4UnsettledAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4UnsettledAmount" tabindex="51" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5UnsettledAmount" id="Machine5UnsettledAmount" :value="formattedData.Record.Machine5UnsettledAmount" @input="updateRecord('Machine5UnsettledAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5UnsettledAmount" tabindex="66" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="UnsettledAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- QR件数 (QR Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">QR件数</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrCount" id="Machine1QrCount" :value="formattedData.Record.Machine1QrCount" @input="updateRecord('Machine1QrCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1QrCount" tabindex="7" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrCount" id="Machine2QrCount" :value="formattedData.Record.Machine2QrCount" @input="updateRecord('Machine2QrCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2QrCount" tabindex="22" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrCount" id="Machine3QrCount" :value="formattedData.Record.Machine3QrCount" @input="updateRecord('Machine3QrCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3QrCount" tabindex="37" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrCount" id="Machine4QrCount" :value="formattedData.Record.Machine4QrCount" @input="updateRecord('Machine4QrCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4QrCount" tabindex="52" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrCount" id="Machine5QrCount" :value="formattedData.Record.Machine5QrCount" @input="updateRecord('Machine5QrCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5QrCount" tabindex="67" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="QrCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- QR金額 (QR Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">QR金額</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrAmount" id="Machine1QrAmount" :value="formattedData.Record.Machine1QrAmount" @input="updateRecord('Machine1QrAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1QrAmount" tabindex="8" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrAmount" id="Machine2QrAmount" :value="formattedData.Record.Machine2QrAmount" @input="updateRecord('Machine2QrAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2QrAmount" tabindex="23" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrAmount" id="Machine3QrAmount" :value="formattedData.Record.Machine3QrAmount" @input="updateRecord('Machine3QrAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3QrAmount" tabindex="38" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrAmount" id="Machine4QrAmount" :value="formattedData.Record.Machine4QrAmount" @input="updateRecord('Machine4QrAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4QrAmount" tabindex="53" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrAmount" id="Machine5QrAmount" :value="formattedData.Record.Machine5QrAmount" @input="updateRecord('Machine5QrAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5QrAmount" tabindex="68" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="QrAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- QR精算件数 (QR Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">QR精算件数</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrSettleCount" id="Machine1QrSettleCount" :value="formattedData.Record.Machine1QrSettleCount" @input="updateRecord('Machine1QrSettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1QrSettleCount" tabindex="9" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrSettleCount" id="Machine2QrSettleCount" :value="formattedData.Record.Machine2QrSettleCount" @input="updateRecord('Machine2QrSettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2QrSettleCount" tabindex="24" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrSettleCount" id="Machine3QrSettleCount" :value="formattedData.Record.Machine3QrSettleCount" @input="updateRecord('Machine3QrSettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3QrSettleCount" tabindex="39" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrSettleCount" id="Machine4QrSettleCount" :value="formattedData.Record.Machine4QrSettleCount" @input="updateRecord('Machine4QrSettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4QrSettleCount" tabindex="54" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrSettleCount" id="Machine5QrSettleCount" :value="formattedData.Record.Machine5QrSettleCount" @input="updateRecord('Machine5QrSettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5QrSettleCount" tabindex="69" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="QrSettleCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- QR精算金額 (QR Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">QR精算金額</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrSettleAmount" id="Machine1QrSettleAmount" :value="formattedData.Record.Machine1QrSettleAmount" @input="updateRecord('Machine1QrSettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1QrSettleAmount" tabindex="10" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrSettleAmount" id="Machine2QrSettleAmount" :value="formattedData.Record.Machine2QrSettleAmount" @input="updateRecord('Machine2QrSettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2QrSettleAmount" tabindex="25" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrSettleAmount" id="Machine3QrSettleAmount" :value="formattedData.Record.Machine3QrSettleAmount" @input="updateRecord('Machine3QrSettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3QrSettleAmount" tabindex="40" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrSettleAmount" id="Machine4QrSettleAmount" :value="formattedData.Record.Machine4QrSettleAmount" @input="updateRecord('Machine4QrSettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4QrSettleAmount" tabindex="55" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrSettleAmount" id="Machine5QrSettleAmount" :value="formattedData.Record.Machine5QrSettleAmount" @input="updateRecord('Machine5QrSettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5QrSettleAmount" tabindex="70" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="QrSettleAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 電子マネ件数 (E-Money Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ件数</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ECount" id="Machine1ECount" :value="formattedData.Record.Machine1ECount" @input="updateRecord('Machine1ECount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1ECount" tabindex="11" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ECount" id="Machine2ECount" :value="formattedData.Record.Machine2ECount" @input="updateRecord('Machine2ECount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2ECount" tabindex="26" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ECount" id="Machine3ECount" :value="formattedData.Record.Machine3ECount" @input="updateRecord('Machine3ECount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3ECount" tabindex="41" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ECount" id="Machine4ECount" :value="formattedData.Record.Machine4ECount" @input="updateRecord('Machine4ECount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4ECount" tabindex="56" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ECount" id="Machine5ECount" :value="formattedData.Record.Machine5ECount" @input="updateRecord('Machine5ECount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5ECount" tabindex="71" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="ECountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 電子マネ金額 (E-Money Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ金額</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1EAmount" id="Machine1EAmount" :value="formattedData.Record.Machine1EAmount" @input="updateRecord('Machine1EAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1EAmount" tabindex="12" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2EAmount" id="Machine2EAmount" :value="formattedData.Record.Machine2EAmount" @input="updateRecord('Machine2EAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2EAmount" tabindex="27" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3EAmount" id="Machine3EAmount" :value="formattedData.Record.Machine3EAmount" @input="updateRecord('Machine3EAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3EAmount" tabindex="42" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4EAmount" id="Machine4EAmount" :value="formattedData.Record.Machine4EAmount" @input="updateRecord('Machine4EAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4EAmount" tabindex="57" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5EAmount" id="Machine5EAmount" :value="formattedData.Record.Machine5EAmount" @input="updateRecord('Machine5EAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5EAmount" tabindex="72" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="EAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 電子マネ精算件数 (E-Money Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ精算件数</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ESettleCount" id="Machine1ESettleCount" :value="formattedData.Record.Machine1ESettleCount" @input="updateRecord('Machine1ESettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1ESettleCount" tabindex="13" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ESettleCount" id="Machine2ESettleCount" :value="formattedData.Record.Machine2ESettleCount" @input="updateRecord('Machine2ESettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2ESettleCount" tabindex="28" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ESettleCount" id="Machine3ESettleCount" :value="formattedData.Record.Machine3ESettleCount" @input="updateRecord('Machine3ESettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3ESettleCount" tabindex="43" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ESettleCount" id="Machine4ESettleCount" :value="formattedData.Record.Machine4ESettleCount" @input="updateRecord('Machine4ESettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4ESettleCount" tabindex="58" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ESettleCount" id="Machine5ESettleCount" :value="formattedData.Record.Machine5ESettleCount" @input="updateRecord('Machine5ESettleCount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5ESettleCount" tabindex="73" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="ESettleCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 電子マネ精算金額 (E-Money Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ精算金額</td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ESettleAmount" id="Machine1ESettleAmount" :value="formattedData.Record.Machine1ESettleAmount" @input="updateRecord('Machine1ESettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine1ESettleAmount" tabindex="14" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ESettleAmount" id="Machine2ESettleAmount" :value="formattedData.Record.Machine2ESettleAmount" @input="updateRecord('Machine2ESettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine2ESettleAmount" tabindex="29" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ESettleAmount" id="Machine3ESettleAmount" :value="formattedData.Record.Machine3ESettleAmount" @input="updateRecord('Machine3ESettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine3ESettleAmount" tabindex="44" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ESettleAmount" id="Machine4ESettleAmount" :value="formattedData.Record.Machine4ESettleAmount" @input="updateRecord('Machine4ESettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine4ESettleAmount" tabindex="59" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ESettleAmount" id="Machine5ESettleAmount" :value="formattedData.Record.Machine5ESettleAmount" @input="updateRecord('Machine5ESettleAmount', $event.target.value)" @focus="$event.target.value = data.Record.Machine5ESettleAmount" tabindex="74" />
+                        </td>
+                        <td>
+                            <input type="text" class="w-full border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="ESettleAmountTotal" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="bg-gray-50 p-4 rounded-md shadow-inner">
+                    <h2 class="text-xl font-semibold mb-2 text-gray-700">チケット・販売データ</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Ticket and Sales -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">大人入浴券枚数</label>
+                            <input type="text" x-model="formattedData.Record.AdultTicketCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">回数券売数</label>
+                            <input type="text" x-model="formattedData.Record.TicketSalesCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">販売NO（始まり）</label>
+                            <input type="text" x-model="formattedData.Record.SalesNoStart" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">販売NO（終わり）</label>
+                            <input type="text" x-model="formattedData.Record.SalesNoEnd" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <!-- ... more fields ... -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other fields (Remarks, Escort, etc.) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="deficiency" class="block text-sm font-medium text-gray-700">過不足</label>
+                    <input type="text" id="deficiency" x-model="formattedData.Record.Deficiency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <div>
+                    <label for="remarks" class="block text-sm font-medium text-gray-700">備考</label>
+                    <input type="text" id="remarks" x-model="data.Remarks" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <div>
+                    <label for="reportSpace" class="block text-sm font-medium text-gray-700">報告スペース</label>
+                    <input type="text" id="reportSpace" x-model="data.ReportSpace" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <!-- ... more fields ... -->
+            </div>
+        </div>
+
+    </div>
+    <script src="/assets/main.js">
+    </script>
+</body>
+</html>

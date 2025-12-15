@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>売上日次報告書</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        /* @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+
+            body {
+                zoom: 0.95;
+            }
+        } */
+
+        body {
+            font-family: "MS Mincho", "Hiragino Mincho Pro", serif;
+            color: #000080;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td,
+        th {
+            border: 1px solid #000080;
+            padding: 0px 6px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        /* Custom styles for the table-based layout to replace Bulma's flex */
+        .layout-table {
+            width: 100%;
+        }
+
+        .layout-table td {
+            border: none;
+            padding: 0;
+            vertical-align: top;
+        }
+
+        .header-cell {
+            text-align: right;
+        }
+
+        .header-cell-content {
+            display: inline-block;
+        }
+
+        .page-break-after {
+            page-break-after: always;
+        }
+
+    </style>
+</head>
+
+<body>
+    {{if .ReportData.Found}}
+
+    <div class="container is-fluid py-4 page-break-after">
+        <!-- Top Half -->
+        <div class="is-size-7">
+            <!-- Header Table -->
+            <table class="layout-table mb-4">
+                <tr>
+                    <td style="width: 50%;"><div class="is-size-5">売上日次報告書1/2 現金</div></td>
+                    <td class="header-cell" style="width: 50%;">
+                        <div class="header-cell-content">
+                            <div>{{ .ReportData.Date }}（{{ .ReportData.Record.JapaneseWeekday }}） {{ .ReportData.Record.WeatherCondition }}</div>
+                            <div class="is-flex is-align-items-center is-justify-content-end">
+                                <div>[日計表 クリップ止め]</div>
+                                <div>ID</div>
+                                <div class="has-border-dark-black px-2 mx-1">{{ .ReportData.Record.ID }}</div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Main Metrics Table -->
+            <table class="layout-table mb-4">
+                <tr>
+                    <td style="width: 33.3%;">
+                        <div class="box has-text-centered has-border-dark-black p-4">
+                            <div>売上高</div>
+                            <div class="is-size-4 has-text-weight-bold">¥2,041,040</div>
+                        </div>
+                    </td>
+                    <td style="width: 33.3%;">
+                        <div class="box has-text-centered has-border-dark-black p-4">
+                            <div>入場者合計</div>
+                            <div class="is-size-4 has-text-weight-bold">1,395</div>
+                        </div>
+                    </td>
+                    <td style="width: 33.3%;">
+                        <div class="box has-text-centered has-border-dark-black p-4">
+                            <div>客単価</div>
+                            <div class="is-size-4 has-text-weight-bold">¥1,463</div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Revenue and Visitor Tables -->
+            <table class="layout-table">
+                <tr>
+                    <td style="width: 33.3%;">
+                        <table class="table is-fullwidth">
+                            <tr>
+                                <td class="has-text-left">温浴</td>
+                                <td class="has-text-right">¥1,294,300</td>
+                            </tr>
+                            <tr>
+                                <td class="has-text-left">飲食</td>
+                                <td class="has-text-right">¥493,840</td>
+                            </tr>
+                            <tr>
+                                <td class="has-text-left">リラク</td>
+                                <td class="has-text-right">¥252,900</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="width: 33.3%;">
+                        <table class="table is-fullwidth">
+                            <tr>
+                                <td>男性</td>
+                                <td>66.91%</td>
+                            </tr>
+                            <tr>
+                                <td>女性</td>
+                                <td>33.09%</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="width: 33.3%;">
+                        <table class="table is-fullwidth">
+                            <tr>
+                                <td class="has-text-info">月平均</td>
+                                <td>¥1,579</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="mt-6 has-text-left is-size-6">報告スペース</div>
+            <div class="mt-2 is-size-7" style="line-height: 1.5rem;">
+            </div>
+
+        </div>
+        <!-- Bottom Half -->
+        <div class="is-size-7 mt-8">
+            <div class="is-flex is-justify-content-space-between">
+                <table class="table">
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>入浴券</th>
+                        <th>入浴食事セット</th>
+                        <th>平日回数券</th>
+                        <th>全日回数券</th>
+                        <th>ポイントカード</th>
+                        <th>招待券</th>
+                        <th>優待券</th>
+                        <th>内、クーポン</th>
+                        <th>福利厚生</th>
+                        <th>合計</th>
+                    </tr>
+                    <tr>
+                        <th>大人</th>
+                        <td class="has-text-right">{{ .ReportData.Record.AdultTicketCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.AdultSetTicketCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.TicketCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.SixTicketCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.PointCardAdultCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.InvitationTicketCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.YuutaikenTicketCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.CouponCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.OldTicketCount }}</td>
+                        <td>
+                            <!--{ .Record.AdultTotal }-->
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>小人</th>
+                        <td class="has-text-right">{{ .ReportData.Record.ChildTicketCount }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>80</td>
+                    </tr>
+                    <tr>
+                        <th>幼児</th>
+                        <td class="has-text-right">{{ .ReportData.Record.InfantTicketCount }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>60</td>
+                    </tr>
+                    <tr>
+                        <th>合計</th>
+                        <td>1,096</td>
+                        <td>0</td>
+                        <td>274</td>
+                        <td>1</td>
+                        <td>14</td>
+                        <td>3</td>
+                        <td>5</td>
+                        <td>0</td>
+                        <td>2</td>
+                        <td>1,395</td>
+                    </tr>
+                </table>
+                <div class="ml-8">
+                    <table class="table">
+                        <tr>
+                            <td>男性</td>
+                            <td class="has-text-right">183</td>
+                            <td class="has-text-right">1</td>
+                        </tr>
+                        <tr>
+                            <td>女性</td>
+                            <td class="has-text-right">91</td>
+                            <td class="has-text-right">0</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="is-flex is-justify-content-space-between mt-6 is-size-7">
+                <table class="table">
+                    <tr>
+                        <th>販売</th>
+                        <th>平日回</th>
+                        <th>全日回</th>
+                        <th>優待券(枚)</th>
+                        <th>優待券(金額)</th>
+                    </tr>
+                    <tr>
+                        <td>販売</td>
+                        <td class="has-text-right">{{ .ReportData.Record.TicketSalesCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.SixTicketSalesCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.YuutaikenSalesCount }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.YuutaikenSalesAmount }}</td>
+                    </tr>
+                    <tr>
+                        <td>番号始</td>
+                        <td class="has-text-right">{{ .ReportData.Record.SalesNoStart }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.SixSalesNoStart }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>番号終</td>
+                        <td class="has-text-right">{{ .ReportData.Record.SalesNoEnd }}</td>
+                        <td class="has-text-right">{{ .ReportData.Record.SixSalesNoEnd }}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>回数券差異</td>
+                        <td class="has-text-right">0</td>
+                        <td class="has-text-right">0</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+
+                <table class="table">
+                    <tr>
+                        <th colspan="2">エスカット</th>
+                    </tr>
+                    <tr>
+                        <td>男性</td>
+                        <td class="has-text-right">{{ .ReportData.Record.SCutMale }}</td>
+                    </tr>
+                    <tr>
+                        <td>女性</td>
+                        <td class="has-text-right">{{ .ReportData.Record.SCutFemale }}</td>
+                    </tr>
+                    <tr>
+                        <td>子供</td>
+                        <td class="has-text-right">{{ .ReportData.Record.SCutChild }}</td>
+                    </tr>
+                    <tr>
+                        <td>合計</td>
+                        <td>61</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <table>
+            <thead>
+                <tr><th colspan="8">1a. 券売機ﾚｼｰﾄより転記&nbsp;現金</th></tr>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>&nbsp;</th>
+                    <th>1号機</th>
+                    <th>2号機</th>
+                    <th>3号機</th>
+                    <th>4号機</th>
+                    <th>5号機</th>
+                    <th>合計</th>
+                </tr>
+            </thead>
+            <tbody>
+               <tr>
+                <th rowspan="2">①現金</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1CashCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2CashCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3CashCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4CashCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5CashCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.CashCountGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1CashAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2CashAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3CashAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4CashAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5CashAmount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.CashAmountGoukei }}</td>
+                </tr>
+               <tr>
+                <th rowspan="2">②精算</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1SettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2SettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3SettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4SettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5SettleCount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.SettleCountGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1SettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2SettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3SettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4SettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5SettleAmount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.SettleAmountGoukei }}</td>
+                </tr>
+               <tr>
+                <th rowspan="2">③合計</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine1CashCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine2CashCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine3CashCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine4CashCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine5CashCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.CashCountGoukeiGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine1CashAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine2CashAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine3CashAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine4CashAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine5CashAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.CashAmountGoukeiGoukei }}</td>
+                </tr>
+               <tr>
+                <th rowspan="2">④精算券未処理</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1UnsettledCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2UnsettledCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3UnsettledCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4UnsettledCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5UnsettledCount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.UnsettledCountGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1UnsettledCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2UnsettledCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3UnsettledCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4UnsettledCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5UnsettledCount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.UnsettledAmountGoukei }}</td>
+                </tr>
+               <tr>
+                <th colspan="2">(ｱ)売上合計③-④</th>
+                <td class="has-text-right" colspan="2">{{ format .ReportData.Record.UriageGoukeiNyuuyoku }}</td>
+                <td class="has-text-right" colspan="2">{{ format .ReportData.Record.UriageGoukeiInshoku }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.UriageGoukeiSeitai }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.UriageGoukeiTotal }}</td>
+                </tr>
+                <tr><th colspan="8">1b. 券売機ﾚｼｰﾄより転記&nbsp;キャッシュレス</th></tr>
+            <tr>
+                <th rowspan="2">①電子マネー</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1ECount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2ECount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3ECount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4ECount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5ECount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.ECountGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1EAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2EAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3EAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4EAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5EAmount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.EAmountGoukei }}</td>
+                </tr>
+               <tr>
+                <th rowspan="2">②電子マネー精算</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1ESettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2ESettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3ESettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4ESettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5ESettleCount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.ESettleCountGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1ESettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2ESettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3ESettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4ESettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5ESettleAmount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.ESettleAmountGoukei }}</td>
+                </tr>
+               <tr>
+                <th rowspan="2">③電子マネー合計</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine1ECountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine2ECountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine3ECountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine4ECountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine5ECountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.ECountGoukeiGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine1EAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine2EAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine3EAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine4EAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine5EAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.EAmountGoukeiGoukei }}</td>
+                </tr>
+               <tr>
+                <th rowspan="2">①QRコード</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1QrCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2QrCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3QrCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4QrCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5QrCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.QrCountGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1QrAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2QrAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3QrAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4QrAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5QrAmount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.QrAmountGoukei }}</td>
+                </tr>
+               <tr>
+                <th rowspan="2">②Qrコード精算</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1QrSettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2QrSettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3QrSettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4QrSettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5QrSettleCount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.QrSettleCountGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1QrSettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2QrSettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3QrSettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4QrSettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5QrSettleAmount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.QrSettleAmountGoukei }}</td>
+                </tr>
+               <tr>
+                <th rowspan="2">③Qrコード合計</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine1QrCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine2QrCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine3QrCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine4QrCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine5QrCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.QrCountGoukeiGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine1QrAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine2QrAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine3QrAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine4QrAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine5QrAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.QrAmountGoukeiGoukei }}</td>
+                </tr>
+               <tr>
+                <tr>
+                <th rowspan="2">①クレジットカード</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1CCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2CCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3CCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4CCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5CCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.CCountGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1CAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2CAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3CAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4CAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5CAmount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.CAmountGoukei }}</td>
+                </tr>
+               <tr>
+                <th rowspan="2">②クレジットカード精算</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1CSettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2CSettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3CSettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4CSettleCount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5CSettleCount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.CSettleCountGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ .ReportData.Record.Machine1CSettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine2CSettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine3CSettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine4CSettleAmount }}</td>
+                <td class="has-text-right">{{ .ReportData.Record.Machine5CSettleAmount }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.CSettleAmountGoukei }}</td>
+                </tr>
+               <tr>
+                <th rowspan="2">③クレジットカード合計</th>
+                <th>枚数</th>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine1CCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine2CCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine3CCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine4CCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine5CCountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.CCountGoukeiGoukei }}</td>
+                </tr>
+               <tr>
+                <th>金額</th>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine1CAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine2CAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine3CAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine4CAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine5CAmountGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.CAmountGoukeiGoukei }}</td>
+                </tr>
+
+                <th colspan="2">キャッシレス合計</th>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine1CashlessGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine2CashlessGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine3CashlessGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine4CashlessGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine5CashlessGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.CashlessGoukei }}</td>
+                </tr>
+               <tr>
+                <th colspan="2">現金+ｷｬｯｼｭﾚｽ合計</th>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine1TotalGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine2TotalGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine3TotalGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine4TotalGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.Machine5TotalGoukei }}</td>
+                <td class="has-text-right">{{ format .ReportData.Record.TotalGoukei }}</td>
+                </tr>
+                <tr>
+                <th colspan="2" rowspan="2">構成比（%）</th>
+                <th colspan="2">入浴</th>
+                <th colspan="2">飲食</th>
+                <th colspan="1">リラク</th>
+                </tr>
+                <tr>
+                    <th colspan="2">{{ .ReportData.Record.NyuuyokuWariai}}</th>
+                    <th colspan="2">{{ .ReportData.Record.InshokuWariai}}</th>
+                    <th colspan="1">{{ .ReportData.Record.SeitaiWariai}}</th>
+                    </tr>
+            </tbody>
+
+        </table>
+
+        <table>
+            <tr>
+                <th colspan="8">２. 現金在高</th>
+            </tr>
+            <tr><td>券売機計</td><td>{{ format .ReportData.Record.TotalGoukei}}</td></tr>
+            <tr><td>金銭(ﾌﾛﾝﾄ含む)</td><td>{{ format .ReportData.Record.Change}}</td></tr>
+            <tr><td>精算券未処理</td><td>{{ format .ReportData.Record.Miseisan_Tousha}}</td></tr>
+            <tr><td>電話料入金</td><td>{{ format .ReportData.Record.PhoneFee}}</td></tr>
+            <tr><td>本日未投入金額（未確定）</td><td>{{ format .ReportData.Record.HonjitsuMitounyuuAmountUncertain}}</td></tr>
+            <tr><td>本日未投入金額（確定）</td><td>{{ format .ReportData.Record.HonjitsuMitounyuuAmountCertain}}</td></tr>
+            <tr><td>過不足</td><td>{{ format .ReportData.Record.Deficiency}}</td></tr>
+            <tr><td>前日未投入金額</td><td>{{ format .ReportData.Record.ZenjitsuMitounyuuAmount}}</td></tr>
+            <tr><td>投入合計</td><td>{{ format .ReportData.Record.TounyuuGoukei}}</td></tr>
+            <tr><td>投入ﾚｼﾞｰﾄ合計</td><td>{{ format .ReportData.Record.ReceiptTotalAmount }}</td></tr>
+
+            <tr><td>入金予定金額</td><td>入金予定金額</td><td>入金予定日付</td><td>入金予定日付</td></tr>
+
+        </table>
+
+    </div>
+
+    {{else}}
+    <p class="is-size-6 has-text-centered has-text-danger">指定された日付({{ .ReportData.Date }})のデータは見つかりませんでした。</p>
+    {{end}}
+
+</body>
+
+</html>

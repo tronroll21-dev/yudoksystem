@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .Title }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; width: 210mm;}
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 0px 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .product-row { background-color: white; }
+        .subcat-row { background-color: lightgray ; }
+        .sub-cat-total { background-color: #e0f7fa; font-weight: bold; }
+        .cat-total { background-color: #b3e5fc; font-weight: bold; font-size: 1.1em; }
+        .grand-total { background-color: #81d4fa; font-weight: bold; font-size: 1.2em; }
+        .revenue-col { text-align: right; }
+    </style>
+</head>
+<body>
+    <h1>{{ .Title }}</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>カテゴリー名</th>
+                <th>メニュー名</th>
+                <th class="revenue-col">単価</th>
+                <th class="revenue-col">売上枚数</th>
+                <th class="revenue-col">売上金額</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+        {{/* The outer range iterates over the Categories (SubGroups of Grand Total) */}}
+
+
+        {{range .GroupedSale.SubGroups}}
+            {{$catName := .Name}}
+
+            {{/* The inner range iterates over the SubCategories (SubGroups of Category) */}}
+            {{range .SubGroups}}
+                {{$subCatName := .Name}}
+                <tr class="subcat-row">
+                    <td>{{$subCatName}}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {{/* Range over the Products within the SubCategory */}}
+                {{range .Products}}
+                    <tr class="product-row">
+                        <td></td>
+                        <td>{{.MenuName}}</td>
+                        <td class="revenue-col">{{ format .Tanka}}</td>
+                        <td class="revenue-col">{{ format .UriageMaisuu}}</td>
+                        <td class="revenue-col">{{ format .UriageKingaku}}</td>
+                    </tr>
+                {{end}}
+
+                {{/* Subcategory Total Row */}}
+                <tr class="sub-cat-total">
+                    <td colspan="4">合計 {{$subCatName}}</td>
+                    <td class="revenue-col">{{ format .Total}}</td>
+                </tr>
+            {{end}}
+
+            {{/* Category Total Row */}}
+            <!-- <tr class="cat-total">
+                <td colspan="3">Total for {{$catName}} Category</td>
+                <td class="revenue-col">{{ .Total}}</td>
+            </tr> -->
+        {{end}}
+
+        {{/* Grand Total Row */}}
+        <tr class="grand-total">
+            <td colspan="4">{{.GroupedSale.Name}}</td>
+            <td class="revenue-col">{{ format .GroupedSale.Total}}</td>
+        </tr>
+
+        </tbody>
+    </table>
+</body>
+</html>

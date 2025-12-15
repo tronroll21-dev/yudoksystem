@@ -1,0 +1,95 @@
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f0f4f8;
+            margin: 0;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        #mode-panel {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: white;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        #register-mode {
+            background-color: #28a745;
+        }
+
+        /* Green */
+        #update-mode {
+            background-color: #ffc107;
+        }
+
+        /* Orange */
+
+        #kenbaiki {
+            display: flex;
+            flex-wrap: nowrap;
+            margin-top: 20px;
+        }
+
+        .kenbaikiCol {
+            flex: 1;
+        }
+
+        .kenbaikiCol input {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .label {
+            font-weight: bold;
+            color: black;
+            background-color: white;
+            border: none;
+            text-align: left;
+        }
+
+        input[type="number"] {
+            text-align: right;
+        }

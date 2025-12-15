@@ -1,0 +1,267 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>売上日次報告書</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+
+            body {
+                zoom: 0.95;
+            }
+        } */
+
+        body {
+            font-family: "MS Mincho", "Hiragino Mincho Pro", serif;
+            color: #000080;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td,
+        th {
+            border: 1px solid #000080;
+            padding: 2px 6px;
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body class="p-4"> <!-- Top Half -->
+    {{if .Found}}
+
+    <div class="w-full text-sm">
+        <div class="flex justify-between items-center mb-4">
+            <div class="text-lg">売上日次報告書1/2 現金aa</div>
+            <div class="text-right">
+                <div>{{ .Date }}（金） 雨台風</div>
+                <div class="flex items-center justify-end space-x-2">
+                    <div>[日計表 クリップ止め]</div>
+                    <div>ID</div>
+                    <div class="border border-black px-2">8454</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-6 mb-4">
+            <div class="border border-black text-center p-4">
+                <div>売上高</div>
+                <div class="text-2xl font-bold">¥2,041,040</div>
+            </div>
+            <div class="border border-black text-center p-4">
+                <div>入場者合計</div>
+                <div class="text-2xl font-bold">1,395</div>
+            </div>
+            <div class="border border-black text-center p-4">
+                <div>客単価</div>
+                <div class="text-2xl font-bold">¥1,463</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-6">
+            <div>
+                <table class="w-full">
+                    <tr>
+                        <td class="text-left">温浴</td>
+                        <td class="text-right">¥1,294,300</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">飲食</td>
+                        <td class="text-right">¥493,840</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">リラク</td>
+                        <td class="text-right">¥252,900</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table class="w-full">
+                    <tr>
+                        <td>男性</td>
+                        <td>66.91%</td>
+                    </tr>
+                    <tr>
+                        <td>女性</td>
+                        <td>33.09%</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table class="w-full">
+                    <tr>
+                        <td class="text-blue-800">月平均</td>
+                        <td>¥1,579</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-6 text-left text-base">報告スペース</div>
+        <div class="mt-2 text-xs leading-5">
+         </div>
+
+    </div> <!-- Bottom Half -->
+    <div class="w-full text-sm mt-8">
+        <div class="flex justify-between">
+            <table>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>入浴券</th>
+                    <th>入浴食事セット</th>
+                    <th>平日回数券</th>
+                    <th>全日回数券</th>
+                    <th>ポイントカード</th>
+                    <th>招待券</th>
+                    <th>優待券</th>
+                    <th>内、クーポン</th>
+                    <th>福利厚生</th>
+                    <th>合計</th>
+                </tr>
+                <tr>
+                    <th>大人</th>
+                    <td>{{ .Record.AdultTicketCount }}</td>
+                    <td>{{ .Record.AdultSetTicketCount }}</td>
+                    <td>{{ .Record.TicketCount }}</td>
+                    <td>{{ .Record.SixTicketCount }}</td>
+                    <td>{{ .Record.PointCardAdultCount }}</td>
+                    <td>{{ .Record.InvitationTicketCount }}</td>
+                    <td>{{ .Record.YuutaikenTicketCount }}</td>
+                    <td>{{ .Record.CouponCount }}</td>
+                    <td>{{ .Record.OldTicketCount }}</td>
+                    <td><!--{ .Record.AdultTotal }--></td>
+                </tr>
+                <tr>
+                    <th>小人</th>
+                    <td>{{ .Record.ChildTicketCount }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>80</td>
+                </tr>
+                <tr>
+                    <th>幼児</th>
+                    <td>{{ .Record.InfantTicketCount }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>60</td>
+                </tr>
+                <tr>
+                    <th>合計</th>
+                    <td>1,096</td>
+                    <td>0</td>
+                    <td>274</td>
+                    <td>1</td>
+                    <td>14</td>
+                    <td>3</td>
+                    <td>5</td>
+                    <td>0</td>
+                    <td>2</td>
+                    <td>1,395</td>
+                </tr>
+            </table>
+            <div class="ml-8">
+                <table>
+                    <tr>
+                        <td>男性</td>
+                        <td>183</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>女性</td>
+                        <td>91</td>
+                        <td>0</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex justify-between mt-6">
+            <table>
+                <tr>
+                    <th>販売</th>
+                    <th>平日回</th>
+                    <th>全日回</th>
+                    <th>優待券(枚)</th>
+                    <th>優待券(金額)</th>
+                </tr>
+                <tr>
+                    <td>販売</td>
+                    <td>{{ .Record.TicketSalesCount }}</td>
+                    <td>{{ .Record.SixTicketSalesCount }}</td>
+                    <td>{{ .Record.YuutaikenSalesCount }}</td>
+                    <td>{{ .Record.YuutaikenSalesAmount }}</td>
+                </tr>
+                <tr>
+                    <td>番号始</td>
+                    <td>{{ .Record.SalesNoStart }}</td>
+                    <td>{{ .Record.SixSalesNoStart }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>番号終</td>
+                    <td>{{ .Record.SalesNoEnd }}</td>
+                    <td>{{ .Record.SixSalesNoEnd }}</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>回数券差異</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <th colspan="2">エスカット</th>
+                </tr>
+                <tr>
+                    <td>男性</td>
+                    <td>{{ .Record.SCutMale }}</td>
+                </tr>
+                <tr>
+                    <td>女性</td>
+                    <td>{{ .Record.SCutFemale }}</td>
+                </tr>
+                <tr>
+                    <td>子供</td>
+                    <td>{{ .Record.SCutChild }}</td>
+                </tr>
+                <tr>
+                    <td>合計</td>
+                    <td>61</td>
+                </tr>
+            </table>
+        </div>    
+    </div>
+
+    {{else}}
+    <p class="not-found">指定された日付({{ .Date }})のデータは見つかりませんでした。</p>
+    {{end}}
+
+</body>
+
+</html>

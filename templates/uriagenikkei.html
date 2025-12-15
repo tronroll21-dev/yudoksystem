@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>日次売上集計</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; width: 209mm; font-size: 0.7rem;}
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 4px; text-align: right; }
+        th { background: #f0f0f0; }
+        td.text { text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>日次売上集計</h1>
+    <table>
+        <thead>
+            <tr>
+                <th class="text">日付</th>
+                <th>券売機計</th>
+                <th>優待券販売（金額）</th>
+                <th>未清算金額合計</th>
+                <th>過不足</th>
+                <th>売上金額</th>
+                <th>電話料投入</th>
+                <th>釣銭（ﾌﾛﾝﾄ含む）</th>
+                <th class="text">入金予定日</th>
+                <th>入金予定金額</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range .UriagenikkeiDailyData }}
+            <tr>
+                <td class="text">{{ .Hiduke_str }}</td>
+                <td>{{ format .Kenbaikikei }}</td>
+                <td>{{ format .Yuutaikenhanbai_kingaku }}</td>
+                <td>{{ format .Miseisankingakugoukei }}</td>
+                <td>{{ format .Kabusoku }}</td>
+                <td>{{ format .Uriagekingaku }}</td>
+                <td>{{ format .Denwaryoutounyu }}</td>
+                <td>{{ format .Kinsen_frontfukumu }}</td>
+                <td class="text">{{ .Nyuukinyoteibi_str }}</td>
+                <td>{{ format .Nyuukinyoteikingaku }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+    <h2>営業日数: {{ format .EigyouNissuu }}</h2>
+    <h2>営業日数: {{ format .UriageRuikeiData.Ichinichiatariuriageruikei }}</h2>
+    <h2>営業日数: {{ format .UriageRuikeiData.Hitoriatariuriageruikei }}</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>日付</th>
+                <th>現金売上</th>
+                <th>リアレジ金額</th>
+                <th>QR金額合計</th>
+                <th>電子マネ金額合計</th>
+                <th>クレジット金額合計</th>
+                <th>現金+キャッシュレス合計</th>
+                <th>電子マネ精算金額</th>
+                <!-- <th>本日未投入金額（未確定）</th>
+                <th>本日未投入金額（確定）</th>
+                <th>前日未投入金額</th>
+                <th>売上金額2</th>
+                <th>売上リアレジ合計</th>
+                <th>手売（金額）</th>
+                <th>ｸｰﾎﾟﾝ回収</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            {{ range .UriagenikkeiDailyData }}
+            <tr>
+                <td class="text">{{ .Hiduke_str }}</td>
+                <td>{{ format .Uriagekingaku2 }}</td>
+                <!-- <td class="text">{{ .Nyuukinyoteibi_str }}</td>
+                <td>{{ format .Nyuukinyoteikingaku }}</td>
+                <td>{{ format .Kenbaikikei }}</td>
+                <td>{{ format .Yuutaikenhanbai_kingaku }}</td>
+                <td>{{ format .Miseisankingakugoukei }}</td>
+                <td>{{ format .Kabusoku }}</td>
+                <td>{{ format .Denwaryoutounyu }}</td>
+                <td>{{ format .Kinsen_frontfukumu }}</td>
+                <td>{{ format .Honjitsumitounyuukingaku_mikakutei }}</td>
+                <td>{{ format .Honjitsumitounyuukingaku_kakutei }}</td>
+                <td>{{ format .Zenjitsumitounyuukingaku }}</td>
+                <td>{{ format .Uriagekingaku }}</td>
+                <td>{{ format .Uriagekingaku2 }}</td>
+                <td>{{ format .Uriagerearejigoukei }}</td>
+                <td>{{ format .Teuri_kingaku }}</td>
+                <td>{{ format .Couponkaishuu }}</td> -->
+                <td>{{ format .Rearejikingaku }}</td>
+                <td>{{ format .QRkingakugoukei }}</td>
+                <td>{{ format .Denshimoneykingakugoukei }}</td>
+                <td>{{ format .Creditkingakugoukei }}</td>
+                <td>{{ format .Genkincashlessgoukei }}</td>
+                <td>{{ format .Denshimoneyseisankingakugoukei }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+
+</body>
+</html>

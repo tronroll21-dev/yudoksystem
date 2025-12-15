@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>日次売上集計</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; width: 209mm; font-size: 0.7rem;}
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 4px; text-align: right; }
+        th { background: #f0f0f0; text-align: center; }
+        td.text { text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>入浴者数集計表 1/2</h1>
+    <table>
+        <thead>
+            <tr>
+                <th class="text">日付</th>
+                <th class="text">曜日</th>
+                <th>大人<br>入浴<br>券</th>
+                <th>大人<br>入浴<br>セット</th>
+                <th>小人<br>入浴<br>券</th>
+                <th>幼児<br>入浴<br>券</th>
+                <th>平日<br>回数<br>券男</th>
+                <th>全日<br>回数<br>券男</th>
+                <th>平日<br>回数<br>券女</th>
+                <th>全日<br>回数<br>券女</th>
+                <th>平日<br>回数<br>券回<br>収</th>
+                <th>全日<br>回数<br>券回<br>収</th>
+                <th>回数<br>券回<br>収計</th>
+                <th>招待<br>券回<br>収</th>
+                <th>優待<br>券回<br>収</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range .NyuuyokushasuuDailyData }}
+            <tr>
+                <td class="text">{{ .Hiduke_str }}</td>
+                <td class="text">（{{ .JapaneseWeekday }}）</td>
+                <td>{{ format .AdultTicketCount }}</td>
+                <td>{{ format .AdultSetTicketCount }}</td>
+                <td>{{ format .ChildTicketCount }}</td>
+                <td>{{ format .InfantTicketCount }}</td>
+                <td>{{ format .MaleTicketCount }}</td>
+                <td>{{ format .SixMaleTicketCount }}</td>
+                <td>{{ format .FemaleTicketCount }}</td>
+                <td>{{ format .SixFemaleTicketCount }}</td>
+                <td>{{ format .TicketCount }}</td>
+                <td>{{ format .SixTicketCount }}</td>
+                <td>{{ format .AllTicketCount }}</td>
+                <td>{{ format .ShoutaikenTicketCount }}</td>
+                <td>{{ format .YuutaikenTicketCount }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th class="text">&nbsp;</th>
+                <th class="text">&nbsp;</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.AdultTicketGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.AdultSetTicketGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.ChildTicketGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.InfantTicketGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.MaleTicketGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.SixMaleTicketGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.FemaleTicketGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.SixFemaleTicketGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.TicketCountGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.SixTicketCountGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.AllTicketCountGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.ShoutaikenTicketGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.YuutaikenTicketGoukei }}</th>
+            </tr>
+            <tr>
+                <th colspan="6">回数券の男女比％➡</th>
+                <th colspan="2">{{ format .NyuuyokushasuuShuukeiData.OtokoTicketCountRitsu }}</th>
+                <th colspan="2">{{ format .NyuuyokushasuuShuukeiData.OnnaTicketCountRitsu }}</th>
+                <th class="text" colspan="5">&nbsp;</th>
+            </tr>
+        </tfoot>
+    </table>
+    
+    
+
+    <table style="margin-top:2em;">
+        <tr>
+            <th colspan="4">1-1. 平日回数券未回収枚数</th>
+            <th colspan="4">1-2. 全日回数券未回収枚数</th>
+        </tr>
+        <tr>
+            <th>売数(冊)合計</th>
+            <th>売数(枚)合計</th>
+            <th>回収の合計</th>
+            <th>未回収の合計</th>
+            <th>売数(冊)合計</th>
+            <th>売数(枚)合計</th>
+            <th>回収の合計</th>
+            <th>未回収の合計</th>
+        </tr>
+        <tr>
+            <td>{{ format .NyuuyokushasuuRuikeiData.KaisuukenhannbaiGoukei }}</td>
+            <td>{{ format .NyuuyokushasuuRuikeiData.KaisuukenhannbaiMaiGoukei }}</td>
+            <td>{{ format .NyuuyokushasuuRuikeiData.KaisuukenkaishuuGoukei }}</td>
+            <td>{{ format .NyuuyokushasuuRuikeiData.KaisuukenmikaishuuGoukei }}</td>
+            <td>{{ format .NyuuyokushasuuRuikeiData.SixKaisuukenhannbaiGoukei }}</td>
+            <td>{{ format .NyuuyokushasuuRuikeiData.SixKaisuukenhannbaiMaiGoukei }}</td>
+            <td>{{ format .NyuuyokushasuuRuikeiData.SixKaisuukenkaishuuGoukei }}</td>
+            <td>{{ format .NyuuyokushasuuRuikeiData.SixKaisuukenmikaishuuGoukei }}</td>
+        </tr>
+        <tr><td colspan="8" style="border: none;">&nbsp;</td></tr>
+        <tr>
+            <th colspan="3">優待券未回収枚数</th>
+        </tr>
+        <tr>
+            <td>販売(枚数)</td>
+            <td>回収(枚数)</td>
+            <td>未回収(枚数)</td>
+        </tr>
+        <tr>
+            <td>{{ format .NyuuyokushasuuRuikeiData.YuutaikenhanbaiGoukei }}</td>
+            <td>{{ format .NyuuyokushasuuRuikeiData.YuutaikenkaishuuGoukei }}</td>
+            <td>{{ format .NyuuyokushasuuRuikeiData.YuutaikenmikaishuuGoukei }}</td>            
+        </tr>
+    </table>
+    
+   <br style="page-break-after: always;">    
+
+    <h1>入浴者数集計表 2/2</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>日付</th>
+                <th>曜日</th>
+                <th>天気状況</th>
+                <th>ﾎﾟｲﾝﾄ<br>ｶｰﾄﾞ<br>大人</th>
+                <th>ﾎﾟｲﾝﾄ<br>ｶｰﾄﾞ<br>小人</th>
+                <th>入場者<br>合計</th>
+                <th>平日回<br>数券販<br>売（冊）</th>
+                <th>全日回<br>数券販<br>売（冊）</th>
+                <th>回数券<br>販売計<br>（冊）</th>
+                <th>ｴｽｶｯﾄ<br>男性</th>
+                <th>ｴｽｶｯﾄ<br>女性</th>
+                <th>ｴｽｶｯﾄ<br>子供</th>
+                <th>ｸｰﾎﾟﾝ<br>回収</th>
+                <th>福利<br>厚生</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range .NyuuyokushasuuDailyData }}
+            <tr>
+                <td class="text">{{ .Hiduke_str }}</td>
+                <td class="text">（{{ .JapaneseWeekday }}）</td>
+                <td style="text-align: left;">{{  .WeatherCondition }}</td>
+                <td>{{ format .PointCardAdultCount }}</td>
+                <td>{{ format .PointCardChildCount }}</td>
+                <td>{{ format .NyuuyokushasuuSoukei }}</td>
+                <td>{{ format .TicketSalesCount }}</td>
+                <td>{{ format .SixTicketSalesCount }}</td>
+                <td>{{ format .AllTicketSalesCount }}</td>
+                <td>{{ format .SCutMale }}</td>
+                <td>{{ format .SCutFemale }}</td>
+                <td>{{ format .SCutChild }}</td>
+                <td>{{ format .CouponCount }}</td>
+                <td>{{ format .OldTicketCount }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+                <tfoot>
+            <tr>
+                <th class="text">&nbsp;</th>
+                <th class="text">&nbsp;</th>
+                <th class="text">&nbsp;</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.PointCardAdultGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.PointCardChildGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.NyuuyokushasuuGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.TicketSalesGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.SixTicketSalesGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.AllTicketSalesGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.SCutMaleGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.SCutFemaleGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.SCutChildGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.CouponGoukei }}</th>
+                <th>{{ format .NyuuyokushasuuShuukeiData.OldTicketGoukei }}</th>
+            </tr>
+        </tfoot>
+
+    </table>
+
+</body>
+</html>

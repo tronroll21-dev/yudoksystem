@@ -1,0 +1,28 @@
+{{define "index1.html"}}
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日次報告システム</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="stylesheet" href="/assets/sales-data-entry/main.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>日次報告システム</h1>
+        <div class="form-group">
+            <label for="date-picker">日付選択</label>
+            <input type="date" id="date-picker" name="date" hx-get="/sales-data" hx-trigger="load, change"
+                hx-target="#sales-data-panel" hx-swap="outerHTML" value="{{.InitialDate}}" />
+        </div>
+        <div id="sales-data-panel">
+            <!-- This panel will be updated by HTMX -->
+        </div>
+    </div>
+</body>
+<script src="/assets/sales-data-entry/main.js"></script>
+</html>
+{{end}}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{.Date}} 日次報告レポート</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+margin: 20px;
+background-color: #f4f4f4;
+}
+.container {
+max-width: 800px;
+margin: auto;
+background-color: #fff;
+padding: 20px;
+border-radius: 8px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+h1 {
+color: #333;
+text-align: center;
+border-bottom: 2px solid #eee;
+padding-bottom: 10px;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 20px;
+}
+th, td {
+border: 1px solid #ddd;
+padding: 12px;
+text-align: left;
+}
+th {
+background-color: #f2f2f2;
+color: #555;
+}
+.not-found {
+text-align: center;
+color: #999;
+margin-top: 50px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>日次報告レポート - {{.Date}}</h1>
+{{if .Found}}
+<table>
+<tr>
+<th>項目</th>
+<th>値</th>
+</tr>
+<tr>
+<td>日付</td>
+<td>{{.Record.Date}}</td>
+</tr>
+<tr>
+<td>担当者コード</td>
+<td>{{.Record.StaffCode}}</td>
+</tr>
+<tr>
+<td>天気コード</td>
+<td>{{.Record.WeatherCode}}</td>
+</tr>
+<tr>
+<td>1号機現金枚数</td>
+<td>{{.Record.Machine1CashCount}}</td>
+</tr>
+<tr>
+<td>1号機現金金額</td>
+<td>{{.Record.Machine1CashAmount}}</td>
+</tr>
+<tr>
+<td>備考</td>
+<td>{{.Record.Remarks}}</td>
+</tr>
+</table>
+{{else}}
+<p class="not-found">指定された日付({{ .Date }})のデータは見つかりませんでした。</p>
+{{end}}
+</div>
+</body>
+</html>

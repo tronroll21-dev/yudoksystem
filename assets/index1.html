@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vending Machine Data Table</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .numCell {
+            text-align: right;
+            -moz-appearance: textfield; /* Firefox */
+        }
+        .numCell::-webkit-outer-spin-button,
+        .numCell::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg w-full max-w-7xl mx-auto">
+        <h1 class="text-xl md:text-2xl font-semibold text-center text-gray-800 mb-6">Vending Machine Data</h1>
+        <p class="text-center text-gray-500 mb-8 text-sm md:text-base">This table is structured for vertical tabbing. Use the Tab key to move through the fields from top to bottom within each machine's column.</p>
+        
+        <div class="table-responsive rounded-lg overflow-hidden border border-gray-200">
+            <table class="w-full min-w-max md:min-w-0 border-collapse">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">種類</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">1号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">2号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">3号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">4号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">5号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">合計</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <!-- 現金枚数 (Cash Count) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">現金枚数</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CashCount" id="Machine1CashCount" value="{{.Record.Machine1CashCount}}" x-text="Machine1CashCount" tabindex="1" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CashCount" id="Machine2CashCount" value="{{.Record.Machine2CashCount}}" x-text="Machine2CashCount" tabindex="16" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CashCount" id="Machine3CashCount" value="{{.Record.Machine3CashCount}}" x-text="Machine3CashCount" tabindex="31" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CashCount" id="Machine4CashCount" value="{{.Record.Machine4CashCount}}" x-text="Machine4CashCount" tabindex="46" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CashCount" id="Machine5CashCount" value="{{.Record.Machine5CashCount}}" x-text="Machine5CashCount" tabindex="61" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="CashCountTotal" x-text="CashCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金金額 (Cash Amount) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">現金金額</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CashAmount" id="Machine1CashAmount" value="{{.Record.Machine1CashAmount}}" x-text="Machine1CashAmount" tabindex="2" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CashAmount" id="Machine2CashAmount" value="{{.Record.Machine2CashAmount}}" x-text="Machine2CashAmount" tabindex="17" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CashAmount" id="Machine3CashAmount" value="{{.Record.Machine3CashAmount}}" x-text="Machine3CashAmount" tabindex="32" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CashAmount" id="Machine4CashAmount" value="{{.Record.Machine4CashAmount}}" x-text="Machine4CashAmount" tabindex="47" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CashAmount" id="Machine5CashAmount" value="{{.Record.Machine5CashAmount}}" x-text="Machine5CashAmount" tabindex="62" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="CashAmountTotal" x-text="CashAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金精算件数 (Cash Settle Count) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">現金精算件数</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1SettleCount" id="Machine1SettleCount" value="{{.Record.Machine1SettleCount}}" x-text="Machine1SettleCount" tabindex="3" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2SettleCount" id="Machine2SettleCount" value="{{.Record.Machine2SettleCount}}" x-text="Machine2SettleCount" tabindex="18" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3SettleCount" id="Machine3SettleCount" value="{{.Record.Machine3SettleCount}}" x-text="Machine3SettleCount" tabindex="33" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4SettleCount" id="Machine4SettleCount" value="{{.Record.Machine4SettleCount}}" x-text="Machine4SettleCount" tabindex="48" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5SettleCount" id="Machine5SettleCount" value="{{.Record.Machine5SettleCount}}" x-text="Machine5SettleCount" tabindex="63" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="SettleCountTotal" x-text="SettleCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金精算金額 (Cash Settle Amount) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">現金精算金額</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1SettleAmount" id="Machine1SettleAmount" value="{{.Record.Machine1SettleAmount}}" x-text="Machine1SettleAmount" tabindex="4" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2SettleAmount" id="Machine2SettleAmount" value="{{.Record.Machine2SettleAmount}}" x-text="Machine2SettleAmount" tabindex="19" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3SettleAmount" id="Machine3SettleAmount" value="{{.Record.Machine3SettleAmount}}" x-text="Machine3SettleAmount" tabindex="34" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4SettleAmount" id="Machine4SettleAmount" value="{{.Record.Machine4SettleAmount}}" x-text="Machine4SettleAmount" tabindex="49" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5SettleAmount" id="Machine5SettleAmount" value="{{.Record.Machine5SettleAmount}}" x-text="Machine5SettleAmount" tabindex="64" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="SettleAmountTotal" x-text="SettleAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金未精算件数 (Cash Unsettled Count) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">現金未精算件数</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1UnsettledCount" id="Machine1UnsettledCount" value="{{.Record.Machine1UnsettledCount}}" x-text="Machine1UnsettledCount" tabindex="5" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2UnsettledCount" id="Machine2UnsettledCount" value="{{.Record.Machine2UnsettledCount}}" x-text="Machine2UnsettledCount" tabindex="20" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3UnsettledCount" id="Machine3UnsettledCount" value="{{.Record.Machine3UnsettledCount}}" x-text="Machine3UnsettledCount" tabindex="35" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4UnsettledCount" id="Machine4UnsettledCount" value="{{.Record.Machine4UnsettledCount}}" x-text="Machine4UnsettledCount" tabindex="50" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5UnsettledCount" id="Machine5UnsettledCount" value="{{.Record.Machine5UnsettledCount}}" x-text="Machine5UnsettledCount" tabindex="65" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="UnsettledCountTotal" x-text="UnsettledCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金未精算金額 (Cash Unsettled Amount) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">現金未精算金額</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1UnsettledAmount" id="Machine1UnsettledAmount" value="{{.Record.Machine1UnsettledAmount}}" x-text="Machine1UnsettledAmount" tabindex="6" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2UnsettledAmount" id="Machine2UnsettledAmount" value="{{.Record.Machine2UnsettledAmount}}" x-text="Machine2UnsettledAmount" tabindex="21" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3UnsettledAmount" id="Machine3UnsettledAmount" value="{{.Record.Machine3UnsettledAmount}}" x-text="Machine3UnsettledAmount" tabindex="36" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4UnsettledAmount" id="Machine4UnsettledAmount" value="{{.Record.Machine4UnsettledAmount}}" x-text="Machine4UnsettledAmount" tabindex="51" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5UnsettledAmount" id="Machine5UnsettledAmount" value="{{.Record.Machine5UnsettledAmount}}" x-text="Machine5UnsettledAmount" tabindex="66" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="UnsettledAmountTotal" x-text="UnsettledAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- QR件数 (QR Count) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">QR件数</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrCount" id="Machine1QrCount" value="{{.Record.Machine1QrCount}}" x-text="Machine1QrCount" tabindex="7" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrCount" id="Machine2QrCount" value="{{.Record.Machine2QrCount}}" x-text="Machine2QrCount" tabindex="22" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrCount" id="Machine3QrCount" value="{{.Record.Machine3QrCount}}" x-text="Machine3QrCount" tabindex="37" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrCount" id="Machine4QrCount" value="{{.Record.Machine4QrCount}}" x-text="Machine4QrCount" tabindex="52" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrCount" id="Machine5QrCount" value="{{.Record.Machine5QrCount}}" x-text="Machine5QrCount" tabindex="67" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="QrCountTotal" x-text="QrCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- QR金額 (QR Amount) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">QR金額</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrAmount" id="Machine1QrAmount" value="{{.Record.Machine1QrAmount}}" x-text="Machine1QrAmount" tabindex="8" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrAmount" id="Machine2QrAmount" value="{{.Record.Machine2QrAmount}}" x-text="Machine2QrAmount" tabindex="23" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrAmount" id="Machine3QrAmount" value="{{.Record.Machine3QrAmount}}" x-text="Machine3QrAmount" tabindex="38" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrAmount" id="Machine4QrAmount" value="{{.Record.Machine4QrAmount}}" x-text="Machine4QrAmount" tabindex="53" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrAmount" id="Machine5QrAmount" value="{{.Record.Machine5QrAmount}}" x-text="Machine5QrAmount" tabindex="68" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="QrAmountTotal" x-text="QrAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- QR精算件数 (QR Settle Count) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">QR精算件数</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrSettleCount" id="Machine1QrSettleCount" value="{{.Record.Machine1QrSettleCount}}" x-text="Machine1QrSettleCount" tabindex="9" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrSettleCount" id="Machine2QrSettleCount" value="{{.Record.Machine2QrSettleCount}}" x-text="Machine2QrSettleCount" tabindex="24" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrSettleCount" id="Machine3QrSettleCount" value="{{.Record.Machine3QrSettleCount}}" x-text="Machine3QrSettleCount" tabindex="39" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrSettleCount" id="Machine4QrSettleCount" value="{{.Record.Machine4QrSettleCount}}" x-text="Machine4QrSettleCount" tabindex="54" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrSettleCount" id="Machine5QrSettleCount" value="{{.Record.Machine5QrSettleCount}}" x-text="Machine5QrSettleCount" tabindex="69" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="QrSettleCountTotal" x-text="QrSettleCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- QR精算金額 (QR Settle Amount) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">QR精算金額</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrSettleAmount" id="Machine1QrSettleAmount" value="{{.Record.Machine1QrSettleAmount}}" x-text="Machine1QrSettleAmount" tabindex="10" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrSettleAmount" id="Machine2QrSettleAmount" value="{{.Record.Machine2QrSettleAmount}}" x-text="Machine2QrSettleAmount" tabindex="25" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrSettleAmount" id="Machine3QrSettleAmount" value="{{.Record.Machine3QrSettleAmount}}" x-text="Machine3QrSettleAmount" tabindex="40" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrSettleAmount" id="Machine4QrSettleAmount" value="{{.Record.Machine4QrSettleAmount}}" x-text="Machine4QrSettleAmount" tabindex="55" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrSettleAmount" id="Machine5QrSettleAmount" value="{{.Record.Machine5QrSettleAmount}}" x-text="Machine5QrSettleAmount" tabindex="70" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="QrSettleAmountTotal" x-text="QrSettleAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 電子マネ件数 (E-Money Count) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">電子マネ件数</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ECount" id="Machine1ECount" value="{{.Record.Machine1ECount}}" x-text="Machine1ECount" tabindex="11" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ECount" id="Machine2ECount" value="{{.Record.Machine2ECount}}" x-text="Machine2ECount" tabindex="26" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ECount" id="Machine3ECount" value="{{.Record.Machine3ECount}}" x-text="Machine3ECount" tabindex="41" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ECount" id="Machine4ECount" value="{{.Record.Machine4ECount}}" x-text="Machine4ECount" tabindex="56" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ECount" id="Machine5ECount" value="{{.Record.Machine5ECount}}" x-text="Machine5ECount" tabindex="71" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="ECountTotal" x-text="ECountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 電子マネ金額 (E-Money Amount) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">電子マネ金額</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1EAmount" id="Machine1EAmount" value="{{.Record.Machine1EAmount}}" x-text="Machine1EAmount" tabindex="12" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2EAmount" id="Machine2EAmount" value="{{.Record.Machine2EAmount}}" x-text="Machine2EAmount" tabindex="27" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3EAmount" id="Machine3EAmount" value="{{.Record.Machine3EAmount}}" x-text="Machine3EAmount" tabindex="42" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4EAmount" id="Machine4EAmount" value="{{.Record.Machine4EAmount}}" x-text="Machine4EAmount" tabindex="57" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5EAmount" id="Machine5EAmount" value="{{.Record.Machine5EAmount}}" x-text="Machine5EAmount" tabindex="72" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="EAmountTotal" x-text="EAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 電子マネ精算件数 (E-Money Settle Count) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">電子マネ精算件数</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ESettleCount" id="Machine1ESettleCount" value="{{.Record.Machine1ESettleCount}}" x-text="Machine1ESettleCount" tabindex="13" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ESettleCount" id="Machine2ESettleCount" value="{{.Record.Machine2ESettleCount}}" x-text="Machine2ESettleCount" tabindex="28" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ESettleCount" id="Machine3ESettleCount" value="{{.Record.Machine3ESettleCount}}" x-text="Machine3ESettleCount" tabindex="43" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ESettleCount" id="Machine4ESettleCount" value="{{.Record.Machine4ESettleCount}}" x-text="Machine4ESettleCount" tabindex="58" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ESettleCount" id="Machine5ESettleCount" value="{{.Record.Machine5ESettleCount}}" x-text="Machine5ESettleCount" tabindex="73" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="ESettleCountTotal" x-text="ESettleCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 電子マネ精算金額 (E-Money Settle Amount) -->
+                    <tr>
+                        <td class="py-4 px-2 md:px-4 whitespace-nowrap font-medium text-gray-700">電子マネ精算金額</td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ESettleAmount" id="Machine1ESettleAmount" value="{{.Record.Machine1ESettleAmount}}" x-text="Machine1ESettleAmount" tabindex="14" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ESettleAmount" id="Machine2ESettleAmount" value="{{.Record.Machine2ESettleAmount}}" x-text="Machine2ESettleAmount" tabindex="29" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ESettleAmount" id="Machine3ESettleAmount" value="{{.Record.Machine3ESettleAmount}}" x-text="Machine3ESettleAmount" tabindex="44" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ESettleAmount" id="Machine4ESettleAmount" value="{{.Record.Machine4ESettleAmount}}" x-text="Machine4ESettleAmount" tabindex="59" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ESettleAmount" id="Machine5ESettleAmount" value="{{.Record.Machine5ESettleAmount}}" x-text="Machine5ESettleAmount" tabindex="74" />
+                        </td>
+                        <td class="py-4 px-2 md:px-4">
+                            <input type="number" class="w-full p-2 border border-gray-300 bg-gray-50 rounded-lg text-gray-500 numCell" disabled id="ESettleAmountTotal" x-text="ESettleAmountTotal" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

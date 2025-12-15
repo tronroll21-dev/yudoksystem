@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日報データビューア</title>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.10.2/dist/cdn.min.js"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* blue-500 with opacity */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-4xl" x-data="dailyReport()">
+        <!-- ローディングインジケータ -->
+        <div x-show="loading" class="text-center text-xl font-semibold text-gray-700 py-10">
+            データをロード中...
+        </div>
+
+        <!-- エラーメッセージ -->
+        <div x-show="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">エラー！</strong>
+            <span class="block sm:inline" x-text="error"></span>
+        </div>
+
+        <!-- データ表示部分 -->
+        <div x-show="!loading && !error" x-cloak>
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">日報詳細</h1>
+
+            <!-- ID and Date -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="id" class="block text-sm font-medium text-gray-700">ID</label>
+                    <input type="text" id="id" x-model="formattedData.Record.ID" readonly class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50 border p-2">
+                </div>
+                <div>
+                    <label for="date" class="block text-sm font-medium text-gray-700">日付</label>
+                    <input type="text" id="date" x-model="data.Date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+            </div>
+
+            <!-- Weather and Staff -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div>
+                    <label for="weatherCode" class="block text-sm font-medium text-gray-700">天気コード</label>
+                    <input type="text" id="weatherCode" x-model="formattedData.Record.WeatherCode" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <div>
+                    <label for="weatherStatus" class="block text-sm font-medium text-gray-700">天気状況</label>
+                    <input type="text" id="weatherStatus" x-model="data.WeatherStatus" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <div>
+                    <label for="weatherMark" class="block text-sm font-medium text-gray-700">天気マーク</label>
+                    <input type="text" id="weatherMark" x-model="data.WeatherMark" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <div>
+                    <label for="staffName" class="block text-sm font-medium text-gray-700">担当</label>
+                    <input type="text" id="staffName" x-model="data.StaffName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+            </div>
+
+            <!-- Machine 1-5 Totals -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-gray-50 p-4 rounded-md shadow-inner">
+                    <h2 class="text-xl font-semibold mb-2 text-gray-700">精算・未精算データ</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- Machine 1-5 Settle Count -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">1号機 精算枚数</label>
+                            <input type="text" x-model="formattedData.Record.Machine1SettleCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">2号機 精算枚数</label>
+                            <input type="text" x-model="formattedData.Record.Machine2SettleCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">3号機 精算枚数</label>
+                            <input type="text" x-model="formattedData.Record.Machine3SettleCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">4号機 精算枚数</label>
+                            <input type="text" x-model="formattedData.Record.Machine4SettleCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">5号機 精算枚数</label>
+                            <input type="text" x-model="formattedData.Record.Machine5SettleCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <!-- ... more fields ... -->
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-inner">
+                    <h2 class="text-xl font-semibold mb-2 text-gray-700">チケット・販売データ</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Ticket and Sales -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">大人入浴券枚数</label>
+                            <input type="text" x-model="formattedData.Record.AdultTicketCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">回数券売数</label>
+                            <input type="text" x-model="formattedData.Record.TicketSalesCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">販売NO（始まり）</label>
+                            <input type="text" x-model="formattedData.Record.SalesNoStart" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">販売NO（終わり）</label>
+                            <input type="text" x-model="formattedData.Record.SalesNoEnd" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
+                        </div>
+                        <!-- ... more fields ... -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other fields (Remarks, Escort, etc.) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="deficiency" class="block text-sm font-medium text-gray-700">過不足</label>
+                    <input type="text" id="deficiency" x-model="formattedData.Record.Deficiency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <div>
+                    <label for="remarks" class="block text-sm font-medium text-gray-700">備考</label>
+                    <input type="text" id="remarks" x-model="data.Remarks" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <div>
+                    <label for="reportSpace" class="block text-sm font-medium text-gray-700">報告スペース</label>
+                    <input type="text" id="reportSpace" x-model="data.ReportSpace" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-2">
+                </div>
+                <!-- ... more fields ... -->
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('dailyReport', () => ({
+                data: {
+                    Record: {
+                        ID: 0,
+                        Date: '',
+                        WeatherCode: 0,
+                        WeatherStatus: '',
+                        WeatherMark: '',
+                        StaffCode: 0,
+                        StaffName: '',
+                        Machine1CashCount: 0,
+                        Machine1CashAmount: 0,
+                        Machine1SettleCount: 0,
+                        Machine1SettleAmount: 0,
+                        Machine2CashCount: 0,
+                        Machine2CashAmount: 0,
+                        Machine2SettleCount: 0,
+                        Machine2SettleAmount: 0,
+                        Machine3CashCount: 0,
+                        Machine3CashAmount: 0,
+                        Machine3SettleCount: 0,
+                        Machine3SettleAmount: 0,
+                        Machine4CashCount: 0,
+                        Machine4CashAmount: 0,
+                        Machine4SettleCount: 0,
+                        Machine4SettleAmount: 0,
+                        Machine5CashCount: 0,
+                        Machine5CashAmount: 0,
+                        Machine5SettleCount: 0,
+                        Machine5SettleAmount: 0,
+                        Machine1UnsettledCount: 0,
+                        Machine1UnsettledAmount: 0,
+                        Machine2UnsettledCount: 0,
+                        Machine2UnsettledAmount: 0,
+                        Machine3UnsettledCount: 0,
+                        Machine3UnsettledAmount: 0,
+                        Machine4UnsettledCount: 0,
+                        Machine4UnsettledAmount: 0,
+                        Machine5UnsettledCount: 0,
+                        Machine5UnsettledAmount: 0,
+                        Machine1QrCount: 0,
+                        Machine1QrAmount: 0,
+                        Machine2QrCount: 0,
+                        Machine2QrAmount: 0,
+                        Machine3QrCount: 0,
+                        Machine3QrAmount: 0,
+                        Machine4QrCount: 0,
+                        Machine4QrAmount: 0,
+                        Machine5QrCount: 0,
+                        Machine5QrAmount: 0,
+                        Machine1QrSettleCount: 0,
+                        Machine1QrSettleAmount: 0,
+                        Machine2QrSettleCount: 0,
+                        Machine2QrSettleAmount: 0,
+                        Machine3QrSettleCount: 0,
+                        Machine3QrSettleAmount: 0,
+                        Machine4QrSettleCount: 0,
+                        Machine4QrSettleAmount: 0,
+                        Machine5QrSettleCount: 0,
+                        Machine5QrSettleAmount: 0,
+                        Machine1ECount: 0,
+                        Machine1EAmount: 0,
+                        Machine2ECount: 0,
+                        Machine2EAmount: 0,
+                        Machine3ECount: 0,
+                        Machine3EAmount: 0,
+                        Machine4ECount: 0,
+                        Machine4EAmount: 0,
+                        Machine5ECount: 0,
+                        Machine5EAmount: 0,
+                        Machine1ESettleCount: 0,
+                        Machine1ESettleAmount: 0,
+                        Machine2ESettleCount: 0,
+                        Machine2ESettleAmount: 0,
+                        Machine3ESettleCount: 0,
+                        Machine3ESettleAmount: 0,
+                        Machine4ESettleCount: 0,
+                        Machine4ESettleAmount: 0,
+                        Machine5ESettleCount: 0,
+                        Machine5ESettleAmount: 0,
+                        Machine1CCount: 0,
+                        Machine1CAmount: 0,
+                        Machine2CCount: 0,
+                        Machine2CAmount: 0,
+                        Machine3CCount: 0,
+                        Machine3CAmount: 0,
+                        Machine4CCount: 0,
+                        Machine4CAmount: 0,
+                        Machine5CCount: 0,
+                        Machine5CAmount: 0,
+                        Machine1CSettleCount: 0,
+                        Machine1CSettleAmount: 0,
+                        Machine2CSettleCount: 0,
+                        Machine2CSettleAmount: 0,
+                        Machine3CSettleCount: 0,
+                        Machine3CSettleAmount: 0,
+                        Machine4CSettleCount: 0,
+                        Machine4CSettleAmount: 0,
+                        Machine5CSettleCount: 0,
+                        Machine5CSettleAmount: 0,
+                        AdultTicketCount: 0,
+                        AdultSetTicketCount: 0,
+                        ChildTicketCount: 0,
+                        TicketCount: 0,
+                        InvitationTicketCount: 0,
+                        CourtesyTicketCount: 0,
+                        ThanksgivingTicketCount: 0,
+                        PointCardAdultCount: 0,
+                        PointCardChildCount: 0,
+                        TicketSalesCount: 0,
+                        OldTicketCount: 0,
+                        SalesNoStart: 0,
+                        SalesNoEnd: 0,
+                        Change: 0,
+                        PhoneFee: 0,
+                        CourtesySalesCount: 0,
+                        CourtesySalesAmount: 0,
+                        TodayUn投入AmountUncertain: 0,
+                        TodayUn投入AmountCertain: 0,
+                        Deficiency: 0,
+                        YesterdayUn投入Amount: 0,
+                        ReceiptTotalAmount: 0,
+                        Remarks: '',
+                        EscortMale: 0,
+                        EscortFemale: 0,
+                        EscortChild: 0,
+                        SixTicketCount: 0,
+                        SixTicketSalesCount: 0,
+                        SixSalesNoStart: 0,
+                        SixSalesNoEnd: 0,
+                        SixMaleTicketCount: 0,
+                        SixFemaleTicketCount: 0,
+                        CouponCount: 0,
+                        RearRegisterAmount: 0,
+                        RearRegisterTicketAmount: 0,
+                        RearRegisterRelaxAmount: 0,
+                        ReportSpace: '',
+                    }
+                },
+                loading: true,
+                error: null,
+                // フェッチするデータのURL。実際のサーバーエンドポイントに置き換えてください。
+                // This URL should be replaced with your actual server endpoint.
+                api_url: '/sales-data?date=',
+
+                init() {
+                    this.fetchData('2024-07-26');
+                },
+
+                // サーバーからデータを取得する関数
+                async fetchData(date) {
+                    this.loading = true;
+                    this.error = null;
+                    try {
+                        const response = await fetch(`${this.api_url}${date}`);
+                        if (!response.ok) {
+                            throw new Error('ネットワーク応答が正常ではありませんでした');
+                        }
+                        const rawData = await response.json();
+                        
+                        // Golang の []uint8 を JavaScript の文字列に変換
+                        if (rawData.Date) {
+                            rawData.Date = new TextDecoder().decode(new Uint8Array(rawData.Date));
+                        }
+                        
+                        this.data = rawData;
+                        console.log('Fetched Data:', this.data);
+                    } catch (e) {
+                        this.error = `データの取得に失敗しました: ${e.message}`;
+                        console.error('Error fetching data:', e);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                // 数値にカンマ区切りを追加するgetter
+                get formattedData() {
+                    // if (this.loading || !this.data) {
+                    //     return {};
+                    // }
+
+                    const formatted = {};
+                    formatted.Color = this.data.Color || 'green'; // デフォルトの色を設定
+                    formatted.Found = this.data.Found || false; // デフォルトのFoundを設定
+                    formatted.Mode = this.data.Mode || '登録'; // デフォルトのModeを設定
+                    formatted.Record = {};
+                    for (const key in this.data.Record) {
+                        // `Date`のような文字列や`null`値をスキップ
+                        if (typeof this.data.Record[key] === 'number') {
+                            // 日本語のロケールを使用してカンマを追加
+                            formatted.Record[key] = this.data.Record[key].toLocaleString('ja-JP');
+                            //console.log(`Formatted ${key}:`, formatted[key], `typeof ${this.data[key]} :`, typeof this.data[key]);
+                        } else {
+                            // 数値でない場合はそのまま値をコピー
+                            formatted.Record[key] = this.data.Record[key];
+                        }
+                    }
+                    return formatted;
+                }
+            }));
+        });
+    </script>
+</body>
+</html>

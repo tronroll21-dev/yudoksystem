@@ -1,0 +1,17 @@
+version: '3'
+
+tasks:
+  dev:
+    desc: Run Go backend (Fresh) + BrowserSync for assets
+    cmds:
+      - |
+        # Start Fresh in the background
+        fresh &
+        FRESH_PID=$!
+
+        # Start BrowserSync (proxy Go backend)
+        browser-sync start --proxy "localhost:8080" --files "assets/*.html, assets/*.css, assets/*.js"
+
+        # Kill Fresh when BrowserSync exits
+        kill $FRESH_PID
+    silent: false

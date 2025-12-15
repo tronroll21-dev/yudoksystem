@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日報データビューア</title>
+    <!-- Alpine Plugins -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js" defer></script> -->
+    <!-- Alpine.js -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.10.2/dist/cdn.min.js" defer></script> -->
+
+    <!-- Alpine Plugins -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Alpine Core -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8em;
+        }
+        input[type="text"]:focus, input[type="text"]:focus, input[type="date"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* blue-500 with opacity */
+        }
+        .numCell {
+            text-align: right;
+            background-color: white;
+        }
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 justify-center min-h-screen p-4" x-data="{ open: false }">
+    <nav class="absolute inset-0 transform -translate-x-full bg-white transition ease-in-out duration-200 opacity-0 z-10 w-64 bg-white-900 text-white h-screen" :class="{ 'translate-x-0 ease-out opacity-100': open === true, '-translate-x-full ease-in opacity-0': open === false }">
+            <div class="p-3 flex justify-between items-center">
+                <span class="font-bold text-2xl sm:text-3xl">メニュー</span>
+                <button class="p-2 rounded-md focus:outline-none focus:text-indigo-800 hover:text-gray-200" @click="open = false">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+            </div>
+
+            <div x-data="uploader()" class="min-h-screen flex inset-0">
+                <div class="w-full max-w-2xl p-6 sm:p-10 shadow-lg">
+                    <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">TSVデータアップロード</h1>
+
+                    <p class="text-center text-gray-600 mb-8">日付と券売機のトランザクションログファイル (.tsv) を選択してください。</p>
+
+                    <form @submit.prevent="submitForm" class="space-y-6">
+                        <div>
+                            <label for="date" class="block text-sm font-medium text-gray-700 mb-2">処理対象日</label>
+                            <input type="date" id="date" x-model="formData.date" required
+                                class="mt-1 block w-full px-4 py-2 bg-gray-50 shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+                        </div>
+
+                        <div>
+                            <label for="files" class="block text-sm font-medium text-gray-700 mb-2">TSVファイルを選択</label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed cursor-pointer"
+                                @dragover.prevent @drop.prevent="handleDrop($event)"
+                                x-on:click="$refs.fileInput.click()">
+                                <div class="space-y-1 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                        <path d="M28 8H12a2 2 0 00-2 2v20m36-8V12a2 2 0 00-2-2h-12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M42 22v10a2 2 0 01-2 2H12a2 2 0 01-2-2V10a2 2 0 012-2h12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M10 24l8-8 8 8m0-8l8 8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <div class="flex text-sm text-gray-600">
+                                        <span class="relative rounded-md font-semibold text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                            ファイルをアップロード
+                                        </span>
+                                        <input id="files" name="files[]" type="file" multiple class="sr-only" x-ref="fileInput" @change="handleFileChange($event)">
+                                        <p class="pl-1">またはドラッグ＆ドロップ</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500" x-text="fileStatus"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit" :disabled="isLoading"
+                                class="w-full flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out disabled:bg-blue-300">
+                                <span x-show="!isLoading">アップロードして処理</span>
+                                <svg x-show="isLoading" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-8">
+                        <div x-show="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 relative" role="alert">
+                            <strong class="font-bold">エラー！</strong>
+                            <span class="block sm:inline" x-text="errorMessage"></span>
+                        </div>
+
+                        <div x-show="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 relative" role="alert">
+                            <strong class="font-bold">成功！</strong>
+                            <span class="block sm:inline" x-text="successMessage"></span>
+                        </div>
+
+                        <div x-show="responseData" class="mt-6 bg-gray-100 p-4 overflow-x-auto">
+                            <h2 class="text-lg font-bold text-gray-800 mb-2">集計データ (JSON)</h2>
+                            <pre class="whitespace-pre-wrap text-sm text-gray-800" x-text="JSON.stringify(responseData, null, 2)"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <a href="#" class="block px-4 py-2 hover:bg-gray-200 rounded-md">Home</a>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-200 rounded-md">About</a>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-200 rounded-md">Products</a>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-200 rounded-md">Pricing</a>
+            </div>
+        </nav>
+
+    <div class="bg-white rounded-xl shadow-lg p-4 w-full z-0" x-data="dailyReport()" @data-updated.window="updateKenbaikiData($event.detail.data)">
+        <!-- ローディングインジケータ -->
+        <div x-show="loading" class="text-center text-xl font-semibold text-gray-700 py-10" x-cloak>
+            データをロード中...
+        </div>
+
+        <header class="bg-gray-700 p-3">
+            <div class="flex items-center">
+                <button class="p-2 rounded-md focus:outline-none focus:bg-gray-600 hover:bg-gray-600 text-white mr-3" @click="open = true">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <span class="block font-bold text-2xl sm:text-3xl text-white">日報詳細</span>
+            </div>
+        </header>
+
+        <!-- エラーメッセージ -->
+        <div x-show="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" x-cloak role="alert">
+            <strong class="font-bold">エラー！</strong>
+            <span class="block sm:inline" x-model="data.Record.error"></span>
+        </div>
+
+        <!-- データ表示部分 -->
+        <div class="grid grid-cols-12" x-show="!loading && !error" x-cloak>
+
+        <div id="kisojouhou" class="p-4 col-span-2">
+            <!-- Date Picker -->
+            <!-- <div class="flex items-center justify-center mb-6">
+                <label for="report-date" class="block text-sm font-medium text-gray-700 mr-2">日付を選択:</label>
+                <input type="date" id="report-date" x-on:blur="fetchData($event.target.value)" x-model="selectedDate" class="rounded-md border-gray-300 shadow-sm border p-1">
+            </div> -->
+
+            <!-- ID and Date -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="col-span-1">
+                    <label for="id" class="block text-sm font-medium text-gray-700">ID</label>
+                    <input type="text" id="id" x-model="data.Record.ID" readonly class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50 border p-1">
+                </div>
+                <div class="col-span-2">
+                    <label for="date" class="block text-sm font-medium text-gray-700">日付</label>
+                    <input type="date" id="report-date" x-on:keyup.enter="fetchData($event.target.value)" x-model="selectedDate" class="rounded-md border-gray-300 shadow-sm border p-1">
+                </div>
+            </div>
+
+            <!-- Weather -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="col-span-2">
+                    <label for="weatherCode" class="block text-sm font-medium text-gray-700">天気コード</label>
+                    <select  id="weatherCode" x-model="data.Record.WeatherCode" class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-1">
+                        <template x-for="(option, idx) in tenkiOptions">
+                            <option :value="idx" x-text="option"></option>
+                        </template>
+                    </select>
+                </div>
+                <img :src="tenkiIconUrl" alt="天気アイコン" class="h-12 w-12 self-end">
+            </div>
+
+            <!-- Staff -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="col-span-3">
+                    <label for="staffName" class="block text-sm font-medium text-gray-700">担当</label>
+                    <!-- <input type="text" id="staffName" x-model="data.StaffName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-1"> -->
+                    
+                    <select  id="staffCode" x-model="data.Record.StaffCode" class="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-1">
+                        <template x-for="tantousha in tantoushas">
+                            <option :value="tantousha.id" x-text="tantousha.name"></option>
+                        </template>
+                    </select>
+                    
+                </div>
+            </div>
+        
+        </div>
+
+
+        <div class="table-responsive overflow-hidden border border-gray-200 col-span-4">
+            <table class="w-full min-w-max border-black md:min-w-0 border-collapse">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">種類</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">1号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">2号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">3号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">4号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">5号機</th>
+                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">合計</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <!-- 現金枚数 (Cash Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金枚数</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CashCount" id="Machine1CashCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1CashCount" tabindex="5" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CashCount" id="Machine2CashCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2CashCount" tabindex="20" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CashCount" id="Machine3CashCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3CashCount" tabindex="35" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CashCount" id="Machine4CashCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4CashCount" tabindex="50" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CashCount" id="Machine5CashCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5CashCount" tabindex="65" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CashCountTotal"  :value="Totals.CashCountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 現金金額 (Cash Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CashAmount" id="Machine1CashAmount"  x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1CashAmount" tabindex="6" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CashAmount" id="Machine2CashAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2CashAmount" tabindex="21" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CashAmount" id="Machine3CashAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3CashAmount" tabindex="36" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CashAmount" id="Machine4CashAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4CashAmount" tabindex="51" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CashAmount" id="Machine5CashAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5CashAmount" tabindex="66" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CashAmountTotal" :value="Totals.CashAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- 現金精算件数 (Cash Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金精算件数</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1SettleCount" id="Machine1SettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1SettleCount" tabindex="7" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2SettleCount" id="Machine2SettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2SettleCount" tabindex="22" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3SettleCount" id="Machine3SettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3SettleCount" tabindex="37" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4SettleCount" id="Machine4SettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4SettleCount" tabindex="52" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5SettleCount" id="Machine5SettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5SettleCount" tabindex="67" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="SettleCountTotal" :value="Totals.SettleCountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 現金精算金額 (Cash Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金精算金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1SettleAmount" id="Machine1SettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1SettleAmount" tabindex="8" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2SettleAmount" id="Machine2SettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2SettleAmount" tabindex="23" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3SettleAmount" id="Machine3SettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3SettleAmount" tabindex="38" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4SettleAmount" id="Machine4SettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4SettleAmount" tabindex="53" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5SettleAmount" id="Machine5SettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5SettleAmount" tabindex="68" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="SettleAmountTotal"  :value="Totals.SettleAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 現金合計件数 (Cash Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCashCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCashCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCashCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCashCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCashCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCashCountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 現金合計金額 (Cash Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCashAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCashAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCashAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCashAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCashAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCashAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 現金未精算件数 (Cash Unsettled Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金未精算件数</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1UnsettledCount" id="Machine1UnsettledCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1UnsettledCount" tabindex="9" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2UnsettledCount" id="Machine2UnsettledCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2UnsettledCount" tabindex="24" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3UnsettledCount" id="Machine3UnsettledCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3UnsettledCount" tabindex="39" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4UnsettledCount" id="Machine4UnsettledCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4UnsettledCount" tabindex="54" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5UnsettledCount" id="Machine5UnsettledCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5UnsettledCount" tabindex="69" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="UnsettledCountTotal" :value="Totals.UnsettledCountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 現金未精算金額 (Cash Unsettled Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金未精算金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1UnsettledAmount" id="Machine1UnsettledAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1UnsettledAmount" tabindex="10" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2UnsettledAmount" id="Machine2UnsettledAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2UnsettledAmount" tabindex="25" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3UnsettledAmount" id="Machine3UnsettledAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3UnsettledAmount" tabindex="40" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4UnsettledAmount" id="Machine4UnsettledAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4UnsettledAmount" tabindex="55" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5UnsettledAmount" id="Machine5UnsettledAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5UnsettledAmount" tabindex="70" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="UnsettledAmountTotal"  :value="Totals.UnsettledAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 現金合計件数 (Cash Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCashCountMinusUnsettled"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCashCountMinusUnsettled"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCashCountMinusUnsettled"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCashCountMinusUnsettled"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCashCountMinusUnsettled"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCashCountMinusUnsettledTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 現金合計金額 (Cash Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">現金合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCashAmountMinusUnsettled"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCashAmountMinusUnsettled"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCashAmountMinusUnsettled"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCashAmountMinusUnsettled"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCashAmountMinusUnsettled"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCashAmountMinusUnsettledTotal"/>
+                        </td>
+                    </tr>
+                    <!-- QR件数 (QR Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">QR件数</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrCount" id="Machine1QrCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1QrCount" tabindex="11" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrCount" id="Machine2QrCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2QrCount" tabindex="26" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrCount" id="Machine3QrCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3QrCount" tabindex="41" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrCount" id="Machine4QrCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4QrCount" tabindex="56" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrCount" id="Machine5QrCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5QrCount" tabindex="71" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="QrCountTotal" :value="Totals.QrCountTotal" />
+                        </td>
+                    </tr>
+                    <!-- QR金額 (QR Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">QR金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrAmount" id="Machine1QrAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1QrAmount" tabindex="12" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrAmount" id="Machine2QrAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2QrAmount" tabindex="27" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrAmount" id="Machine3QrAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3QrAmount" tabindex="42" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrAmount" id="Machine4QrAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4QrAmount" tabindex="57" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrAmount" id="Machine5QrAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5QrAmount" tabindex="72" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="QrAmountTotal" :value="Totals.QrAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- QR精算件数 (QR Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">QR精算件数</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrSettleCount" id="Machine1QrSettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1QrSettleCount" tabindex="13" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrSettleCount" id="Machine2QrSettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2QrSettleCount" tabindex="28" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrSettleCount" id="Machine3QrSettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3QrSettleCount" tabindex="43" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrSettleCount" id="Machine4QrSettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4QrSettleCount" tabindex="58" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrSettleCount" id="Machine5QrSettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5QrSettleCount" tabindex="73" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="QrSettleCountTotal" :value="Totals.QrSettleCountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- QR精算金額 (QR Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">QR精算金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrSettleAmount" id="Machine1QrSettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1QrSettleAmount" tabindex="14" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrSettleAmount" id="Machine2QrSettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2QrSettleAmount" tabindex="29" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrSettleAmount" id="Machine3QrSettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3QrSettleAmount" tabindex="44" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrSettleAmount" id="Machine4QrSettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4QrSettleAmount" tabindex="59" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrSettleAmount" id="Machine5QrSettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5QrSettleAmount" tabindex="74" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="QrSettleAmountTotal" :value="Totals.QrSettleAmountTotal" />
+                        </td>
+                    </tr>
+                    <!-- QR合計件数 (QR Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">QR合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetQrCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetQrCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetQrCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetQrCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetQrCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetQrCountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- QR合計金額 (QR Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">QR合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetQrAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetQrAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetQrAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetQrAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetQrAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetQrAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 電子マネ件数 (E-Money Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ件数</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ECount" id="Machine1ECount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1ECount" tabindex="15" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ECount" id="Machine2ECount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2ECount" tabindex="30" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ECount" id="Machine3ECount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3ECount" tabindex="45" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ECount" id="Machine4ECount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4ECount" tabindex="60" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ECount" id="Machine5ECount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5ECount" tabindex="75" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="ECountTotal" :value="Totals.ECountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 電子マネ金額 (E-Money Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1EAmount" id="Machine1EAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1EAmount" tabindex="16" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2EAmount" id="Machine2EAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2EAmount" tabindex="31" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3EAmount" id="Machine3EAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3EAmount" tabindex="46" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4EAmount" id="Machine4EAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4EAmount" tabindex="61" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5EAmount" id="Machine5EAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5EAmount" tabindex="76" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="EAmountTotal" :value="Totals.EAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 電子マネ精算件数 (E-Money Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ精算件数</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ESettleCount" id="Machine1ESettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1ESettleCount" tabindex="17" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ESettleCount" id="Machine2ESettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2ESettleCount" tabindex="32" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ESettleCount" id="Machine3ESettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3ESettleCount" tabindex="47" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ESettleCount" id="Machine4ESettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4ESettleCount" tabindex="62" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ESettleCount" id="Machine5ESettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5ESettleCount" tabindex="77" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="ESettleCountTotal" :value="Totals.ESettleCountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 電子マネ精算金額 (E-Money Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ精算金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ESettleAmount" id="Machine1ESettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1ESettleAmount" tabindex="18" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ESettleAmount" id="Machine2ESettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2ESettleAmount" tabindex="33" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ESettleAmount" id="Machine3ESettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3ESettleAmount" tabindex="48" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ESettleAmount" id="Machine4ESettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4ESettleAmount" tabindex="63" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ESettleAmount" id="Machine5ESettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5ESettleAmount" tabindex="78" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="ESettleAmountTotal" :value="Totals.ESettleAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 電子マネ合計件数 (電子マネ Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetECount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetECount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetECount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetECount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetECount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetECountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- 電子マネ合計金額 (電子マネ Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetEAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetEAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetEAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetEAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetEAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetEAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- クレジットカード件数 (E-Money Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード件数</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CCount" id="Machine1CCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1CCount" tabindex="15" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CCount" id="Machine2CCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2CCount" tabindex="30" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CCount" id="Machine3CCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3CCount" tabindex="45" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CCount" id="Machine4CCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4CCount" tabindex="60" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CCount" id="Machine5CCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5CCount" tabindex="75" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CCountTotal" :value="Totals.CCountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- クレジットカード金額 (E-Money Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CAmount" id="Machine1CAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1CAmount" tabindex="16" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CAmount" id="Machine2CAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2CAmount" tabindex="31" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CAmount" id="Machine3CAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3CAmount" tabindex="46" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CAmount" id="Machine4CAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4CAmount" tabindex="61" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CAmount" id="Machine5CAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5CAmount" tabindex="76" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CAmountTotal" :value="Totals.CAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- クレジットカード精算件数 (E-Money Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード精算件数</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CSettleCount" id="Machine1CSettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1CSettleCount" tabindex="17" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CSettleCount" id="Machine2CSettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2CSettleCount" tabindex="32" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CSettleCount" id="Machine3CSettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3CSettleCount" tabindex="47" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CSettleCount" id="Machine4CSettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4CSettleCount" tabindex="62" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CSettleCount" id="Machine5CSettleCount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5CSettleCount" tabindex="77" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CSettleCountTotal" :value="Totals.CSettleCountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- クレジットカード精算金額 (E-Money Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード精算金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CSettleAmount" id="Machine1CSettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine1CSettleAmount" tabindex="18" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CSettleAmount" id="Machine2CSettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine2CSettleAmount" tabindex="33" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CSettleAmount" id="Machine3CSettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine3CSettleAmount" tabindex="48" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CSettleAmount" id="Machine4CSettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine4CSettleAmount" tabindex="63" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CSettleAmount" id="Machine5CSettleAmount" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Machine5CSettleAmount" tabindex="78" />
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CSettleAmountTotal" :value="Totals.CSettleAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- クレジットカード合計件数 (クレジットカード Settle Count) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCCount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCCountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- クレジットカード合計金額 (クレジットカード Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCAmount"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCAmountTotal"/>
+                        </td>
+                    </tr>
+                    <!-- キャッシュレス合計金額 (キャッシュレス Settle Amount) -->
+                    <tr>
+                        <td class="whitespace-nowrap font-medium text-gray-700">キャッシュレス合計金額</td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1CashlessTotal"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2CashlessTotal"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3CashlessTotal"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4CashlessTotal"/>
+                        </td>
+                        <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5CashlessTotal"/>
+                        </td>
+                        <!-- <td class="border border-gray-400">
+                            <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.CashlessTotalTotal"/>
+                        </td> -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-span-3 col-start-8 grid grid-cols-2">
+
+            <div>
+                <h2>2. 現金在高</h2>
+                <table>
+                    <tr><th class="whitespace-nowrap">券売機計</th><td><input class="w-24 numCell border" type="text" disabled :value="Totals.NetCashAmountTotal"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">釣銭(ﾌﾛﾝﾄ含む)</th><td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" :value="data.Record.Change"/></td><td class="numCell w-24">1,052,000</td></tr>
+                    <tr><th class="whitespace-nowrap">未清算(当社)</th><td><input class="w-24 numCell border" type="text" x-model="Totals.UnsettledAmountTotal"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">電話料投入</th><td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.PhoneFee"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">本日未投入金額(未確定)</th><td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" :value="data.Record.HonjitsuMitounyuuAmountUncertain"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">本日未投入金額(確定)</th><td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" :value="data.Record.HonjitsuMitounyuuAmountCertain"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">過不足</th><td><input class="w-24 numCell border" type="text"  x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.Deficiency"/></td><td><input class="w-24 numCell border" type="text" disabled :value="Totals.TounyuuGoukei"/></td></tr>
+                    <tr><th class="whitespace-nowrap">前日未投入金額</th><td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.ZenjitsuMitounyuuAmount"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">投入合計</th><td><input class="w-24 numCell border" type="text" disabled :value="Totals.TounyuuGoukei"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">投入ﾚｼｰﾄ合計金額</th><td><input class="w-24 numCell border" type="text"  x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.ReceiptTotalAmount"/></td><td>&nbsp;</td></tr>
+                </table>
+
+            </div>
+            <div class="row-span-4">
+                <h2>3. 入場数等</h2>
+                <table>
+                    <tr><th class="whitespace-nowrap">大人入浴券枚数</th><td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.AdultTicketCount"/></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">大人入浴セット券枚数</th><td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.AdultSetTicketCount"/></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">小人入浴券枚数</th><td><input class="w-24 numCell border" type="text" x-model="Totals.ChildTicketCount"/></td><td>男</td><td>女</td></tr>
+                    <tr><th class="whitespace-nowrap">幼児入浴券枚数</th><td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.InfantTicketCount"/></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">平日回数券回収(枚)</th>
+                        <td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.TicketCount"/></td>
+                        <td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.MaleTicketCount"/></td>
+                        <td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.FemaleTicketCount"/></td>
+                        <td><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.TicketCountTotal"></td>
+                    </tr>
+                    <tr><th class="whitespace-nowrap">全日回数券回収（枚）</th>
+                        <td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.SixTicketCount"/></td>
+                        <td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.SixMaleTicketCount"/></td>
+                        <td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.SixFemaleTicketCount"/></td>
+                        <td><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.SixTicketCountTotal"></td>
+                    </tr>
+                    <tr><th class="whitespace-nowrap">福利厚生</th><td><input class="w-24 numCell border" type="text"  x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.OldTicketCount"/></td><td><input class="w-24 numCell border" type="text" disabled x-model="Totals.TounyuuGoukei"/></td></tr>
+                    <tr><th class="whitespace-nowrap">招待券回収</th>
+                        <td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.InvitationTicketCount"/></td>
+                        <td><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.MaleTicketCountTotal"/></td>
+                        <td><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.FemaleTicketCountTotal"/></td>
+                    </tr>
+                    <tr><th class="whitespace-nowrap">優待券回収</th>
+                        <td><input class="w-24 numCell border" type="text" x-mask:dynamic="$money($input, '.', ',', 0)" x-model="Totals.YuutaikenTicketCount"/></td>
+                        <td><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.MaleTicketShare"/></td>
+                        <td><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.FemaleTicketShare"/></td>
+                    </tr>
+                    <tr><th class="whitespace-nowrap">ﾎﾟｲﾝﾄｶｰﾄﾞ大人回収</th><td><input class="w-24 numCell border" type="text"  x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.PointCardAdultCount"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">ﾎﾟｲﾝﾄｶｰﾄﾞﾞ小人回収</th><td><input class="w-24 numCell border" type="text"  x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.PointCardChildCount"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">入場者合計</th><td><input class="w-24 numCell border" type="text" disabled x-model="data.Record.ReceiptTotalAmount"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">客単価</th><td><input class="w-24 numCell border" type="text" disabled x-model="data.Record.ReceiptTotalAmount"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">平日回数券売数（冊）</th><td><input class="w-24 numCell border" type="text"  x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.TicketSalesCount"/></td><td>&nbsp;</td></tr>
+                    <tr><th class="whitespace-nowrap">全日回数券売数（冊）</th><td><input class="w-24 numCell border" type="text"  x-mask:dynamic="$money($input, '.', ',', 0)" x-model="data.Record.SixTicketSalesCount"/></td><td>&nbsp;</td></tr>
+                </table>
+            </div>
+            <div><h2>4. 優待券販売</h2></div>
+            <div><h2>5. ｴｽｶｯﾄ来客数</h2></div>
+            <div><h2>6. ｸｰﾎﾟﾝ回収</h2></div>
+            <div class="col-span-2"><h2>報告スペース</h2></div>
+
+
+
+            <!-- <div class="bg-gray-50 p-4 rounded-md shadow-inner">
+                        <h2 class="text-xl font-semibold mb-2 text-gray-700">チケット・販売データ</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">大人入浴券枚数</label>
+                                <input type="text" x-model="data.Record.AdultTicketCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-1">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">回数券売数</label>
+                                <input type="text" x-model="data.Record.TicketSalesCount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-1">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">販売NO（始まり）</label>
+                                <input type="text" x-model="data.Record.SalesNoStart" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-1">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">販売NO（終わり）</label>
+                                <input type="text" x-model="data.Record.SalesNoEnd" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-1">
+                            </div>
+                        </div>
+                
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="deficiency" class="block text-sm font-medium text-gray-700">過不足</label>
+                        <input type="text" id="deficiency" x-model="data.Record.Deficiency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-1">
+                    </div>
+                    <div>
+                        <label for="remarks" class="block text-sm font-medium text-gray-700">備考</label>
+                        <input type="text" id="remarks" x-model="data.Remarks" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-1">
+                    </div>
+                    <div>
+                        <label for="reportSpace" class="block text-sm font-medium text-gray-700">報告スペース</label>
+                        <input type="text" id="reportSpace" x-model="data.ReportSpace" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-1">
+                    </div>
+                </div>
+            </div> -->
+        </div>
+
+    </div>
+    <script src="/assets/js/uploader.js"></script>
+    <script src="/assets/js/dailyReport.js"></script>
+</body>
+</html>
