@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"log"
 	"time"
-
-	"golang.org/x/text/language"
-	"golang.org/x/text/message"
 )
 
 /*
@@ -23,186 +20,96 @@ type DailyReportRaw struct {
 	WeatherMark                      string `db:"天気ﾏｰｸ"`
 	StaffCode                        int    `db:"担当ｺｰﾄﾞ"`
 	StaffName                        string `db:"担当"`
-	Machine1CashCountNum             int    `db:"1号機現金枚数" json:"-"`
-	Machine1CashAmountNum            int    `db:"1号機現金金額" json:"-"`
-	Machine1SettleCountNum           int    `db:"1号機精算枚数" json:"-"`
-	Machine1SettleAmountNum          int    `db:"1号機精算金額" json:"-"`
-	Machine2CashCountNum             int    `db:"2号機現金枚数" json:"-"`
-	Machine2CashAmountNum            int    `db:"2号機現金金額" json:"-"`
-	Machine2SettleCountNum           int    `db:"2号機精算枚数" json:"-"`
-	Machine2SettleAmountNum          int    `db:"2号機精算金額" json:"-"`
-	Machine3CashCountNum             int    `db:"3号機現金枚数" json:"-"`
-	Machine3CashAmountNum            int    `db:"3号機現金金額" json:"-"`
-	Machine3SettleCountNum           int    `db:"3号機精算枚数" json:"-"`
-	Machine3SettleAmountNum          int    `db:"3号機精算金額" json:"-"`
-	Machine4CashCountNum             int    `db:"4号機現金枚数" json:"-"`
-	Machine4CashAmountNum            int    `db:"4号機現金金額" json:"-"`
-	Machine4SettleCountNum           int    `db:"4号機精算枚数" json:"-"`
-	Machine4SettleAmountNum          int    `db:"4号機精算金額" json:"-"`
-	Machine5CashCountNum             int    `db:"5号機現金枚数" json:"-"`
-	Machine5CashAmountNum            int    `db:"5号機現金金額" json:"-"`
-	Machine5SettleCountNum           int    `db:"5号機精算枚数" json:"-"`
-	Machine5SettleAmountNum          int    `db:"5号機精算金額" json:"-"`
-	Machine1UnsettledCountNum        int    `db:"1号機未精算枚数" json:"-"`
-	Machine1UnsettledAmountNum       int    `db:"1号機未精算金額" json:"-"`
-	Machine2UnsettledCountNum        int    `db:"2号機未精算枚数" json:"-"`
-	Machine2UnsettledAmountNum       int    `db:"2号機未精算金額" json:"-"`
-	Machine3UnsettledCountNum        int    `db:"3号機未精算枚数" json:"-"`
-	Machine3UnsettledAmountNum       int    `db:"3号機未精算金額" json:"-"`
-	Machine4UnsettledCountNum        int    `db:"4号機未精算枚数" json:"-"`
-	Machine4UnsettledAmountNum       int    `db:"4号機未精算金額" json:"-"`
-	Machine5UnsettledCountNum        int    `db:"5号機未精算枚数" json:"-"`
-	Machine5UnsettledAmountNum       int    `db:"5号機未精算金額" json:"-"`
-	Machine1QrCountNum               int    `db:"1号機QR件数" json:"-"`
-	Machine1QrAmountNum              int    `db:"1号機QR金額" json:"-"`
-	Machine2QrCountNum               int    `db:"2号機QR件数" json:"-"`
-	Machine2QrAmountNum              int    `db:"2号機QR金額" json:"-"`
-	Machine3QrCountNum               int    `db:"3号機QR件数" json:"-"`
-	Machine3QrAmountNum              int    `db:"3号機QR金額" json:"-"`
-	Machine4QrCountNum               int    `db:"4号機QR件数" json:"-"`
-	Machine4QrAmountNum              int    `db:"4号機QR金額" json:"-"`
-	Machine5QrCountNum               int    `db:"5号機QR件数" json:"-"`
-	Machine5QrAmountNum              int    `db:"5号機QR金額" json:"-"`
-	Machine1QrSettleCountNum         int    `db:"1号機QR精算件数" json:"-"`
-	Machine1QrSettleAmountNum        int    `db:"1号機QR精算金額" json:"-"`
-	Machine2QrSettleCountNum         int    `db:"2号機QR精算件数" json:"-"`
-	Machine2QrSettleAmountNum        int    `db:"2号機QR精算金額" json:"-"`
-	Machine3QrSettleCountNum         int    `db:"3号機QR精算件数" json:"-"`
-	Machine3QrSettleAmountNum        int    `db:"3号機QR精算金額" json:"-"`
-	Machine4QrSettleCountNum         int    `db:"4号機QR精算件数" json:"-"`
-	Machine4QrSettleAmountNum        int    `db:"4号機QR精算金額" json:"-"`
-	Machine5QrSettleCountNum         int    `db:"5号機QR精算件数" json:"-"`
-	Machine5QrSettleAmountNum        int    `db:"5号機QR精算金額" json:"-"`
-	Machine1ECountNum                int    `db:"1号機電子マネ件数" json:"-"`
-	Machine1EAmountNum               int    `db:"1号機電子マネ金額" json:"-"`
-	Machine2ECountNum                int    `db:"2号機電子マネ件数" json:"-"`
-	Machine2EAmountNum               int    `db:"2号機電子マネ金額" json:"-"`
-	Machine3ECountNum                int    `db:"3号機電子マネ件数" json:"-"`
-	Machine3EAmountNum               int    `db:"3号機電子マネ金額" json:"-"`
-	Machine4ECountNum                int    `db:"4号機電子マネ件数" json:"-"`
-	Machine4EAmountNum               int    `db:"4号機電子マネ金額" json:"-"`
-	Machine5ECountNum                int    `db:"5号機電子マネ件数" json:"-"`
-	Machine5EAmountNum               int    `db:"5号機電子マネ金額" json:"-"`
-	Machine1ESettleCountNum          int    `db:"1号機電子マネ精算件数" json:"-"`
-	Machine1ESettleAmountNum         int    `db:"1号機電子マネ精算金額" json:"-"`
-	Machine2ESettleCountNum          int    `db:"2号機電子マネ精算件数" json:"-"`
-	Machine2ESettleAmountNum         int    `db:"2号機電子マネ精算金額" json:"-"`
-	Machine3ESettleCountNum          int    `db:"3号機電子マネ精算件数" json:"-"`
-	Machine3ESettleAmountNum         int    `db:"3号機電子マネ精算金額" json:"-"`
-	Machine4ESettleCountNum          int    `db:"4号機電子マネ精算件数" json:"-"`
-	Machine4ESettleAmountNum         int    `db:"4号機電子マネ精算金額" json:"-"`
-	Machine5ESettleCountNum          int    `db:"5号機電子マネ精算件数" json:"-"`
-	Machine5ESettleAmountNum         int    `db:"5号機電子マネ精算金額" json:"-"`
-	Machine1CCountNum                int    `db:"1号機クレジット件数" json:"-"`
-	Machine1CAmountNum               int    `db:"1号機クレジット金額" json:"-"`
-	Machine2CCountNum                int    `db:"2号機クレジット件数" json:"-"`
-	Machine2CAmountNum               int    `db:"2号機クレジット金額" json:"-"`
-	Machine3CCountNum                int    `db:"3号機クレジット件数" json:"-"`
-	Machine3CAmountNum               int    `db:"3号機クレジット金額" json:"-"`
-	Machine4CCountNum                int    `db:"4号機クレジット件数" json:"-"`
-	Machine4CAmountNum               int    `db:"4号機クレジット金額" json:"-"`
-	Machine5CCountNum                int    `db:"5号機クレジット件数" json:"-"`
-	Machine5CAmountNum               int    `db:"5号機クレジット金額" json:"-"`
-	Machine1CSettleCountNum          int    `db:"1号機クレジット精算件数" json:"-"`
-	Machine1CSettleAmountNum         int    `db:"1号機クレジット精算金額" json:"-"`
-	Machine2CSettleCountNum          int    `db:"2号機クレジット精算件数" json:"-"`
-	Machine2CSettleAmountNum         int    `db:"2号機クレジット精算金額" json:"-"`
-	Machine3CSettleCountNum          int    `db:"3号機クレジット精算件数" json:"-"`
-	Machine3CSettleAmountNum         int    `db:"3号機クレジット精算金額" json:"-"`
-	Machine4CSettleCountNum          int    `db:"4号機クレジット精算件数" json:"-"`
-	Machine4CSettleAmountNum         int    `db:"4号機クレジット精算金額" json:"-"`
-	Machine5CSettleCountNum          int    `db:"5号機クレジット精算件数" json:"-"`
-	Machine5CSettleAmountNum         int    `db:"5号機クレジット精算金額" json:"-"`
-	Machine1CashCount                string `db:"1号機現金枚数"`
-	Machine1CashAmount               string `db:"1号機現金金額"`
-	Machine1SettleCount              string `db:"1号機精算枚数"`
-	Machine1SettleAmount             string `db:"1号機精算金額"`
-	Machine2CashCount                string `db:"2号機現金枚数"`
-	Machine2CashAmount               string `db:"2号機現金金額"`
-	Machine2SettleCount              string `db:"2号機精算枚数"`
-	Machine2SettleAmount             string `db:"2号機精算金額"`
-	Machine3CashCount                string `db:"3号機現金枚数"`
-	Machine3CashAmount               string `db:"3号機現金金額"`
-	Machine3SettleCount              string `db:"3号機精算枚数"`
-	Machine3SettleAmount             string `db:"3号機精算金額"`
-	Machine4CashCount                string `db:"4号機現金枚数"`
-	Machine4CashAmount               string `db:"4号機現金金額"`
-	Machine4SettleCount              string `db:"4号機精算枚数"`
-	Machine4SettleAmount             string `db:"4号機精算金額"`
-	Machine5CashCount                string `db:"5号機現金枚数"`
-	Machine5CashAmount               string `db:"5号機現金金額"`
-	Machine5SettleCount              string `db:"5号機精算枚数"`
-	Machine5SettleAmount             string `db:"5号機精算金額"`
-	Machine1UnsettledCount           string `db:"1号機未精算枚数"`
-	Machine1UnsettledAmount          string `db:"1号機未精算金額"`
-	Machine2UnsettledCount           string `db:"2号機未精算枚数"`
-	Machine2UnsettledAmount          string `db:"2号機未精算金額"`
-	Machine3UnsettledCount           string `db:"3号機未精算枚数"`
-	Machine3UnsettledAmount          string `db:"3号機未精算金額"`
-	Machine4UnsettledCount           string `db:"4号機未精算枚数"`
-	Machine4UnsettledAmount          string `db:"4号機未精算金額"`
-	Machine5UnsettledCount           string `db:"5号機未精算枚数"`
-	Machine5UnsettledAmount          string `db:"5号機未精算金額"`
-	Machine1QrCount                  string `db:"1号機QR件数"`
-	Machine1QrAmount                 string `db:"1号機QR金額"`
-	Machine2QrCount                  string `db:"2号機QR件数"`
-	Machine2QrAmount                 string `db:"2号機QR金額"`
-	Machine3QrCount                  string `db:"3号機QR件数"`
-	Machine3QrAmount                 string `db:"3号機QR金額"`
-	Machine4QrCount                  string `db:"4号機QR件数"`
-	Machine4QrAmount                 string `db:"4号機QR金額"`
-	Machine5QrCount                  string `db:"5号機QR件数"`
-	Machine5QrAmount                 string `db:"5号機QR金額"`
-	Machine1QrSettleCount            string `db:"1号機QR精算件数"`
-	Machine1QrSettleAmount           string `db:"1号機QR精算金額"`
-	Machine2QrSettleCount            string `db:"2号機QR精算件数"`
-	Machine2QrSettleAmount           string `db:"2号機QR精算金額"`
-	Machine3QrSettleCount            string `db:"3号機QR精算件数"`
-	Machine3QrSettleAmount           string `db:"3号機QR精算金額"`
-	Machine4QrSettleCount            string `db:"4号機QR精算件数"`
-	Machine4QrSettleAmount           string `db:"4号機QR精算金額"`
-	Machine5QrSettleCount            string `db:"5号機QR精算件数"`
-	Machine5QrSettleAmount           string `db:"5号機QR精算金額"`
-	Machine1ECount                   string `db:"1号機電子マネ件数"`
-	Machine1EAmount                  string `db:"1号機電子マネ金額"`
-	Machine2ECount                   string `db:"2号機電子マネ件数"`
-	Machine2EAmount                  string `db:"2号機電子マネ金額"`
-	Machine3ECount                   string `db:"3号機電子マネ件数"`
-	Machine3EAmount                  string `db:"3号機電子マネ金額"`
-	Machine4ECount                   string `db:"4号機電子マネ件数"`
-	Machine4EAmount                  string `db:"4号機電子マネ金額"`
-	Machine5ECount                   string `db:"5号機電子マネ件数"`
-	Machine5EAmount                  string `db:"5号機電子マネ金額"`
-	Machine1ESettleCount             string `db:"1号機電子マネ精算件数"`
-	Machine1ESettleAmount            string `db:"1号機電子マネ精算金額"`
-	Machine2ESettleCount             string `db:"2号機電子マネ精算件数"`
-	Machine2ESettleAmount            string `db:"2号機電子マネ精算金額"`
-	Machine3ESettleCount             string `db:"3号機電子マネ精算件数"`
-	Machine3ESettleAmount            string `db:"3号機電子マネ精算金額"`
-	Machine4ESettleCount             string `db:"4号機電子マネ精算件数"`
-	Machine4ESettleAmount            string `db:"4号機電子マネ精算金額"`
-	Machine5ESettleCount             string `db:"5号機電子マネ精算件数"`
-	Machine5ESettleAmount            string `db:"5号機電子マネ精算金額"`
-	Machine1CCount                   string `db:"1号機クレジット件数"`
-	Machine1CAmount                  string `db:"1号機クレジット金額"`
-	Machine2CCount                   string `db:"2号機クレジット件数"`
-	Machine2CAmount                  string `db:"2号機クレジット金額"`
-	Machine3CCount                   string `db:"3号機クレジット件数"`
-	Machine3CAmount                  string `db:"3号機クレジット金額"`
-	Machine4CCount                   string `db:"4号機クレジット件数"`
-	Machine4CAmount                  string `db:"4号機クレジット金額"`
-	Machine5CCount                   string `db:"5号機クレジット件数"`
-	Machine5CAmount                  string `db:"5号機クレジット金額"`
-	Machine1CSettleCount             string `db:"1号機クレジット精算件数"`
-	Machine1CSettleAmount            string `db:"1号機クレジット精算金額"`
-	Machine2CSettleCount             string `db:"2号機クレジット精算件数"`
-	Machine2CSettleAmount            string `db:"2号機クレジット精算金額"`
-	Machine3CSettleCount             string `db:"3号機クレジット精算件数"`
-	Machine3CSettleAmount            string `db:"3号機クレジット精算金額"`
-	Machine4CSettleCount             string `db:"4号機クレジット精算件数"`
-	Machine4CSettleAmount            string `db:"4号機クレジット精算金額"`
-	Machine5CSettleCount             string `db:"5号機クレジット精算件数"`
-	Machine5CSettleAmount            string `db:"5号機クレジット精算金額"`
+	Machine1CashCount                int    `db:"1号機現金枚数"`
+	Machine1CashAmount               int    `db:"1号機現金金額"`
+	Machine1SettleCount              int    `db:"1号機精算枚数"`
+	Machine1SettleAmount             int    `db:"1号機精算金額"`
+	Machine2CashCount                int    `db:"2号機現金枚数"`
+	Machine2CashAmount               int    `db:"2号機現金金額"`
+	Machine2SettleCount              int    `db:"2号機精算枚数"`
+	Machine2SettleAmount             int    `db:"2号機精算金額"`
+	Machine3CashCount                int    `db:"3号機現金枚数"`
+	Machine3CashAmount               int    `db:"3号機現金金額"`
+	Machine3SettleCount              int    `db:"3号機精算枚数"`
+	Machine3SettleAmount             int    `db:"3号機精算金額"`
+	Machine4CashCount                int    `db:"4号機現金枚数"`
+	Machine4CashAmount               int    `db:"4号機現金金額"`
+	Machine4SettleCount              int    `db:"4号機精算枚数"`
+	Machine4SettleAmount             int    `db:"4号機精算金額"`
+	Machine5CashCount                int    `db:"5号機現金枚数"`
+	Machine5CashAmount               int    `db:"5号機現金金額"`
+	Machine5SettleCount              int    `db:"5号機精算枚数"`
+	Machine5SettleAmount             int    `db:"5号機精算金額"`
+	Machine1UnsettledCount           int    `db:"1号機未精算枚数"`
+	Machine1UnsettledAmount          int    `db:"1号機未精算金額"`
+	Machine2UnsettledCount           int    `db:"2号機未精算枚数"`
+	Machine2UnsettledAmount          int    `db:"2号機未精算金額"`
+	Machine3UnsettledCount           int    `db:"3号機未精算枚数"`
+	Machine3UnsettledAmount          int    `db:"3号機未精算金額"`
+	Machine4UnsettledCount           int    `db:"4号機未精算枚数"`
+	Machine4UnsettledAmount          int    `db:"4号機未精算金額"`
+	Machine5UnsettledCount           int    `db:"5号機未精算枚数"`
+	Machine5UnsettledAmount          int    `db:"5号機未精算金額"`
+	Machine1QrCount                  int    `db:"1号機QR件数"`
+	Machine1QrAmount                 int    `db:"1号機QR金額"`
+	Machine2QrCount                  int    `db:"2号機QR件数"`
+	Machine2QrAmount                 int    `db:"2号機QR金額"`
+	Machine3QrCount                  int    `db:"3号機QR件数"`
+	Machine3QrAmount                 int    `db:"3号機QR金額"`
+	Machine4QrCount                  int    `db:"4号機QR件数"`
+	Machine4QrAmount                 int    `db:"4号機QR金額"`
+	Machine5QrCount                  int    `db:"5号機QR件数"`
+	Machine5QrAmount                 int    `db:"5号機QR金額"`
+	Machine1QrSettleCount            int    `db:"1号機QR精算件数"`
+	Machine1QrSettleAmount           int    `db:"1号機QR精算金額"`
+	Machine2QrSettleCount            int    `db:"2号機QR精算件数"`
+	Machine2QrSettleAmount           int    `db:"2号機QR精算金額"`
+	Machine3QrSettleCount            int    `db:"3号機QR精算件数"`
+	Machine3QrSettleAmount           int    `db:"3号機QR精算金額"`
+	Machine4QrSettleCount            int    `db:"4号機QR精算件数"`
+	Machine4QrSettleAmount           int    `db:"4号機QR精算金額"`
+	Machine5QrSettleCount            int    `db:"5号機QR精算件数"`
+	Machine5QrSettleAmount           int    `db:"5号機QR精算金額"`
+	Machine1ECount                   int    `db:"1号機電子マネ件数"`
+	Machine1EAmount                  int    `db:"1号機電子マネ金額"`
+	Machine2ECount                   int    `db:"2号機電子マネ件数"`
+	Machine2EAmount                  int    `db:"2号機電子マネ金額"`
+	Machine3ECount                   int    `db:"3号機電子マネ件数"`
+	Machine3EAmount                  int    `db:"3号機電子マネ金額"`
+	Machine4ECount                   int    `db:"4号機電子マネ件数"`
+	Machine4EAmount                  int    `db:"4号機電子マネ金額"`
+	Machine5ECount                   int    `db:"5号機電子マネ件数"`
+	Machine5EAmount                  int    `db:"5号機電子マネ金額"`
+	Machine1ESettleCount             int    `db:"1号機電子マネ精算件数"`
+	Machine1ESettleAmount            int    `db:"1号機電子マネ精算金額"`
+	Machine2ESettleCount             int    `db:"2号機電子マネ精算件数"`
+	Machine2ESettleAmount            int    `db:"2号機電子マネ精算金額"`
+	Machine3ESettleCount             int    `db:"3号機電子マネ精算件数"`
+	Machine3ESettleAmount            int    `db:"3号機電子マネ精算金額"`
+	Machine4ESettleCount             int    `db:"4号機電子マネ精算件数"`
+	Machine4ESettleAmount            int    `db:"4号機電子マネ精算金額"`
+	Machine5ESettleCount             int    `db:"5号機電子マネ精算件数"`
+	Machine5ESettleAmount            int    `db:"5号機電子マネ精算金額"`
+	Machine1CCount                   int    `db:"1号機クレジット件数"`
+	Machine1CAmount                  int    `db:"1号機クレジット金額"`
+	Machine2CCount                   int    `db:"2号機クレジット件数"`
+	Machine2CAmount                  int    `db:"2号機クレジット金額"`
+	Machine3CCount                   int    `db:"3号機クレジット件数"`
+	Machine3CAmount                  int    `db:"3号機クレジット金額"`
+	Machine4CCount                   int    `db:"4号機クレジット件数"`
+	Machine4CAmount                  int    `db:"4号機クレジット金額"`
+	Machine5CCount                   int    `db:"5号機クレジット件数"`
+	Machine5CAmount                  int    `db:"5号機クレジット金額"`
+	Machine1CSettleCount             int    `db:"1号機クレジット精算件数"`
+	Machine1CSettleAmount            int    `db:"1号機クレジット精算金額"`
+	Machine2CSettleCount             int    `db:"2号機クレジット精算件数"`
+	Machine2CSettleAmount            int    `db:"2号機クレジット精算金額"`
+	Machine3CSettleCount             int    `db:"3号機クレジット精算件数"`
+	Machine3CSettleAmount            int    `db:"3号機クレジット精算金額"`
+	Machine4CSettleCount             int    `db:"4号機クレジット精算件数"`
+	Machine4CSettleAmount            int    `db:"4号機クレジット精算金額"`
+	Machine5CSettleCount             int    `db:"5号機クレジット精算件数"`
+	Machine5CSettleAmount            int    `db:"5号機クレジット精算金額"`
 	AdultTicketCount                 int    `db:"大人入浴券枚数"`
 	AdultSetTicketCount              int    `db:"大人入浴セット券枚数"`
 	ChildTicketCount                 int    `db:"小人入浴券枚数"`
@@ -300,96 +207,96 @@ func GetSalesRecordByDate(targetDate time.Time) (*DailyReportRaw, bool, error) {
 		&raw.WeatherCode,
 		&raw.WeatherCondition,
 		&raw.StaffCode,
-		&raw.Machine1CashCountNum,
-		&raw.Machine1CashAmountNum,
-		&raw.Machine1SettleCountNum,
-		&raw.Machine1SettleAmountNum,
-		&raw.Machine2CashCountNum,
-		&raw.Machine2CashAmountNum,
-		&raw.Machine2SettleCountNum,
-		&raw.Machine2SettleAmountNum,
-		&raw.Machine3CashCountNum,
-		&raw.Machine3CashAmountNum,
-		&raw.Machine3SettleCountNum,
-		&raw.Machine3SettleAmountNum,
-		&raw.Machine4CashCountNum,
-		&raw.Machine4CashAmountNum,
-		&raw.Machine4SettleCountNum,
-		&raw.Machine4SettleAmountNum,
-		&raw.Machine5CashCountNum,
-		&raw.Machine5CashAmountNum,
-		&raw.Machine5SettleCountNum,
-		&raw.Machine5SettleAmountNum,
-		&raw.Machine1UnsettledCountNum,
-		&raw.Machine1UnsettledAmountNum,
-		&raw.Machine2UnsettledCountNum,
-		&raw.Machine2UnsettledAmountNum,
-		&raw.Machine3UnsettledCountNum,
-		&raw.Machine3UnsettledAmountNum,
-		&raw.Machine4UnsettledCountNum,
-		&raw.Machine4UnsettledAmountNum,
-		&raw.Machine5UnsettledCountNum,
-		&raw.Machine5UnsettledAmountNum,
-		&raw.Machine1QrCountNum,
-		&raw.Machine1QrAmountNum,
-		&raw.Machine2QrCountNum,
-		&raw.Machine2QrAmountNum,
-		&raw.Machine3QrCountNum,
-		&raw.Machine3QrAmountNum,
-		&raw.Machine4QrCountNum,
-		&raw.Machine4QrAmountNum,
-		&raw.Machine5QrCountNum,
-		&raw.Machine5QrAmountNum,
-		&raw.Machine1QrSettleCountNum,
-		&raw.Machine1QrSettleAmountNum,
-		&raw.Machine2QrSettleCountNum,
-		&raw.Machine2QrSettleAmountNum,
-		&raw.Machine3QrSettleCountNum,
-		&raw.Machine3QrSettleAmountNum,
-		&raw.Machine4QrSettleCountNum,
-		&raw.Machine4QrSettleAmountNum,
-		&raw.Machine5QrSettleCountNum,
-		&raw.Machine5QrSettleAmountNum,
-		&raw.Machine1ECountNum,
-		&raw.Machine1EAmountNum,
-		&raw.Machine2ECountNum,
-		&raw.Machine2EAmountNum,
-		&raw.Machine3ECountNum,
-		&raw.Machine3EAmountNum,
-		&raw.Machine4ECountNum,
-		&raw.Machine4EAmountNum,
-		&raw.Machine5ECountNum,
-		&raw.Machine5EAmountNum,
-		&raw.Machine1ESettleCountNum,
-		&raw.Machine1ESettleAmountNum,
-		&raw.Machine2ESettleCountNum,
-		&raw.Machine2ESettleAmountNum,
-		&raw.Machine3ESettleCountNum,
-		&raw.Machine3ESettleAmountNum,
-		&raw.Machine4ESettleCountNum,
-		&raw.Machine4ESettleAmountNum,
-		&raw.Machine5ESettleCountNum,
-		&raw.Machine5ESettleAmountNum,
-		&raw.Machine1CCountNum,
-		&raw.Machine1CAmountNum,
-		&raw.Machine2CCountNum,
-		&raw.Machine2CAmountNum,
-		&raw.Machine3CCountNum,
-		&raw.Machine3CAmountNum,
-		&raw.Machine4CCountNum,
-		&raw.Machine4CAmountNum,
-		&raw.Machine5CCountNum,
-		&raw.Machine5CAmountNum,
-		&raw.Machine1CSettleCountNum,
-		&raw.Machine1CSettleAmountNum,
-		&raw.Machine2CSettleCountNum,
-		&raw.Machine2CSettleAmountNum,
-		&raw.Machine3CSettleCountNum,
-		&raw.Machine3CSettleAmountNum,
-		&raw.Machine4CSettleCountNum,
-		&raw.Machine4CSettleAmountNum,
-		&raw.Machine5CSettleCountNum,
-		&raw.Machine5CSettleAmountNum,
+		&raw.Machine1CashCount,
+		&raw.Machine1CashAmount,
+		&raw.Machine1SettleCount,
+		&raw.Machine1SettleAmount,
+		&raw.Machine2CashCount,
+		&raw.Machine2CashAmount,
+		&raw.Machine2SettleCount,
+		&raw.Machine2SettleAmount,
+		&raw.Machine3CashCount,
+		&raw.Machine3CashAmount,
+		&raw.Machine3SettleCount,
+		&raw.Machine3SettleAmount,
+		&raw.Machine4CashCount,
+		&raw.Machine4CashAmount,
+		&raw.Machine4SettleCount,
+		&raw.Machine4SettleAmount,
+		&raw.Machine5CashCount,
+		&raw.Machine5CashAmount,
+		&raw.Machine5SettleCount,
+		&raw.Machine5SettleAmount,
+		&raw.Machine1UnsettledCount,
+		&raw.Machine1UnsettledAmount,
+		&raw.Machine2UnsettledCount,
+		&raw.Machine2UnsettledAmount,
+		&raw.Machine3UnsettledCount,
+		&raw.Machine3UnsettledAmount,
+		&raw.Machine4UnsettledCount,
+		&raw.Machine4UnsettledAmount,
+		&raw.Machine5UnsettledCount,
+		&raw.Machine5UnsettledAmount,
+		&raw.Machine1QrCount,
+		&raw.Machine1QrAmount,
+		&raw.Machine2QrCount,
+		&raw.Machine2QrAmount,
+		&raw.Machine3QrCount,
+		&raw.Machine3QrAmount,
+		&raw.Machine4QrCount,
+		&raw.Machine4QrAmount,
+		&raw.Machine5QrCount,
+		&raw.Machine5QrAmount,
+		&raw.Machine1QrSettleCount,
+		&raw.Machine1QrSettleAmount,
+		&raw.Machine2QrSettleCount,
+		&raw.Machine2QrSettleAmount,
+		&raw.Machine3QrSettleCount,
+		&raw.Machine3QrSettleAmount,
+		&raw.Machine4QrSettleCount,
+		&raw.Machine4QrSettleAmount,
+		&raw.Machine5QrSettleCount,
+		&raw.Machine5QrSettleAmount,
+		&raw.Machine1ECount,
+		&raw.Machine1EAmount,
+		&raw.Machine2ECount,
+		&raw.Machine2EAmount,
+		&raw.Machine3ECount,
+		&raw.Machine3EAmount,
+		&raw.Machine4ECount,
+		&raw.Machine4EAmount,
+		&raw.Machine5ECount,
+		&raw.Machine5EAmount,
+		&raw.Machine1ESettleCount,
+		&raw.Machine1ESettleAmount,
+		&raw.Machine2ESettleCount,
+		&raw.Machine2ESettleAmount,
+		&raw.Machine3ESettleCount,
+		&raw.Machine3ESettleAmount,
+		&raw.Machine4ESettleCount,
+		&raw.Machine4ESettleAmount,
+		&raw.Machine5ESettleCount,
+		&raw.Machine5ESettleAmount,
+		&raw.Machine1CCount,
+		&raw.Machine1CAmount,
+		&raw.Machine2CCount,
+		&raw.Machine2CAmount,
+		&raw.Machine3CCount,
+		&raw.Machine3CAmount,
+		&raw.Machine4CCount,
+		&raw.Machine4CAmount,
+		&raw.Machine5CCount,
+		&raw.Machine5CAmount,
+		&raw.Machine1CSettleCount,
+		&raw.Machine1CSettleAmount,
+		&raw.Machine2CSettleCount,
+		&raw.Machine2CSettleAmount,
+		&raw.Machine3CSettleCount,
+		&raw.Machine3CSettleAmount,
+		&raw.Machine4CSettleCount,
+		&raw.Machine4CSettleAmount,
+		&raw.Machine5CSettleCount,
+		&raw.Machine5CSettleAmount,
 		&raw.AdultTicketCount,
 		&raw.AdultSetTicketCount,
 		&raw.ChildTicketCount,
@@ -433,100 +340,6 @@ func GetSalesRecordByDate(targetDate time.Time) (*DailyReportRaw, bool, error) {
 
 	dateString = string(raw.Date)
 	raw.DateString = dateString
-
-	//数値を書式付き文字列に変換
-	pJapanese := message.NewPrinter(language.Japanese)
-
-	raw.Machine1CashAmount = pJapanese.Sprintf("%d", raw.Machine1CashAmountNum)
-	raw.Machine1CashCount = pJapanese.Sprintf("%d", raw.Machine1CashCountNum)
-	raw.Machine1SettleCount = pJapanese.Sprintf("%d", raw.Machine1SettleCountNum)
-	raw.Machine1SettleAmount = pJapanese.Sprintf("%d", raw.Machine1SettleAmountNum)
-	raw.Machine2CashCount = pJapanese.Sprintf("%d", raw.Machine2CashCountNum)
-	raw.Machine2CashAmount = pJapanese.Sprintf("%d", raw.Machine2CashAmountNum)
-	raw.Machine2SettleCount = pJapanese.Sprintf("%d", raw.Machine2SettleCountNum)
-	raw.Machine2SettleAmount = pJapanese.Sprintf("%d", raw.Machine2SettleAmountNum)
-	raw.Machine3CashCount = pJapanese.Sprintf("%d", raw.Machine3CashCountNum)
-	raw.Machine3CashAmount = pJapanese.Sprintf("%d", raw.Machine3CashAmountNum)
-	raw.Machine3SettleCount = pJapanese.Sprintf("%d", raw.Machine3SettleCountNum)
-	raw.Machine3SettleAmount = pJapanese.Sprintf("%d", raw.Machine3SettleAmountNum)
-	raw.Machine4CashCount = pJapanese.Sprintf("%d", raw.Machine4CashCountNum)
-	raw.Machine4CashAmount = pJapanese.Sprintf("%d", raw.Machine4CashAmountNum)
-	raw.Machine4SettleCount = pJapanese.Sprintf("%d", raw.Machine4SettleCountNum)
-	raw.Machine4SettleAmount = pJapanese.Sprintf("%d", raw.Machine4SettleAmountNum)
-	raw.Machine5CashCount = pJapanese.Sprintf("%d", raw.Machine5CashCountNum)
-	raw.Machine5CashAmount = pJapanese.Sprintf("%d", raw.Machine5CashAmountNum)
-	raw.Machine5SettleCount = pJapanese.Sprintf("%d", raw.Machine5SettleCountNum)
-	raw.Machine5SettleAmount = pJapanese.Sprintf("%d", raw.Machine5SettleAmountNum)
-	raw.Machine1UnsettledCount = pJapanese.Sprintf("%d", raw.Machine1UnsettledCountNum)
-	raw.Machine1UnsettledAmount = pJapanese.Sprintf("%d", raw.Machine1UnsettledAmountNum)
-	raw.Machine2UnsettledCount = pJapanese.Sprintf("%d", raw.Machine2UnsettledCountNum)
-	raw.Machine2UnsettledAmount = pJapanese.Sprintf("%d", raw.Machine2UnsettledAmountNum)
-	raw.Machine3UnsettledCount = pJapanese.Sprintf("%d", raw.Machine3UnsettledCountNum)
-	raw.Machine3UnsettledAmount = pJapanese.Sprintf("%d", raw.Machine3UnsettledAmountNum)
-	raw.Machine4UnsettledCount = pJapanese.Sprintf("%d", raw.Machine4UnsettledCountNum)
-	raw.Machine4UnsettledAmount = pJapanese.Sprintf("%d", raw.Machine4UnsettledAmountNum)
-	raw.Machine5UnsettledCount = pJapanese.Sprintf("%d", raw.Machine5UnsettledCountNum)
-	raw.Machine5UnsettledAmount = pJapanese.Sprintf("%d", raw.Machine5UnsettledAmountNum)
-	raw.Machine1QrCount = pJapanese.Sprintf("%d", raw.Machine1QrCountNum)
-	raw.Machine1QrAmount = pJapanese.Sprintf("%d", raw.Machine1QrAmountNum)
-	raw.Machine2QrCount = pJapanese.Sprintf("%d", raw.Machine2QrCountNum)
-	raw.Machine2QrAmount = pJapanese.Sprintf("%d", raw.Machine2QrAmountNum)
-	raw.Machine3QrCount = pJapanese.Sprintf("%d", raw.Machine3QrCountNum)
-	raw.Machine3QrAmount = pJapanese.Sprintf("%d", raw.Machine3QrAmountNum)
-	raw.Machine4QrCount = pJapanese.Sprintf("%d", raw.Machine4QrCountNum)
-	raw.Machine4QrAmount = pJapanese.Sprintf("%d", raw.Machine4QrAmountNum)
-	raw.Machine5QrCount = pJapanese.Sprintf("%d", raw.Machine5QrCountNum)
-	raw.Machine5QrAmount = pJapanese.Sprintf("%d", raw.Machine5QrAmountNum)
-	raw.Machine1QrSettleCount = pJapanese.Sprintf("%d", raw.Machine1QrSettleCountNum)
-	raw.Machine1QrSettleAmount = pJapanese.Sprintf("%d", raw.Machine1QrSettleAmountNum)
-	raw.Machine2QrSettleCount = pJapanese.Sprintf("%d", raw.Machine2QrSettleCountNum)
-	raw.Machine2QrSettleAmount = pJapanese.Sprintf("%d", raw.Machine2QrSettleAmountNum)
-	raw.Machine3QrSettleCount = pJapanese.Sprintf("%d", raw.Machine3QrSettleCountNum)
-	raw.Machine3QrSettleAmount = pJapanese.Sprintf("%d", raw.Machine3QrSettleAmountNum)
-	raw.Machine4QrSettleCount = pJapanese.Sprintf("%d", raw.Machine4QrSettleCountNum)
-	raw.Machine4QrSettleAmount = pJapanese.Sprintf("%d", raw.Machine4QrSettleAmountNum)
-	raw.Machine5QrSettleCount = pJapanese.Sprintf("%d", raw.Machine5QrSettleCountNum)
-	raw.Machine5QrSettleAmount = pJapanese.Sprintf("%d", raw.Machine5QrSettleAmountNum)
-	raw.Machine1ECount = pJapanese.Sprintf("%d", raw.Machine1ECountNum)
-	raw.Machine1EAmount = pJapanese.Sprintf("%d", raw.Machine1EAmountNum)
-	raw.Machine2ECount = pJapanese.Sprintf("%d", raw.Machine2ECountNum)
-	raw.Machine2EAmount = pJapanese.Sprintf("%d", raw.Machine2EAmountNum)
-	raw.Machine3ECount = pJapanese.Sprintf("%d", raw.Machine3ECountNum)
-	raw.Machine3EAmount = pJapanese.Sprintf("%d", raw.Machine3EAmountNum)
-	raw.Machine4ECount = pJapanese.Sprintf("%d", raw.Machine4ECountNum)
-	raw.Machine4EAmount = pJapanese.Sprintf("%d", raw.Machine4EAmountNum)
-	raw.Machine5ECount = pJapanese.Sprintf("%d", raw.Machine5ECountNum)
-	raw.Machine5EAmount = pJapanese.Sprintf("%d", raw.Machine5EAmountNum)
-	raw.Machine1ESettleCount = pJapanese.Sprintf("%d", raw.Machine1ESettleCountNum)
-	raw.Machine1ESettleAmount = pJapanese.Sprintf("%d", raw.Machine1ESettleAmountNum)
-	raw.Machine2ESettleCount = pJapanese.Sprintf("%d", raw.Machine2ESettleCountNum)
-	raw.Machine2ESettleAmount = pJapanese.Sprintf("%d", raw.Machine2ESettleAmountNum)
-	raw.Machine3ESettleCount = pJapanese.Sprintf("%d", raw.Machine3ESettleCountNum)
-	raw.Machine3ESettleAmount = pJapanese.Sprintf("%d", raw.Machine3ESettleAmountNum)
-	raw.Machine4ESettleCount = pJapanese.Sprintf("%d", raw.Machine4ESettleCountNum)
-	raw.Machine4ESettleAmount = pJapanese.Sprintf("%d", raw.Machine4ESettleAmountNum)
-	raw.Machine5ESettleCount = pJapanese.Sprintf("%d", raw.Machine5ESettleCountNum)
-	raw.Machine5ESettleAmount = pJapanese.Sprintf("%d", raw.Machine5ESettleAmountNum)
-	raw.Machine1CCount = pJapanese.Sprintf("%d", raw.Machine1CCountNum)
-	raw.Machine1CAmount = pJapanese.Sprintf("%d", raw.Machine1CAmountNum)
-	raw.Machine2CCount = pJapanese.Sprintf("%d", raw.Machine2CCountNum)
-	raw.Machine2CAmount = pJapanese.Sprintf("%d", raw.Machine2CAmountNum)
-	raw.Machine3CCount = pJapanese.Sprintf("%d", raw.Machine3CCountNum)
-	raw.Machine3CAmount = pJapanese.Sprintf("%d", raw.Machine3CAmountNum)
-	raw.Machine4CCount = pJapanese.Sprintf("%d", raw.Machine4CCountNum)
-	raw.Machine4CAmount = pJapanese.Sprintf("%d", raw.Machine4CAmountNum)
-	raw.Machine5CCount = pJapanese.Sprintf("%d", raw.Machine5CCountNum)
-	raw.Machine5CAmount = pJapanese.Sprintf("%d", raw.Machine5CAmountNum)
-	raw.Machine1CSettleCount = pJapanese.Sprintf("%d", raw.Machine1CSettleCountNum)
-	raw.Machine1CSettleAmount = pJapanese.Sprintf("%d", raw.Machine1CSettleAmountNum)
-	raw.Machine2CSettleCount = pJapanese.Sprintf("%d", raw.Machine2CSettleCountNum)
-	raw.Machine2CSettleAmount = pJapanese.Sprintf("%d", raw.Machine2CSettleAmountNum)
-	raw.Machine3CSettleCount = pJapanese.Sprintf("%d", raw.Machine3CSettleCountNum)
-	raw.Machine3CSettleAmount = pJapanese.Sprintf("%d", raw.Machine3CSettleAmountNum)
-	raw.Machine4CSettleCount = pJapanese.Sprintf("%d", raw.Machine4CSettleCountNum)
-	raw.Machine4CSettleAmount = pJapanese.Sprintf("%d", raw.Machine4CSettleAmountNum)
-	raw.Machine5CSettleCount = pJapanese.Sprintf("%d", raw.Machine5CSettleCountNum)
-	raw.Machine5CSettleAmount = pJapanese.Sprintf("%d", raw.Machine5CSettleAmountNum)
 
 	switch {
 	case err == sql.ErrNoRows:

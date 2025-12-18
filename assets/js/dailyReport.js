@@ -11,21 +11,33 @@ document.addEventListener('alpine:init', () => {
                 StaffName: '',
                 Machine1CashCount: '0',
                 Machine1CashAmount: '0',
+                Machine1CashCount: 0,
+                Machine1CashAmount: 0,
                 Machine1SettleCount: '0',
                 Machine1SettleAmount: '0',
                 Machine2CashCount: '0',
                 Machine2CashAmount: '0',
+                Machine2CashCount: 0,
+                Machine2CashAmount: 0,
                 Machine2SettleCount: '0',
                 Machine2SettleAmount: '0',
                 Machine3CashCount: '0',
+                Machine3CashAmount: '0',
+                Machine3CashCount: 0,
+                Machine3CashAmount: 0,
                 Machine3CashAmount: '0',
                 Machine3SettleCount: '0',
                 Machine3SettleAmount: '0',
                 Machine4CashCount: '0',
                 Machine4CashAmount: '0',
+                Machine4CashCount: 0,
+                Machine4CashAmount: 0,
                 Machine4SettleCount: '0',
                 Machine4SettleAmount: '0',
                 Machine5CashCount: '0',
+                Machine5CashAmount: '0',
+                Machine5CashCount: 0,
+                Machine5CashAmount: 0,
                 Machine5CashAmount: '0',
                 Machine5SettleCount: '0',
                 Machine5SettleAmount: '0',
@@ -258,24 +270,24 @@ document.addEventListener('alpine:init', () => {
                 netQrCountTotal = 0,
                 netQrAmountTotal = 0;
             for (let i = 1; i <= 5; i++) {
-                curCashCountTotal = Number(this.data.Record[`Machine${i}CashCount`].replace(/,/g, '')) || 0;
-                curCashAmountTotal = Number(this.data.Record[`Machine${i}CashAmount`].replace(/,/g, '')) || 0;
-                curSettleCountTotal = Number(this.data.Record[`Machine${i}SettleCount`].replace(/,/g, '')) || 0;
-                curSettleAmountTotal = Number(this.data.Record[`Machine${i}SettleAmount`].replace(/,/g, '')) || 0;
-                curUnsettledCountTotal = Number(this.data.Record[`Machine${i}UnsettledCount`].replace(/,/g, '')) || 0;
-                curUnsettledAmountTotal = Number(this.data.Record[`Machine${i}UnsettledAmount`].replace(/,/g, '')) || 0;
-                curQrCountTotal = Number(this.data.Record[`Machine${i}QrCount`].replace(/,/g, '')) || 0;
-                curQrAmountTotal = Number(this.data.Record[`Machine${i}QrAmount`].replace(/,/g, '')) || 0;
-                curQrSettleCountTotal = Number(this.data.Record[`Machine${i}QrSettleCount`].replace(/,/g, '')) || 0;
-                curQrSettleAmountTotal = Number(this.data.Record[`Machine${i}QrSettleAmount`].replace(/,/g, '')) || 0;
-                curECountTotal = Number(this.data.Record[`Machine${i}ECount`].replace(/,/g, '')) || 0;
-                curEAmountTotal = Number(this.data.Record[`Machine${i}EAmount`].replace(/,/g, '')) || 0;
-                curESettleCountTotal = Number(this.data.Record[`Machine${i}ESettleCount`].replace(/,/g, '')) || 0;
-                curESettleAmountTotal = Number(this.data.Record[`Machine${i}ESettleAmount`].replace(/,/g, '')) || 0;
-                curCCountTotal = Number(this.data.Record[`Machine${i}CCount`].replace(/,/g, '')) || 0;
-                curCAmountTotal = Number(this.data.Record[`Machine${i}CAmount`].replace(/,/g, '')) || 0;
-                curCSettleCountTotal = Number(this.data.Record[`Machine${i}CSettleCount`].replace(/,/g, '')) || 0;
-                curCSettleAmountTotal = Number(this.data.Record[`Machine${i}CSettleAmount`].replace(/,/g, '')) || 0;
+                curCashCountTotal = Number(this.data.Record[`Machine${i}CashCount`]) || 0;
+                curCashAmountTotal = Number(this.data.Record[`Machine${i}CashAmount`]) || 0;
+                curSettleCountTotal = Number(this.data.Record[`Machine${i}SettleCount`]) || 0;
+                curSettleAmountTotal = Number(this.data.Record[`Machine${i}SettleAmount`]) || 0;
+                curUnsettledCountTotal = Number(this.data.Record[`Machine${i}UnsettledCount`]) || 0;
+                curUnsettledAmountTotal = Number(this.data.Record[`Machine${i}UnsettledAmount`]) || 0;
+                curQrCountTotal = Number(this.data.Record[`Machine${i}QrCount`]) || 0;
+                curQrAmountTotal = Number(this.data.Record[`Machine${i}QrAmount`]) || 0;
+                curQrSettleCountTotal = Number(this.data.Record[`Machine${i}QrSettleCount`]) || 0;
+                curQrSettleAmountTotal = Number(this.data.Record[`Machine${i}QrSettleAmount`]) || 0;
+                curECountTotal = Number(this.data.Record[`Machine${i}ECount`]) || 0;
+                curEAmountTotal = Number(this.data.Record[`Machine${i}EAmount`]) || 0;
+                curESettleCountTotal = Number(this.data.Record[`Machine${i}ESettleCount`]) || 0;
+                curESettleAmountTotal = Number(this.data.Record[`Machine${i}ESettleAmount`]) || 0;
+                curCCountTotal = Number(this.data.Record[`Machine${i}CCount`]) || 0;
+                curCAmountTotal = Number(this.data.Record[`Machine${i}CAmount`]) || 0;
+                curCSettleCountTotal = Number(this.data.Record[`Machine${i}CSettleCount`]) || 0;
+                curCSettleAmountTotal = Number(this.data.Record[`Machine${i}CSettleAmount`]) || 0;
                 cashCountTotal += curCashCountTotal;
                 cashAmountTotal += curCashAmountTotal;
                 settleCountTotal += curSettleCountTotal;
@@ -383,7 +395,11 @@ get TicketTotals() {
         TicketCountGrandTotal: (totals.MaleTicketCountTotalNumber + totals.FemaleTicketCountTotalNumber).toLocaleString('ja-JP'),
 
        MaleTicketShare: (Math.round(totals.MaleTicketCountTotalNumber/(totals.MaleTicketCountTotalNumber + totals.FemaleTicketCountTotalNumber)*100)) ,
-       FemaleTicketShare: (Math.round(totals.FemaleTicketCountTotalNumber/(totals.MaleTicketCountTotalNumber + totals.FemaleTicketCountTotalNumber)*100)) 
+       FemaleTicketShare: (Math.round(totals.FemaleTicketCountTotalNumber/(totals.MaleTicketCountTotalNumber + totals.FemaleTicketCountTotalNumber)*100)),
+
+       SCutTotal: (Number(this.data.Record.SCutMale) +
+                   Number(this.data.Record.SCutFemale) +
+                   Number(this.data.Record.SCutChild)).toLocaleString('ja-JP')
     }
 },
 

@@ -140,55 +140,55 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 	var Machine1CCountGoukei, Machine2CCountGoukei, Machine3CCountGoukei, Machine4CCountGoukei, Machine5CCountGoukei,
 		Machine1CAmountGoukei, Machine2CAmountGoukei, Machine3CAmountGoukei, Machine4CAmountGoukei, Machine5CAmountGoukei int
 
-	Machine1CashCountGoukei = record.Machine1CashCountNum - record.Machine1SettleCountNum
-	Machine2CashCountGoukei = record.Machine2CashCountNum - record.Machine2SettleCountNum
-	Machine3CashCountGoukei = record.Machine3CashCountNum - record.Machine3SettleCountNum
-	Machine4CashCountGoukei = record.Machine4CashCountNum - record.Machine4SettleCountNum
-	Machine5CashCountGoukei = record.Machine5CashCountNum - record.Machine5SettleCountNum
-	Machine1CashAmountGoukei = record.Machine1CashAmountNum - record.Machine1SettleAmountNum
-	Machine2CashAmountGoukei = record.Machine2CashAmountNum - record.Machine2SettleAmountNum
-	Machine3CashAmountGoukei = record.Machine3CashAmountNum - record.Machine3SettleAmountNum
-	Machine4CashAmountGoukei = record.Machine4CashAmountNum - record.Machine4SettleAmountNum
-	Machine5CashAmountGoukei = record.Machine5CashAmountNum - record.Machine5SettleAmountNum
+	Machine1CashCountGoukei = record.Machine1CashCount - record.Machine1SettleCount
+	Machine2CashCountGoukei = record.Machine2CashCount - record.Machine2SettleCount
+	Machine3CashCountGoukei = record.Machine3CashCount - record.Machine3SettleCount
+	Machine4CashCountGoukei = record.Machine4CashCount - record.Machine4SettleCount
+	Machine5CashCountGoukei = record.Machine5CashCount - record.Machine5SettleCount
+	Machine1CashAmountGoukei = record.Machine1CashAmount - record.Machine1SettleAmount
+	Machine2CashAmountGoukei = record.Machine2CashAmount - record.Machine2SettleAmount
+	Machine3CashAmountGoukei = record.Machine3CashAmount - record.Machine3SettleAmount
+	Machine4CashAmountGoukei = record.Machine4CashAmount - record.Machine4SettleAmount
+	Machine5CashAmountGoukei = record.Machine5CashAmount - record.Machine5SettleAmount
 
-	Machine1CashAmountGoukeiWithUnsettled := Machine1CashAmountGoukei - record.Machine1UnsettledAmountNum
-	Machine2CashAmountGoukeiWithUnsettled := Machine2CashAmountGoukei - record.Machine2UnsettledAmountNum
-	Machine3CashAmountGoukeiWithUnsettled := Machine3CashAmountGoukei - record.Machine3UnsettledAmountNum
-	Machine4CashAmountGoukeiWithUnsettled := Machine4CashAmountGoukei - record.Machine4UnsettledAmountNum
-	Machine5CashAmountGoukeiWithUnsettled := Machine5CashAmountGoukei - record.Machine5UnsettledAmountNum
+	Machine1CashAmountGoukeiWithUnsettled := Machine1CashAmountGoukei - record.Machine1UnsettledAmount
+	Machine2CashAmountGoukeiWithUnsettled := Machine2CashAmountGoukei - record.Machine2UnsettledAmount
+	Machine3CashAmountGoukeiWithUnsettled := Machine3CashAmountGoukei - record.Machine3UnsettledAmount
+	Machine4CashAmountGoukeiWithUnsettled := Machine4CashAmountGoukei - record.Machine4UnsettledAmount
+	Machine5CashAmountGoukeiWithUnsettled := Machine5CashAmountGoukei - record.Machine5UnsettledAmount
 
-	Machine1ECountGoukei = record.Machine1ECountNum - record.Machine1ESettleCountNum
-	Machine2ECountGoukei = record.Machine2ECountNum - record.Machine2ESettleCountNum
-	Machine3ECountGoukei = record.Machine3ECountNum - record.Machine3ESettleCountNum
-	Machine4ECountGoukei = record.Machine4ECountNum - record.Machine4ESettleCountNum
-	Machine5ECountGoukei = record.Machine5ECountNum - record.Machine5ESettleCountNum
-	Machine1EAmountGoukei = record.Machine1EAmountNum - record.Machine1ESettleAmountNum
-	Machine2EAmountGoukei = record.Machine2EAmountNum - record.Machine2ESettleAmountNum
-	Machine3EAmountGoukei = record.Machine3EAmountNum - record.Machine3ESettleAmountNum
-	Machine4EAmountGoukei = record.Machine4EAmountNum - record.Machine4ESettleAmountNum
-	Machine5EAmountGoukei = record.Machine5EAmountNum - record.Machine5ESettleAmountNum
+	Machine1ECountGoukei = record.Machine1ECount - record.Machine1ESettleCount
+	Machine2ECountGoukei = record.Machine2ECount - record.Machine2ESettleCount
+	Machine3ECountGoukei = record.Machine3ECount - record.Machine3ESettleCount
+	Machine4ECountGoukei = record.Machine4ECount - record.Machine4ESettleCount
+	Machine5ECountGoukei = record.Machine5ECount - record.Machine5ESettleCount
+	Machine1EAmountGoukei = record.Machine1EAmount - record.Machine1ESettleAmount
+	Machine2EAmountGoukei = record.Machine2EAmount - record.Machine2ESettleAmount
+	Machine3EAmountGoukei = record.Machine3EAmount - record.Machine3ESettleAmount
+	Machine4EAmountGoukei = record.Machine4EAmount - record.Machine4ESettleAmount
+	Machine5EAmountGoukei = record.Machine5EAmount - record.Machine5ESettleAmount
 
-	Machine1CCountGoukei = record.Machine1CCountNum - record.Machine1CSettleCountNum
-	Machine2CCountGoukei = record.Machine2CCountNum - record.Machine2CSettleCountNum
-	Machine3CCountGoukei = record.Machine3CCountNum - record.Machine3CSettleCountNum
-	Machine4CCountGoukei = record.Machine4CCountNum - record.Machine4CSettleCountNum
-	Machine5CCountGoukei = record.Machine5CCountNum - record.Machine5CSettleCountNum
-	Machine1CAmountGoukei = record.Machine1CAmountNum - record.Machine1CSettleAmountNum
-	Machine2CAmountGoukei = record.Machine2CAmountNum - record.Machine2CSettleAmountNum
-	Machine3CAmountGoukei = record.Machine3CAmountNum - record.Machine3CSettleAmountNum
-	Machine4CAmountGoukei = record.Machine4CAmountNum - record.Machine4CSettleAmountNum
-	Machine5CAmountGoukei = record.Machine5CAmountNum - record.Machine5CSettleAmountNum
+	Machine1CCountGoukei = record.Machine1CCount - record.Machine1CSettleCount
+	Machine2CCountGoukei = record.Machine2CCount - record.Machine2CSettleCount
+	Machine3CCountGoukei = record.Machine3CCount - record.Machine3CSettleCount
+	Machine4CCountGoukei = record.Machine4CCount - record.Machine4CSettleCount
+	Machine5CCountGoukei = record.Machine5CCount - record.Machine5CSettleCount
+	Machine1CAmountGoukei = record.Machine1CAmount - record.Machine1CSettleAmount
+	Machine2CAmountGoukei = record.Machine2CAmount - record.Machine2CSettleAmount
+	Machine3CAmountGoukei = record.Machine3CAmount - record.Machine3CSettleAmount
+	Machine4CAmountGoukei = record.Machine4CAmount - record.Machine4CSettleAmount
+	Machine5CAmountGoukei = record.Machine5CAmount - record.Machine5CSettleAmount
 
-	Machine1QrCountGoukei = record.Machine1QrCountNum - record.Machine1QrSettleCountNum
-	Machine2QrCountGoukei = record.Machine2QrCountNum - record.Machine2QrSettleCountNum
-	Machine3QrCountGoukei = record.Machine3QrCountNum - record.Machine3QrSettleCountNum
-	Machine4QrCountGoukei = record.Machine4QrCountNum - record.Machine4QrSettleCountNum
-	Machine5QrCountGoukei = record.Machine5QrCountNum - record.Machine5QrSettleCountNum
-	Machine1QrAmountGoukei = record.Machine1QrAmountNum - record.Machine1QrSettleAmountNum
-	Machine2QrAmountGoukei = record.Machine2QrAmountNum - record.Machine2QrSettleAmountNum
-	Machine3QrAmountGoukei = record.Machine3QrAmountNum - record.Machine3QrSettleAmountNum
-	Machine4QrAmountGoukei = record.Machine4QrAmountNum - record.Machine4QrSettleAmountNum
-	Machine5QrAmountGoukei = record.Machine5QrAmountNum - record.Machine5QrSettleAmountNum
+	Machine1QrCountGoukei = record.Machine1QrCount - record.Machine1QrSettleCount
+	Machine2QrCountGoukei = record.Machine2QrCount - record.Machine2QrSettleCount
+	Machine3QrCountGoukei = record.Machine3QrCount - record.Machine3QrSettleCount
+	Machine4QrCountGoukei = record.Machine4QrCount - record.Machine4QrSettleCount
+	Machine5QrCountGoukei = record.Machine5QrCount - record.Machine5QrSettleCount
+	Machine1QrAmountGoukei = record.Machine1QrAmount - record.Machine1QrSettleAmount
+	Machine2QrAmountGoukei = record.Machine2QrAmount - record.Machine2QrSettleAmount
+	Machine3QrAmountGoukei = record.Machine3QrAmount - record.Machine3QrSettleAmount
+	Machine4QrAmountGoukei = record.Machine4QrAmount - record.Machine4QrSettleAmount
+	Machine5QrAmountGoukei = record.Machine5QrAmount - record.Machine5QrSettleAmount
 
 	Machine1CashlessGoukei := Machine1QrAmountGoukei + Machine1EAmountGoukei + Machine1CAmountGoukei
 	Machine2CashlessGoukei := Machine2QrAmountGoukei + Machine2EAmountGoukei + Machine2CAmountGoukei
@@ -205,11 +205,11 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 	TotalGoukei := Machine1TotalGoukei + Machine2TotalGoukei + Machine3TotalGoukei + Machine4TotalGoukei + Machine5TotalGoukei
 
 	Miseisan_Tousha :=
-		record.Machine1UnsettledAmountNum +
-			record.Machine2UnsettledAmountNum +
-			record.Machine3UnsettledAmountNum +
-			record.Machine4UnsettledAmountNum +
-			record.Machine5UnsettledAmountNum
+		record.Machine1UnsettledAmount +
+			record.Machine2UnsettledAmount +
+			record.Machine3UnsettledAmount +
+			record.Machine4UnsettledAmount +
+			record.Machine5UnsettledAmount
 
 	TounyuuGoukei := TotalGoukei + record.Change - Miseisan_Tousha + record.PhoneFee - record.HonjitsuMitounyuuAmountUncertain - record.HonjitsuMitounyuuAmountCertain + record.Deficiency + record.ZenjitsuMitounyuuAmount
 
@@ -224,26 +224,26 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 
 	reportRecordData := ReportRecordData{
 		DailyReportRaw: *record,
-		CashCountGoukei: record.Machine1CashCountNum +
-			record.Machine2CashCountNum +
-			record.Machine3CashCountNum +
-			record.Machine4CashCountNum +
-			record.Machine5CashCountNum,
-		CashAmountGoukei: record.Machine1CashAmountNum +
-			record.Machine2CashAmountNum +
-			record.Machine3CashAmountNum +
-			record.Machine4CashAmountNum +
-			record.Machine5CashAmountNum,
-		SettleCountGoukei: record.Machine1SettleCountNum +
-			record.Machine2SettleCountNum +
-			record.Machine3SettleCountNum +
-			record.Machine4SettleCountNum +
-			record.Machine5SettleCountNum,
-		SettleAmountGoukei: record.Machine1SettleAmountNum +
-			record.Machine2SettleAmountNum +
-			record.Machine3SettleAmountNum +
-			record.Machine4SettleAmountNum +
-			record.Machine5SettleAmountNum,
+		CashCountGoukei: record.Machine1CashCount +
+			record.Machine2CashCount +
+			record.Machine3CashCount +
+			record.Machine4CashCount +
+			record.Machine5CashCount,
+		CashAmountGoukei: record.Machine1CashAmount +
+			record.Machine2CashAmount +
+			record.Machine3CashAmount +
+			record.Machine4CashAmount +
+			record.Machine5CashAmount,
+		SettleCountGoukei: record.Machine1SettleCount +
+			record.Machine2SettleCount +
+			record.Machine3SettleCount +
+			record.Machine4SettleCount +
+			record.Machine5SettleCount,
+		SettleAmountGoukei: record.Machine1SettleAmount +
+			record.Machine2SettleAmount +
+			record.Machine3SettleAmount +
+			record.Machine4SettleAmount +
+			record.Machine5SettleAmount,
 		Machine1CashCountGoukei:  Machine1CashCountGoukei,
 		Machine2CashCountGoukei:  Machine2CashCountGoukei,
 		Machine3CashCountGoukei:  Machine3CashCountGoukei,
@@ -264,16 +264,16 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 			Machine3CashAmountGoukei +
 			Machine4CashAmountGoukei +
 			Machine5CashAmountGoukei,
-		UnsettledCountGoukei: record.Machine1UnsettledCountNum +
-			record.Machine2UnsettledCountNum +
-			record.Machine3UnsettledCountNum +
-			record.Machine4UnsettledCountNum +
-			record.Machine5UnsettledCountNum,
-		UnsettledAmountGoukei: record.Machine1UnsettledAmountNum +
-			record.Machine2UnsettledAmountNum +
-			record.Machine3UnsettledAmountNum +
-			record.Machine4UnsettledAmountNum +
-			record.Machine5UnsettledAmountNum,
+		UnsettledCountGoukei: record.Machine1UnsettledCount +
+			record.Machine2UnsettledCount +
+			record.Machine3UnsettledCount +
+			record.Machine4UnsettledCount +
+			record.Machine5UnsettledCount,
+		UnsettledAmountGoukei: record.Machine1UnsettledAmount +
+			record.Machine2UnsettledAmount +
+			record.Machine3UnsettledAmount +
+			record.Machine4UnsettledAmount +
+			record.Machine5UnsettledAmount,
 		UriageGoukeiNyuuyoku:  Machine1CashAmountGoukeiWithUnsettled + Machine2CashAmountGoukeiWithUnsettled,
 		UriageGoukeiInshoku:   Machine3CashAmountGoukeiWithUnsettled + Machine4CashAmountGoukeiWithUnsettled,
 		UriageGoukeiSeitai:    Machine5CashAmountGoukeiWithUnsettled,
@@ -288,26 +288,26 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		Machine3EAmountGoukei: Machine3EAmountGoukei,
 		Machine4EAmountGoukei: Machine4EAmountGoukei,
 		Machine5EAmountGoukei: Machine5EAmountGoukei,
-		ECountGoukei: record.Machine1ECountNum +
-			record.Machine2ECountNum +
-			record.Machine3ECountNum +
-			record.Machine4ECountNum +
-			record.Machine5ECountNum,
-		EAmountGoukei: record.Machine1EAmountNum +
-			record.Machine2EAmountNum +
-			record.Machine3EAmountNum +
-			record.Machine4EAmountNum +
-			record.Machine5EAmountNum,
-		ESettleCountGoukei: record.Machine1ESettleCountNum +
-			record.Machine2ESettleCountNum +
-			record.Machine3ESettleCountNum +
-			record.Machine4ESettleCountNum +
-			record.Machine5ESettleCountNum,
-		ESettleAmountGoukei: record.Machine1ESettleAmountNum +
-			record.Machine2ESettleAmountNum +
-			record.Machine3ESettleAmountNum +
-			record.Machine4ESettleAmountNum +
-			record.Machine5ESettleAmountNum,
+		ECountGoukei: record.Machine1ECount +
+			record.Machine2ECount +
+			record.Machine3ECount +
+			record.Machine4ECount +
+			record.Machine5ECount,
+		EAmountGoukei: record.Machine1EAmount +
+			record.Machine2EAmount +
+			record.Machine3EAmount +
+			record.Machine4EAmount +
+			record.Machine5EAmount,
+		ESettleCountGoukei: record.Machine1ESettleCount +
+			record.Machine2ESettleCount +
+			record.Machine3ESettleCount +
+			record.Machine4ESettleCount +
+			record.Machine5ESettleCount,
+		ESettleAmountGoukei: record.Machine1ESettleAmount +
+			record.Machine2ESettleAmount +
+			record.Machine3ESettleAmount +
+			record.Machine4ESettleAmount +
+			record.Machine5ESettleAmount,
 		ECountGoukeiGoukei: Machine1ECountGoukei +
 			Machine2ECountGoukei +
 			Machine3ECountGoukei +
@@ -328,26 +328,26 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		Machine3CAmountGoukei: Machine3CAmountGoukei,
 		Machine4CAmountGoukei: Machine4CAmountGoukei,
 		Machine5CAmountGoukei: Machine5CAmountGoukei,
-		CCountGoukei: record.Machine1CCountNum +
-			record.Machine2CCountNum +
-			record.Machine3CCountNum +
-			record.Machine4CCountNum +
-			record.Machine5CCountNum,
-		CAmountGoukei: record.Machine1CAmountNum +
-			record.Machine2CAmountNum +
-			record.Machine3CAmountNum +
-			record.Machine4CAmountNum +
-			record.Machine5CAmountNum,
-		CSettleCountGoukei: record.Machine1CSettleCountNum +
-			record.Machine2CSettleCountNum +
-			record.Machine3CSettleCountNum +
-			record.Machine4CSettleCountNum +
-			record.Machine5CSettleCountNum,
-		CSettleAmountGoukei: record.Machine1CSettleAmountNum +
-			record.Machine2CSettleAmountNum +
-			record.Machine3CSettleAmountNum +
-			record.Machine4CSettleAmountNum +
-			record.Machine5CSettleAmountNum,
+		CCountGoukei: record.Machine1CCount +
+			record.Machine2CCount +
+			record.Machine3CCount +
+			record.Machine4CCount +
+			record.Machine5CCount,
+		CAmountGoukei: record.Machine1CAmount +
+			record.Machine2CAmount +
+			record.Machine3CAmount +
+			record.Machine4CAmount +
+			record.Machine5CAmount,
+		CSettleCountGoukei: record.Machine1CSettleCount +
+			record.Machine2CSettleCount +
+			record.Machine3CSettleCount +
+			record.Machine4CSettleCount +
+			record.Machine5CSettleCount,
+		CSettleAmountGoukei: record.Machine1CSettleAmount +
+			record.Machine2CSettleAmount +
+			record.Machine3CSettleAmount +
+			record.Machine4CSettleAmount +
+			record.Machine5CSettleAmount,
 		CCountGoukeiGoukei: Machine1CCountGoukei +
 			Machine2CCountGoukei +
 			Machine3CCountGoukei +
@@ -368,16 +368,16 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		Machine3QrAmountGoukei: Machine3QrAmountGoukei,
 		Machine4QrAmountGoukei: Machine4QrAmountGoukei,
 		Machine5QrAmountGoukei: Machine5QrAmountGoukei,
-		QrCountGoukei: record.Machine1QrCountNum +
-			record.Machine2QrCountNum +
-			record.Machine3QrCountNum +
-			record.Machine4QrCountNum +
-			record.Machine5QrCountNum,
-		QrAmountGoukei: record.Machine1QrAmountNum +
-			record.Machine2QrAmountNum +
-			record.Machine3QrAmountNum +
-			record.Machine4QrAmountNum +
-			record.Machine5QrAmountNum,
+		QrCountGoukei: record.Machine1QrCount +
+			record.Machine2QrCount +
+			record.Machine3QrCount +
+			record.Machine4QrCount +
+			record.Machine5QrCount,
+		QrAmountGoukei: record.Machine1QrAmount +
+			record.Machine2QrAmount +
+			record.Machine3QrAmount +
+			record.Machine4QrAmount +
+			record.Machine5QrAmount,
 		QrCountGoukeiGoukei: Machine1QrCountGoukei +
 			Machine2QrCountGoukei +
 			Machine3QrCountGoukei +
