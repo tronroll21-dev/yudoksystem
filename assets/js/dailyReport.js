@@ -403,14 +403,42 @@ get TicketTotals() {
     }
 },
 
-        // New method to sync data with raw input
-        updateRecord(key, value) {
-            // Strip commas and convert to number
-            const numValue = Number(value.toString().replace(/,/g, ''));
-            if (!isNaN(numValue)) {
-                this.data.Record[key] = numValue;
+        // New method to save record
+        async saveRecord() {
+            try {
+                // Remove formatting from numbers before sending to backend
+                const recordToSend = JSON.parse(JSON.stringify(this.data.Record)); // Deep copy
+                for (const key in recordToSend) {
+                    if (typeof recordToSend[key] === 'string' && !isNaN(recordToSend[key].replace(/,/g, ''))) {
+                        recordToSend[key] = Number(recordToSend[key].replace(/,/g, ''));
+                    }
+                }
+
+                // If Date is a string, convert it to a format the backend expects
+                if (typeof recordToSend.Date === 'string') {
+                    recordToSend.DateString = recordToSend.Date;
+                }
+
+                const response = await fetch('/api/sales-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(recordToSend),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`サーバーエラー: ${response.status} ${response.statusText}`);
+                }
+
+                const responseData = await response.json();
+                this.data = responseData; // Update frontend data with the new record (including ID if newly created)
+                console.log('Record saved successfully:', responseData);
+                alert('レコードが正常に保存されました！'); // User feedback
+            } catch (error) {
+                console.error('レコードの保存中にエラーが発生しました:', error);
+                alert(`レコードの保存に失敗しました: ${error.message}`); // User feedback
             }
-            this.updateCashAmountTotal();
         },
 
         updateKenbaikiData(combinedData) {
