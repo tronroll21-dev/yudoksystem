@@ -14,12 +14,12 @@ type DailyReportRaw struct {
 	ID                               int     `db:"ID"`
 	Date                             []uint8 `db:"日付" json:"-"`
 	DateString                       string
-	JapaneseWeekday                  string
+	JapaneseWeekday                  string `json:"-"`
 	WeatherCode                      int    `db:"天気ｺｰﾄﾞ"`
-	WeatherCondition                 string `db:"天気状況"`
-	WeatherMark                      string `db:"天気ﾏｰｸ"`
+	WeatherCondition                 string `db:"天気状況" json:"-"`
+	WeatherMark                      string `db:"天気ﾏｰｸ" json:"-"`
 	StaffCode                        int    `db:"担当ｺｰﾄﾞ"`
-	StaffName                        string `db:"担当"`
+	StaffName                        string `db:"担当" json:"-"`
 	Machine1CashCount                int    `db:"1号機現金枚数"`
 	Machine1CashAmount               int    `db:"1号機現金金額"`
 	Machine1SettleCount              int    `db:"1号機精算枚数"`
