@@ -160,7 +160,7 @@ document.addEventListener('alpine:init', () => {
             message: '',
             type: 'success'
         },
-        tenkiOptions: [
+        tenkiOptions: [ 
             "なし",
             "晴れ",
             "曇り",
@@ -169,9 +169,13 @@ document.addEventListener('alpine:init', () => {
             "曇りのち雨",
             "雨のち曇り",
             "雪",
-            "雨台風"
-        ],
-        selectedDate: '2024-07-26', // Initialize with the default date
+            "雨台風" 
+        ],                  
+        // Datepicker state
+        showModal: false,
+        selectedDate: '', // This will hold 'YYYY-MM-DD'
+        currentMonth: new Date().getMonth(),
+        currentYear: new Date().getFullYear(),
         loading: true,
         error: null,
         tantoushas: {},
@@ -187,16 +191,92 @@ document.addEventListener('alpine:init', () => {
             return `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==`;
         },
 
-        init() {
-            // Watch for changes to the selectedDate property
-            // this.$watch('selectedDate', (newDate) => {
-            //     this.fetchData(newDate);
-            // });
+        get currentMonthYear() {
+            return `${this.currentYear}年${this.currentMonth + 1}月`;
+        },
 
-            // Initial data fetch
+        get calendarDays() {
+            const days = [];
+            const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
+            const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+            
+            // Month before empty cell
+            for (let i = 0; i < firstDay; i++) {
+                days.push({ date: null, label: '' });
+            }
+            
+            // Month date
+            for (let i = 1; i <= daysInMonth; i++) {
+                days.push({ 
+                    date: new Date(this.currentYear, this.currentMonth, i),
+                    label: i 
+                });
+            }
+            
+            return days;
+        },
+
+        get selectedDateDisplay() {
+            if (!this.selectedDate) return '日付を選択';
+            const [year, month, day] = this.selectedDate.split('-');
+            return `${year}年${parseInt(month)}月${parseInt(day)}日`;
+        },
+        
+        isSelected(date) {
+            if (!this.selectedDate) return false;
+            const selectedDateObj = new Date(this.selectedDate);
+            return date.getFullYear() === selectedDateObj.getFullYear() &&
+                   date.getMonth() === selectedDateObj.getMonth() &&
+                   date.getDate() === selectedDateObj.getDate();
+        },
+        
+        isToday(date) {
+            const today = new Date();
+            return date.getFullYear() === today.getFullYear() &&
+                   date.getMonth() === today.getMonth() &&
+                   date.getDate() === today.getDate();
+        },
+
+        init() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            this.selectedDate = `${year}-${month}-${day}`;
+
             this.fetchData(this.selectedDate);
             this.fetchTantoushas();
+        },
 
+        selectDate(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            this.selectedDate = `${year}-${month}-${day}`;
+            this.showModal = false;
+
+            // Wait for the DOM to update (for the modal to close) before fetching
+            this.$nextTick(() => {
+                this.fetchData(this.selectedDate);
+            });
+        },
+        
+        previousMonth() {
+            if (this.currentMonth === 0) {
+                this.currentMonth = 11;
+                this.currentYear--;
+            } else {
+                this.currentMonth--;
+            }
+        },
+        
+        nextMonth() {
+            if (this.currentMonth === 11) {
+                this.currentMonth = 0;
+                this.currentYear++;
+            } else {
+                this.currentMonth++;
+            }
         },
 
         showToast(message, type = 'success') {
