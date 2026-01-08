@@ -142,17 +142,12 @@
         </div>
 
         <!-- データ表示部分 -->
-        <div class="grid grid-cols-12" x-show="!loading && !error" x-cloak>
+        <div class="flex" x-show="!loading && !error" x-cloak>
 
-        <div id="kisojouhou" class="p-4 col-span-2">
-            <!-- Date Picker -->
-            <!-- <div class="flex items-center justify-center mb-6">
-                <label for="report-date" class="block text-sm font-medium text-gray-700 mr-2">日付を選択:</label>
-                <input type="date" id="report-date" x-on:blur="fetchData($event.target.value)" x-model="selectedDate" class="rounded-md border-gray-300 shadow-sm border p-1">
-            </div> -->
-
+        <div id="kisojouhou" class="p-2 shrink-0 basis-1/12 flex-col">
             <!-- ID and Date -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+             <div>
+            <div class="gap-4 mb-6">
                 <div class="col-span-1">
                     <label for="id" class="block text-sm font-medium text-gray-700">ID</label>
                     <input type="text" id="id" x-model="data.Record.ID" readonly class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50 border p-1">
@@ -918,25 +913,25 @@
                 <table>
                     <tr><th class="whitespace-nowrap">大人入浴券枚数</th><td><input class="w-24 numCell border" type="text" x-currency="data.Record.AdultTicketCount"/></td><td>&nbsp;</td><td>&nbsp;</td></tr>
                     <tr><th class="whitespace-nowrap">大人入浴セット券枚数</th><td><input class="w-24 numCell border" type="text" x-currency="data.Record.AdultSetTicketCount"/></td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                    <tr><th class="whitespace-nowrap">小人入浴券枚数</th><td><input class="w-24 numCell border" type="text" x-currency="Totals.ChildTicketCount"/></td><td>男</td><td>女</td></tr>
+                    <tr><th class="whitespace-nowrap">小人入浴券枚数</th><td><input class="w-24 numCell border" type="text" x-currency="Totals.ChildTicketCount"/></td><td class="w-12">男</td><td class="w-12">女</td></tr>
                     <tr><th class="whitespace-nowrap">幼児入浴券枚数</th><td><input class="w-24 numCell border" type="text" x-currency="data.Record.InfantTicketCount"/></td><td>&nbsp;</td><td>&nbsp;</td></tr>
                     <tr><th class="whitespace-nowrap">平日回数券回収(枚)</th>
                         <td><input class="w-24 numCell border" type="text" x-currency="data.Record.TicketCount"/></td>
-                        <td><input class="w-24 numCell border" type="text" x-currency="data.Record.MaleTicketCount"/></td>
-                        <td><input class="w-24 numCell border" type="text" x-currency="data.Record.FemaleTicketCount"/></td>
-                        <td><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.TicketCountTotal"></td>
+                        <td class="w-12"><input class="w-24 numCell border" type="text" x-currency="data.Record.MaleTicketCount"/></td>
+                        <td class="w-12"><input class="w-24 numCell border" type="text" x-currency="data.Record.FemaleTicketCount"/></td>
+                        <td class="w-12"><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.TicketCountTotal"></td>
                     </tr>
                     <tr><th class="whitespace-nowrap">全日回数券回収（枚）</th>
                         <td><input class="w-24 numCell border" type="text" x-currency="data.Record.SixTicketCount"/></td>
-                        <td><input class="w-24 numCell border" type="text" x-currency="data.Record.SixMaleTicketCount"/></td>
-                        <td><input class="w-24 numCell border" type="text" x-currency="data.Record.SixFemaleTicketCount"/></td>
-                        <td><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.SixTicketCountTotal"></td>
+                        <td class="w-12"><input class="w-24 numCell border" type="text" x-currency="data.Record.SixMaleTicketCount"/></td>
+                        <td class="w-12"><input class="w-24 numCell border" type="text" x-currency="data.Record.SixFemaleTicketCount"/></td>
+                        <td class="w-12"><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.SixTicketCountTotal"></td>
                     </tr>
-                    <tr><th class="whitespace-nowrap">福利厚生</th><td><input class="w-24 numCell border" type="text"  x-currency="data.Record.OldTicketCount"/></td><td><input class="w-24 numCell border" type="text" disabled x-currency="Totals.TounyuuGoukei"/></td></tr>
+                    <tr><th class="whitespace-nowrap">福利厚生</th><td><input class="w-12 numCell border" type="text"  x-currency="data.Record.OldTicketCount"/></td><td><input class="w-24 numCell border" type="text" disabled x-currency="Totals.TounyuuGoukei"/></td></tr>
                     <tr><th class="whitespace-nowrap">招待券回収</th>
                         <td><input class="w-24 numCell border" type="text" x-currency="data.Record.InvitationTicketCount"/></td>
-                        <td><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.MaleTicketCountTotal"/></td>
-                        <td><input class="w-24 numCell border" type="text" disabled :value="TicketTotals.FemaleTicketCountTotal"/></td>
+                        <td><input class="w-12 numCell border" type="text" disabled :value="TicketTotals.MaleTicketCountTotal"/></td>
+                        <td><input class="w-12 numCell border" type="text" disabled :value="TicketTotals.FemaleTicketCountTotal"/></td>
                     </tr>
                     <tr><th class="whitespace-nowrap">優待券回収</th>
                         <td><input class="w-24 numCell border" type="text" x-currency="Totals.YuutaikenTicketCount"/></td>

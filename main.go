@@ -86,6 +86,9 @@ func main() {
 
 	router.GET("/api/tantoushas", controllers.TantoushasHandler)
 
+	router.POST("/signup", controllers.SignUp)
+	router.POST("/login", controllers.Login)
+
 	// APIルートグループ
 	api := router.Group("/api")
 	{

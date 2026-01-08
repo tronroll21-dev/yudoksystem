@@ -12,7 +12,7 @@ The frontend is a single-page application that uses Alpine.js for interactivity 
 
 ### Prerequisites
 
-- Go (version 1.20 or higher)
+- Go (version 1.20 only to maintain compatibility with Windows Server 2008)
 - MySQL
 - Task (a task runner for Go)
 - Node.js and npm (for browser-sync)

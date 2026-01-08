@@ -1,0 +1,125 @@
+package controllers
+
+import (
+	"net/http"
+	"os"
+	"time"
+
+	"tronroll21-dev/yudoksystem/models"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
+	"golang.org/x/crypto/bcrypt"
+)
+
+func SignUp(c *gin.Context) {
+	var body struct {
+		UserID   uint
+		Username string
+		Password string
+	}
+
+	err := c.Bind(&body)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "パラメータが存在しません。" + err.Error(),
+		})
+		return
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "パスワードのハッシュ化に失敗しました。",
+		})
+		return
+	}
+
+	user := models.User{ID: body.UserID, Username: body.Username, Password: string(hash)}
+
+	result, err := models.UpdatePassword(&user)
+
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error":  "ユーザーの作成に失敗しました。",
+			"detail": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":  "ユーザーの作成に成功しました。",
+		"Id":       result.ID,
+		"Username": result.Username,
+		"Password": result.Password,
+	})
+
+}
+
+func Login(c *gin.Context) {
+
+	var body struct {
+		UserID   uint
+		Username string
+		Password string
+	}
+
+	if c.Bind(&body) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "パラメータが存在しません。",
+		})
+
+	}
+
+	var user *models.User
+
+	user, err := models.GetUserById(body.UserID)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ユーザーが存在しません。",
+		})
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "パスワードが間違っています。",
+		})
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": user.ID,
+		// 有効期限を1日に設定
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "トークンの作成に失敗しました。",
+		})
+	}
+
+	c.SetSameSite(http.SameSiteLaxMode)
+	// クッキーにトークンをセット(キー, 値, 有効期限, パス, ドメイン, https, httponly)
+	c.SetCookie("Authorization", tokenString, 3600, "/", "", false, true)
+
+	c.JSON(http.StatusOK, gin.H{
+		"token": tokenString,
+	})
+
+}
+
+func Validate(c *gin.Context) {
+	user, _ := c.Get("user")
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "ログイン済み:" + user.(models.User).Username,
+	})
+
+}
