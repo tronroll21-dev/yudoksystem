@@ -175,7 +175,7 @@
                                 <button @click="nextMonth()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">▶</button>
                             </div>
 
-                            <div class="">
+                            <div class="grid grid-cols-7 gap-1">
                                 <template x-for="day in ['日', '月', '火', '水', '木', '金', '土']" :key="day">
                                     <div class="text-center font-semibold p-2 text-sm text-gray-600" x-text="day"></div>
                                 </template>
@@ -234,689 +234,659 @@
 
         <div class="table-responsive overflow-hidden border border-gray-200 col-span-4">
 
-            <div role="table" class="grid grid-cols-[max-content_max-content_repeat(6,1fr)] w-full border border-gray-200">
-  
-  <div role="rowgroup" class="contents font-bold bg-gray-100">
-    <div role="row" class="contents">
-      <div role="columnheader" class="p-2 border-b">ID</div>
-      <div role="columnheader" class="p-2 border-b">Name</div>
-      <div role="columnheader" class="p-2 border-b">Data 1</div>
-      <div role="columnheader" class="p-2 border-b">Data 2</div>
-      <div role="columnheader" class="p-2 border-b">Data 3</div>
-      <div role="columnheader" class="p-2 border-b">Data 4</div>
-      <div role="columnheader" class="p-2 border-b">Data 5</div>
-      <div role="columnheader" class="p-2 border-b">Data 6</div>
-    </div>
-  </div>
-
-  <div role="rowgroup" class="contents">
-    <div role="row" class="contents group">
-      <div role="cell" class="p-2 border-b group-hover:bg-blue-50">#001</div>
-      <div role="cell" class="p-2 border-b group-hover:bg-blue-50">John Doe</div>
-      <div role="cell" class="p-2 border-b group-hover:bg-blue-50">Val A</div>
-      <div role="cell" class="p-2 border-b group-hover:bg-blue-50">Val B</div>
-      <div role="cell" class="p-2 border-b group-hover:bg-blue-50">Val C</div>
-      <div role="cell" class="p-2 border-b group-hover:bg-blue-50">Val D</div>
-      <div role="cell" class="p-2 border-b group-hover:bg-blue-50">Val E</div>
-      <div role="cell" class="p-2 border-b group-hover:bg-blue-50">Val F</div>
-    </div>
-  </div>
-  
-</div>
-
-            <table class="w-full min-w-max border-black md:min-w-0 border-collapse">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">種類</th>
-                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">1号機</th>
-                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">2号機</th>
-                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">3号機</th>
-                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">4号機</th>
-                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">5号機</th>
-                        <th class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">合計</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
+            <div role="table" class="w-full grid grid-cols-[max-content_repeat(6,1fr)] w-full border border-gray-200">
+                <div role="rowgroup" class="contents bg-gray-200">
+                    <div role="row" class="contents group">
+                        <div role="columnheader" class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">種類</div>
+                        <div role="columnheader" class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">1号機</div>
+                        <div role="columnheader" class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">2号機</div>
+                        <div role="columnheader" class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">3号機</div>
+                        <div role="columnheader" class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">4号機</div>
+                        <div role="columnheader" class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">5号機</div>
+                        <div role="columnheader" class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">合計</div>
+                    </div>
+                </div>
+                <div role="rowgroup" class="contents divide-y divide-gray-200">
                     <!-- 現金枚数 (Cash Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">現金枚数</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">現金枚数</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CashCount" id="Machine1CashCount" x-currency="data.Record.Machine1CashCount" tabindex="5" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CashCount" id="Machine2CashCount" x-currency="data.Record.Machine2CashCount" tabindex="20" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CashCount" id="Machine3CashCount" x-currency="data.Record.Machine3CashCount" tabindex="35" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CashCount" id="Machine4CashCount" x-currency="data.Record.Machine4CashCount" tabindex="50" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CashCount" id="Machine5CashCount" x-currency="data.Record.Machine5CashCount" tabindex="65" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CashCountTotal"  :value="Totals.CashCountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 現金金額 (Cash Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">現金金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">現金金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CashAmount" id="Machine1CashAmount" x-currency="data.Record.Machine1CashAmount" tabindex="6" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CashAmount" id="Machine2CashAmount" x-currency="data.Record.Machine2CashAmount" tabindex="21" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CashAmount" id="Machine3CashAmount" x-currency="data.Record.Machine3CashAmount" tabindex="36" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CashAmount" id="Machine4CashAmount" x-currency="data.Record.Machine4CashAmount" tabindex="51" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CashAmount" id="Machine5CashAmount" x-currency="data.Record.Machine5CashAmount" tabindex="66" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CashAmountTotal" :value="Totals.CashAmountTotal" />
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 現金精算件数 (Cash Settle Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">現金精算件数</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">現金精算件数</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1SettleCount" id="Machine1SettleCount" x-currency="data.Record.Machine1SettleCount" tabindex="7" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2SettleCount" id="Machine2SettleCount" x-currency="data.Record.Machine2SettleCount" tabindex="22" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3SettleCount" id="Machine3SettleCount" x-currency="data.Record.Machine3SettleCount" tabindex="37" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4SettleCount" id="Machine4SettleCount" x-currency="data.Record.Machine4SettleCount" tabindex="52" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5SettleCount" id="Machine5SettleCount" x-currency="data.Record.Machine5SettleCount" tabindex="67" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="SettleCountTotal" :value="Totals.SettleCountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 現金精算金額 (Cash Settle Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">現金精算金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">現金精算金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1SettleAmount" id="Machine1SettleAmount" x-currency="data.Record.Machine1SettleAmount" tabindex="8" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2SettleAmount" id="Machine2SettleAmount" x-currency="data.Record.Machine2SettleAmount" tabindex="23" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3SettleAmount" id="Machine3SettleAmount" x-currency="data.Record.Machine3SettleAmount" tabindex="38" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4SettleAmount" id="Machine4SettleAmount" x-currency="data.Record.Machine4SettleAmount" tabindex="53" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5SettleAmount" id="Machine5SettleAmount" x-currency="data.Record.Machine5SettleAmount" tabindex="68" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="SettleAmountTotal"  :value="Totals.SettleAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 現金合計件数 (Cash Settle Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">現金合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">現金合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCashCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCashCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCashCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCashCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCashCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCashCountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 現金合計金額 (Cash Settle Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">現金合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">現金合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCashAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCashAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCashAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCashAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCashAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCashAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 現金未精算件数 (Cash Unsettled Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">現金未精算件数</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">現金未精算件数</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1UnsettledCount" id="Machine1UnsettledCount" x-currency="data.Record.Machine1UnsettledCount" tabindex="9" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2UnsettledCount" id="Machine2UnsettledCount" x-currency="data.Record.Machine2UnsettledCount" tabindex="24" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3UnsettledCount" id="Machine3UnsettledCount" x-currency="data.Record.Machine3UnsettledCount" tabindex="39" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4UnsettledCount" id="Machine4UnsettledCount" x-currency="data.Record.Machine4UnsettledCount" tabindex="54" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5UnsettledCount" id="Machine5UnsettledCount" x-currency="data.Record.Machine5UnsettledCount" tabindex="69" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="UnsettledCountTotal" :value="Totals.UnsettledCountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 現金未精算金額 (Cash Unsettled Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">現金未精算金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">現金未精算金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1UnsettledAmount" id="Machine1UnsettledAmount" x-currency="data.Record.Machine1UnsettledAmount" tabindex="10" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2UnsettledAmount" id="Machine2UnsettledAmount" x-currency="data.Record.Machine2UnsettledAmount" tabindex="25" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3UnsettledAmount" id="Machine3UnsettledAmount" x-currency="data.Record.Machine3UnsettledAmount" tabindex="40" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4UnsettledAmount" id="Machine4UnsettledAmount" x-currency="data.Record.Machine4UnsettledAmount" tabindex="55" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5UnsettledAmount" id="Machine5UnsettledAmount" x-currency="data.Record.Machine5UnsettledAmount" tabindex="70" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="UnsettledAmountTotal"  :value="Totals.UnsettledAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 現金合計件数 (Cash Settle Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">現金合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">現金合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCashCountMinusUnsettled"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCashCountMinusUnsettled"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCashCountMinusUnsettled"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCashCountMinusUnsettled"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCashCountMinusUnsettled"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCashCountMinusUnsettledTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 現金合計金額 (Cash Settle Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">現金合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">現金合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCashAmountMinusUnsettled"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCashAmountMinusUnsettled"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCashAmountMinusUnsettled"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCashAmountMinusUnsettled"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCashAmountMinusUnsettled"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCashAmountMinusUnsettledTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- QR件数 (QR Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">QR件数</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">QR件数</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrCount" id="Machine1QrCount" x-currency="data.Record.Machine1QrCount" tabindex="11" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrCount" id="Machine2QrCount" x-currency="data.Record.Machine2QrCount" tabindex="26" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrCount" id="Machine3QrCount" x-currency="data.Record.Machine3QrCount" tabindex="41" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrCount" id="Machine4QrCount" x-currency="data.Record.Machine4QrCount" tabindex="56" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrCount" id="Machine5QrCount" x-currency="data.Record.Machine5QrCount" tabindex="71" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="QrCountTotal" :value="Totals.QrCountTotal" />
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- QR金額 (QR Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">QR金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">QR金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrAmount" id="Machine1QrAmount" x-currency="data.Record.Machine1QrAmount" tabindex="12" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrAmount" id="Machine2QrAmount" x-currency="data.Record.Machine2QrAmount" tabindex="27" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrAmount" id="Machine3QrAmount" x-currency="data.Record.Machine3QrAmount" tabindex="42" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrAmount" id="Machine4QrAmount" x-currency="data.Record.Machine4QrAmount" tabindex="57" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrAmount" id="Machine5QrAmount" x-currency="data.Record.Machine5QrAmount" tabindex="72" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="QrAmountTotal" :value="Totals.QrAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- QR精算件数 (QR Settle Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">QR精算件数</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">QR精算件数</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrSettleCount" id="Machine1QrSettleCount" x-currency="data.Record.Machine1QrSettleCount" tabindex="13" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrSettleCount" id="Machine2QrSettleCount" x-currency="data.Record.Machine2QrSettleCount" tabindex="28" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrSettleCount" id="Machine3QrSettleCount" x-currency="data.Record.Machine3QrSettleCount" tabindex="43" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrSettleCount" id="Machine4QrSettleCount" x-currency="data.Record.Machine4QrSettleCount" tabindex="58" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrSettleCount" id="Machine5QrSettleCount" x-currency="data.Record.Machine5QrSettleCount" tabindex="73" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="QrSettleCountTotal" :value="Totals.QrSettleCountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- QR精算金額 (QR Settle Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">QR精算金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">QR精算金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1QrSettleAmount" id="Machine1QrSettleAmount" x-currency="data.Record.Machine1QrSettleAmount" tabindex="14" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2QrSettleAmount" id="Machine2QrSettleAmount" x-currency="data.Record.Machine2QrSettleAmount" tabindex="29" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3QrSettleAmount" id="Machine3QrSettleAmount" x-currency="data.Record.Machine3QrSettleAmount" tabindex="44" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4QrSettleAmount" id="Machine4QrSettleAmount" x-currency="data.Record.Machine4QrSettleAmount" tabindex="59" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5QrSettleAmount" id="Machine5QrSettleAmount" x-currency="data.Record.Machine5QrSettleAmount" tabindex="74" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="QrSettleAmountTotal" :value="Totals.QrSettleAmountTotal" />
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- QR合計件数 (QR Settle Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">QR合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">QR合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetQrCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetQrCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetQrCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetQrCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetQrCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetQrCountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- QR合計金額 (QR Settle Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">QR合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">QR合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetQrAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetQrAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetQrAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetQrAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetQrAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetQrAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 電子マネ件数 (E-Money Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ件数</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">電子マネ件数</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ECount" id="Machine1ECount" x-currency="data.Record.Machine1ECount" tabindex="15" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ECount" id="Machine2ECount" x-currency="data.Record.Machine2ECount" tabindex="30" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ECount" id="Machine3ECount" x-currency="data.Record.Machine3ECount" tabindex="45" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ECount" id="Machine4ECount" x-currency="data.Record.Machine4ECount" tabindex="60" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ECount" id="Machine5ECount" x-currency="data.Record.Machine5ECount" tabindex="75" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="ECountTotal" :value="Totals.ECountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 電子マネ金額 (E-Money Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">電子マネ金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1EAmount" id="Machine1EAmount" x-currency="data.Record.Machine1EAmount" tabindex="16" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2EAmount" id="Machine2EAmount" x-currency="data.Record.Machine2EAmount" tabindex="31" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3EAmount" id="Machine3EAmount" x-currency="data.Record.Machine3EAmount" tabindex="46" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4EAmount" id="Machine4EAmount" x-currency="data.Record.Machine4EAmount" tabindex="61" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5EAmount" id="Machine5EAmount" x-currency="data.Record.Machine5EAmount" tabindex="76" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="EAmountTotal" :value="Totals.EAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 電子マネ精算件数 (E-Money Settle Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ精算件数</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">電子マネ精算件数</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ESettleCount" id="Machine1ESettleCount" x-currency="data.Record.Machine1ESettleCount" tabindex="17" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ESettleCount" id="Machine2ESettleCount" x-currency="data.Record.Machine2ESettleCount" tabindex="32" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ESettleCount" id="Machine3ESettleCount" x-currency="data.Record.Machine3ESettleCount" tabindex="47" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ESettleCount" id="Machine4ESettleCount" x-currency="data.Record.Machine4ESettleCount" tabindex="62" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ESettleCount" id="Machine5ESettleCount" x-currency="data.Record.Machine5ESettleCount" tabindex="77" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="ESettleCountTotal" :value="Totals.ESettleCountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 電子マネ精算金額 (E-Money Settle Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ精算金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">電子マネ精算金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1ESettleAmount" id="Machine1ESettleAmount" x-currency="data.Record.Machine1ESettleAmount" tabindex="18" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2ESettleAmount" id="Machine2ESettleAmount" x-currency="data.Record.Machine2ESettleAmount" tabindex="33" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3ESettleAmount" id="Machine3ESettleAmount" x-currency="data.Record.Machine3ESettleAmount" tabindex="48" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4ESettleAmount" id="Machine4ESettleAmount" x-currency="data.Record.Machine4ESettleAmount" tabindex="63" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5ESettleAmount" id="Machine5ESettleAmount" x-currency="data.Record.Machine5ESettleAmount" tabindex="78" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="ESettleAmountTotal" :value="Totals.ESettleAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 電子マネ合計件数 (電子マネ Settle Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">電子マネ合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetECount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetECount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetECount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetECount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetECount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetECountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- 電子マネ合計金額 (電子マネ Settle Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">電子マネ合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">電子マネ合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetEAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetEAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetEAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetEAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetEAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetEAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- クレジットカード件数 (E-Money Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード件数</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">クレジットカード件数</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CCount" id="Machine1CCount" x-currency="data.Record.Machine1CCount" tabindex="15" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CCount" id="Machine2CCount" x-currency="data.Record.Machine2CCount" tabindex="30" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CCount" id="Machine3CCount" x-currency="data.Record.Machine3CCount" tabindex="45" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CCount" id="Machine4CCount" x-currency="data.Record.Machine4CCount" tabindex="60" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CCount" id="Machine5CCount" x-currency="data.Record.Machine5CCount" tabindex="75" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CCountTotal" :value="Totals.CCountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- クレジットカード金額 (E-Money Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">クレジットカード金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CAmount" id="Machine1CAmount" x-currency="data.Record.Machine1CAmount" tabindex="16" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CAmount" id="Machine2CAmount" x-currency="data.Record.Machine2CAmount" tabindex="31" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CAmount" id="Machine3CAmount" x-currency="data.Record.Machine3CAmount" tabindex="46" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CAmount" id="Machine4CAmount" x-currency="data.Record.Machine4CAmount" tabindex="61" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CAmount" id="Machine5CAmount" x-currency="data.Record.Machine5CAmount" tabindex="76" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CAmountTotal" :value="Totals.CAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- クレジットカード精算件数 (E-Money Settle Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード精算件数</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">クレジットカード精算件数</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CSettleCount" id="Machine1CSettleCount" x-currency="data.Record.Machine1CSettleCount" tabindex="17" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CSettleCount" id="Machine2CSettleCount" x-currency="data.Record.Machine2CSettleCount" tabindex="32" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CSettleCount" id="Machine3CSettleCount" x-currency="data.Record.Machine3CSettleCount" tabindex="47" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CSettleCount" id="Machine4CSettleCount" x-currency="data.Record.Machine4CSettleCount" tabindex="62" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CSettleCount" id="Machine5CSettleCount" x-currency="data.Record.Machine5CSettleCount" tabindex="77" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CSettleCountTotal" :value="Totals.CSettleCountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- クレジットカード精算金額 (E-Money Settle Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード精算金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">クレジットカード精算金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine1CSettleAmount" id="Machine1CSettleAmount" x-currency="data.Record.Machine1CSettleAmount" tabindex="18" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine2CSettleAmount" id="Machine2CSettleAmount" x-currency="data.Record.Machine2CSettleAmount" tabindex="33" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine3CSettleAmount" id="Machine3CSettleAmount" x-currency="data.Record.Machine3CSettleAmount" tabindex="48" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine4CSettleAmount" id="Machine4CSettleAmount" x-currency="data.Record.Machine4CSettleAmount" tabindex="63" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell" name="Machine5CSettleAmount" id="Machine5CSettleAmount" x-currency="data.Record.Machine5CSettleAmount" tabindex="78" />
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled id="CSettleAmountTotal" :value="Totals.CSettleAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- クレジットカード合計件数 (クレジットカード Settle Count) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">クレジットカード合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCCount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCCountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- クレジットカード合計金額 (クレジットカード Settle Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">クレジットカード合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">クレジットカード合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1NetCAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2NetCAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3NetCAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4NetCAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5NetCAmount"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.NetCAmountTotal"/>
-                        </td>
-                    </tr>
+                        </div>
+                    </div>
                     <!-- キャッシュレス合計金額 (キャッシュレス Settle Amount) -->
-                    <tr>
-                        <td class="whitespace-nowrap font-medium text-gray-700">キャッシュレス合計金額</td>
-                        <td class="border border-gray-400">
+                    <div role="row" class="contents group">
+                        <div role="cell" class="whitespace-nowrap font-medium text-gray-700">キャッシュレス合計金額</div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine1CashlessTotal"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine2CashlessTotal"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine3CashlessTotal"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine4CashlessTotal"/>
-                        </td>
-                        <td class="border border-gray-400">
+                        </div>
+                        <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.Machine5CashlessTotal"/>
-                        </td>
-                        <!-- <td class="border border-gray-400">
+                        </div>
+                        <!-- <div role="cell" class="border border-gray-400">
                             <input type="text" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.CashlessTotalTotal"/>
                         </td> -->
-                    </tr>
-                </tbody>
-            </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class=""><!-- 右側エリア -->

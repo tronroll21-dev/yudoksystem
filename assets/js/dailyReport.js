@@ -185,9 +185,9 @@ document.addEventListener('alpine:init', () => {
         api_tantousha_url: '/api/tantoushas',
         get tenkiIconUrl() {
             const code = this.data.Record.WeatherCode;
-            //if (code >= 1 && code <= 3) {
+            if (code >= 1) {
                 return `/assets/img/${this.tenkiOptions[code]}.svg`;
-            //}
+            }
             return `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==`;
         },
 
