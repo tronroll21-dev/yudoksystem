@@ -9,7 +9,8 @@ import (
 	"golang.org/x/text/message"
 
 	"tronroll21-dev/yudoksystem/controllers" // Assuming the controllers package is in the same directory
-	"tronroll21-dev/yudoksystem/models"      // Assuming the models package is in the same directory
+	"tronroll21-dev/yudoksystem/middlewares"
+	"tronroll21-dev/yudoksystem/models" // Assuming the models package is in the same directory
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -55,7 +56,7 @@ func main() {
 	}
 
 	// Define the route for the main page
-	router.GET("/", func(c *gin.Context) {
+	router.GET("/", middlewares.RequireAuth, func(c *gin.Context) {
 		// Serve the static index.html from the assets folder
 		c.File("./assets/index.html")
 	})
@@ -88,6 +89,10 @@ func main() {
 
 	router.POST("/signup", controllers.SignUp)
 	router.POST("/login", controllers.Login)
+
+	router.GET("/login", func(c *gin.Context) {
+		c.File("./assets/login.html")
+	})
 
 	// APIルートグループ
 	api := router.Group("/api")
