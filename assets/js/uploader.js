@@ -194,15 +194,23 @@ Alpine.data('uploader', () => ({
         errorMessage: '',
         successMessage: '',
         responseData: null,
-        open:false,
+
+        updateDate(newDate) {
+            console.log('Updating date to:', newDate);
+            this.formData.date = newDate;
+        },
 
         handleFileChange(event) {
             this.formData.files = event.target.files;
             this.updateFileStatus();
+            this.submitForm();
         },
         handleDrop(event) {
+            debugger;
             this.formData.files = event.dataTransfer.files;
             this.updateFileStatus();
+            this.submitForm();
+            this.$dispatch('close-menu');
         },
         updateFileStatus() {
             if (this.formData.files && this.formData.files.length > 0) {
@@ -286,7 +294,6 @@ Alpine.data('uploader', () => ({
 
                 this.successMessage = 'データが正常に処理されました！';
                 this.$dispatch('data-updated', { data: combinedData });
-                this.open = false;
 
             } catch (error) {
                 console.error('Processing error:', error);

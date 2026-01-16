@@ -3,7 +3,7 @@ document.addEventListener('alpine:init', () => {
         data: {
             Record: {
                 ID: 0,
-                Date: '',
+                DateString: '',
                 WeatherCode: 0,
                 StaffCode: 0,
                 Machine1CashCount: 0,
@@ -244,6 +244,9 @@ document.addEventListener('alpine:init', () => {
             const day = today.getDate().toString().padStart(2, '0');
             this.selectedDate = `${year}-${month}-${day}`;
 
+            this.data.Record.DateString = this.selectedDate;
+            this.$dispatch('update-date', { data: this.selectedDate });
+
             this.fetchData(this.selectedDate);
             this.fetchTantoushas();
         },
@@ -258,6 +261,8 @@ document.addEventListener('alpine:init', () => {
             // Wait for the DOM to update (for the modal to close) before fetching
             this.$nextTick(() => {
                 this.fetchData(this.selectedDate);
+                this.data.Record.DateString = this.selectedDate;
+                this.$dispatch('update-date', { data: this.selectedDate });
             });
         },
         
@@ -277,6 +282,11 @@ document.addEventListener('alpine:init', () => {
             } else {
                 this.currentMonth++;
             }
+        },
+
+        focusNextTabbable(element) {
+            //const tabbableElements = this.$el.querySelectorAll('[tabindex])');
+            document.querySelector('[tabindex="' + (element.tabIndex + 1) + '"]').focus();
         },
 
         showToast(message, type = 'success') {
@@ -319,10 +329,17 @@ document.addEventListener('alpine:init', () => {
                 const rawData = await response.json();
                 
                 // Golang の []uint8 を JavaScript の文字列に変換
-                if (rawData.Date) {
-                    rawData.Date = new TextDecoder().decode(new Uint8Array(rawData.Date));
+                // if (rawData.Date) {
+                //     rawData.Date = new TextDecoder().decode(new Uint8Array(rawData.Date));
+                // }
+                if (rawData.Found && rawData.Record.DateString != date) {
+                    console.error('Fetched record date does not match requested date.');
                 }
-                
+
+                if (!rawData.Found) {
+                    rawData.Record.DateString = date;
+                }
+
                 this.data = rawData;
                 console.log('Fetched Data:', this.data);
             } catch (e) {
@@ -502,9 +519,11 @@ get TicketTotals() {
                 const recordToSend = JSON.parse(JSON.stringify(this.data.Record)); // Deep copy
 
                 // If Date is a string, convert it to a format the backend expects
-                if (typeof recordToSend.Date === 'string') {
-                    recordToSend.DateString = recordToSend.Date;
-                }
+                // if (typeof recordToSend.DateString === 'string') {
+                //     recordToSend.DateString = this.selectDate;
+                // }
+
+                debugger;
 
                 const response = await fetch('/api/sales-data', {
                     method: 'POST',
@@ -533,17 +552,17 @@ get TicketTotals() {
             for(const key in combinedData.paymentStats) {
                 if (combinedData.paymentStats.hasOwnProperty(key)) {
          
-                    this.data.Record['Machine' + key + 'CashCount'] = combinedData.paymentStats[key].GenkinGrossMaisuu.toLocaleString('ja-JP');
-                    this.data.Record['Machine' + key + 'CashAmount'] = combinedData.paymentStats[key].GenkinGrossKingaku.toLocaleString('ja-JP');
-                    this.data.Record['Machine' + key + 'QrCount'] = combinedData.paymentStats[key].QrcodeGrossMaisuu.toLocaleString('ja-JP');
-                    this.data.Record['Machine' + key + 'QrAmount'] = combinedData.paymentStats[key].QrcodeGrossKingaku.toLocaleString('ja-JP');
-                    this.data.Record['Machine' + key + 'ECount'] = combinedData.paymentStats[key].DenshimaneeGrossMaisuu.toLocaleString('ja-JP');
-                    this.data.Record['Machine' + key + 'EAmount'] = combinedData.paymentStats[key].DenshimaneeGrossKingaku.toLocaleString('ja-JP');
+                    this.data.Record['Machine' + key + 'CashCount'] = combinedData.paymentStats[key].GenkinGrossMaisuu;
+                    this.data.Record['Machine' + key + 'CashAmount'] = combinedData.paymentStats[key].GenkinGrossKingaku;
+                    this.data.Record['Machine' + key + 'QrCount'] = combinedData.paymentStats[key].QrcodeGrossMaisuu;
+                    this.data.Record['Machine' + key + 'QrAmount'] = combinedData.paymentStats[key].QrcodeGrossKingaku;
+                    this.data.Record['Machine' + key + 'ECount'] = combinedData.paymentStats[key].DenshimaneeGrossMaisuu;
+                    this.data.Record['Machine' + key + 'EAmount'] = combinedData.paymentStats[key].DenshimaneeGrossKingaku;
 
-                    this.data.Record['Machine' + key + 'CashSettleCount'] = combinedData.paymentStats[key].GenkinSeisanMaisuu.toLocaleString('ja-JP');
-                    this.data.Record['Machine' + key + 'CashSettleAmount'] = combinedData.paymentStats[key].GenkinSeisanKingaku.toLocaleString('ja-JP');
-                    this.data.Record['Machine' + key + 'QrSettleCount'] = combinedData.paymentStats[key].QrcodeSeisanMaisuu.toLocaleString('ja-JP');
-                    this.data.Record['Machine' + key + 'QrSettleAmount'] = combinedData.paymentStats[key].QrcodeSeisanKingaku.toLocaleString('ja-JP');
+                    this.data.Record['Machine' + key + 'CashSettleCount'] = combinedData.paymentStats[key].GenkinSeisanMaisuu;
+                    this.data.Record['Machine' + key + 'CashSettleAmount'] = combinedData.paymentStats[key].GenkinSeisanKingaku;
+                    this.data.Record['Machine' + key + 'QrSettleCount'] = combinedData.paymentStats[key].QrcodeSeisanMaisuu;
+                    this.data.Record['Machine' + key + 'QrSettleAmount'] = combinedData.paymentStats[key].QrcodeSeisanKingaku;
                 }
             }
 

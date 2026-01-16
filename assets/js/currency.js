@@ -22,53 +22,48 @@ document.addEventListener('alpine:init', () => {
       return str.replace(/\D/g, '');
     };
 
-    // Handle input event
-    const handleInput = (e) => {
-      const cursorPosition = e.target.selectionStart;
-      const oldValue = e.target.value;
-      const oldLength = oldValue.length;
-
-      // Get only numeric characters
-      const numericValue = getNumericValue(oldValue);
-
-      // Update the Alpine data with numeric value
-      setValue(numericValue === '' ? 0 : parseInt(numericValue, 10));
-
-      // Format with commas for display
-      const formattedValue = numericValue === '' ? '' : formatWithCommas(numericValue);
-      e.target.value = formattedValue;
-
-      // Adjust cursor position after formatting
-      const newLength = formattedValue.length;
-      const diff = newLength - oldLength;
-      const newPosition = cursorPosition + diff;
-      
-      // Set cursor position
-      requestAnimationFrame(() => {
-        e.target.setSelectionRange(newPosition, newPosition);
-      });
+    // When the element gains focus, remove commas for editing
+    const handleFocus = (e) => {
+      e.target.value = getNumericValue(e.target.value);
     };
 
-    // Watch for programmatic changes and update display
+    // When the element loses focus, update the Alpine model and re-format
+    const handleBlur = (e) => {
+      const numericValue = getNumericValue(e.target.value);
+      const valueToSet = numericValue === '' ? 0 : parseInt(numericValue, 10);
+      setValue(valueToSet);
+
+      const formattedValue = numericValue === '' ? '' : formatWithCommas(numericValue);
+      if (e.target.value !== formattedValue) {
+        e.target.value = formattedValue;
+      }
+    };
+
+    // Watch for programmatic changes to the model and update the display
     effect(() => {
       getValue((value) => {
+        // Do not format if the element is focused, as the user is editing.
+        if (document.activeElement === el) {
+          return;
+        }
+
         const numValue = value && !isNaN(value) ? parseInt(value, 10) : 0;
         const formattedValue = numValue === 0 ? '' : formatWithCommas(numValue);
         
-        // Only update if the formatted value differs from current display
-        // This prevents cursor jumping during manual input
         if (el.value !== formattedValue) {
           el.value = formattedValue;
         }
       });
     });
 
-    // Attach input event listener
-    el.addEventListener('input', handleInput);
+    // Attach event listeners
+    el.addEventListener('focus', handleFocus);
+    el.addEventListener('blur', handleBlur);
 
     // Cleanup
     cleanup(() => {
-      el.removeEventListener('input', handleInput);
+      el.removeEventListener('focus', handleFocus);
+      el.removeEventListener('blur', handleBlur);
     });
   });
 });
