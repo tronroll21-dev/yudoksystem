@@ -70,7 +70,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "パラメータが存在しません。",
 		})
-
+		return
 	}
 
 	var user *models.User
@@ -81,6 +81,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "ユーザーが存在しません。",
 		})
+		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
@@ -89,6 +90,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "パスワードが間違っています。",
 		})
+		return
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -103,6 +105,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "トークンの作成に失敗しました。",
 		})
+		return
 	}
 
 	c.SetSameSite(http.SameSiteLaxMode)
