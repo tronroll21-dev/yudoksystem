@@ -128,6 +128,15 @@
                     </svg>
                 </button>
                 <span class="block font-bold text-2xl text-white">日報詳細</span>
+
+                <div x-data="userMenu()" @click.away="open = false" class="ml-auto relative">
+                    <button @click="open = !open" class="flex items-center justify-center h-10 w-10 rounded-full bg-blue-500 text-white font-bold text-xl focus:outline-none">
+                        <span x-text="initial"></span>
+                    </button>
+                    <div x-show="open" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20" style="display: none;">
+                        <a @click.prevent="logout()" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ログアウト</a>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -997,7 +1006,39 @@
                 <button @click="saveRecord()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg">
                     保存
                 </button>
-            </div>    <script src="/assets/js/uploader.js"></script>
+            </div>
+    <script>
+        function userMenu() {
+            return {
+                open: false,
+                initial: '',
+                async init() {
+                    try {
+                        const response = await fetch('/api/user/me');
+                        if (!response.ok) {
+                            // This will catch 401 Unauthorized, etc.
+                            throw new Error('Not authenticated');
+                        }
+                        const userData = await response.json();
+                        if (userData.username) {
+                            this.initial = userData.username.charAt(0).toUpperCase();
+                        } else {
+							throw new Error('Username not found in response');
+						}
+                    } catch (e) {
+                        console.error('Failed to fetch user data, redirecting to login.', e);
+                        window.location.href = '/login';
+                    }
+                },
+                logout() {
+                    // Set cookie to expire in the past
+                    document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    window.location.href = '/login';
+                }
+            }
+        }
+    </script>
+    <script src="/assets/js/uploader.js"></script>
     <script src="/assets/js/dailyReport.js"></script>
 </body>
 </html>

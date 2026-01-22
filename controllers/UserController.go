@@ -95,6 +95,7 @@ func Login(c *gin.Context) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": user.ID,
+		"name": user.Username,
 		// 有効期限を1日に設定
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
@@ -125,4 +126,23 @@ func Validate(c *gin.Context) {
 		"message": "ログイン済み:" + user.(models.User).Username,
 	})
 
+}
+
+func GetCurrentUser(c *gin.Context) {
+	user, exists := c.Get("user")
+	if !exists {
+		// This case should ideally not be reached if RequireAuth middleware is used
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found in context"})
+		return
+	}
+
+	userModel, ok := user.(models.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to assert user type from context"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"username": userModel.Username,
+	})
 }

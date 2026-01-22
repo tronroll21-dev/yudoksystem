@@ -55,11 +55,16 @@ func main() {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
-	// Define the route for the main page
-	router.GET("/", middlewares.RequireAuth, func(c *gin.Context) {
-		// Serve the static index.html from the assets folder
-		c.File("./assets/index.html")
-	})
+	// Define the route for the main page, protected by auth middleware
+	authorized := router.Group("/")
+	authorized.Use(middlewares.RequireAuth)
+	{
+		authorized.GET("/", func(c *gin.Context) {
+			// Serve the static index.html from the assets folder
+			c.File("./assets/index.html")
+		})
+		authorized.GET("/api/user/me", controllers.GetCurrentUser)
+	}
 
 	// Define the route for the main page
 	router.GET("/ranges", func(c *gin.Context) {
