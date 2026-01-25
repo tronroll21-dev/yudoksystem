@@ -267,7 +267,7 @@
 
             <div class="table-responsive overflow-hidden border border-gray-200 col-span-4 flex-[4] p-4">
 
-                <div role="table" class="w-full grid grid-cols-[max-content_repeat(6,1fr)] w-full">
+                <div role="table" class="w-full grid grid-cols-[max-content_repeat(6,minmax(0,1fr))] w-full">
                     <div role="rowgroup" class="contents bg-gray-200">
                         <div role="row" class="contents group">
                             <div role="columnheader"
@@ -1353,12 +1353,12 @@
             </div>
 
             <div
-                class="flex-[6] grid grid-cols-1 grid-rows-4 md:[grid-template-areas:'item1_item2''item3_item2''item4_item2''item5_item2''item6_item6'] md:grid-cols-2 p-4 md:grid-rows-[repeat(5,auto)]">
+                class="flex-[6] grid grid-cols-1 grid-rows-4 md:[grid-template-areas:'item2_item3''item4_item3''item5_item3''item6_item6''item7_item7'] md:grid-cols-2 p-4 md:grid-rows-[repeat(5,auto)]">
                 <!-- 右側エリア -->
 
-                <div>
+                <div class="md:[grid-area:item2]">
                     <h2>2. 現金在高</h2>
-                    <div role="table" class="grid w-full" style="grid-template-columns: max-content auto auto;">
+                    <div role="table" class="grid grid-cols-[max-content_repeat(2,minmax(0,1fr))] w-full">
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">券売機計</div>
                             <div role="cell"><input class="numCell border" type="text" disabled
@@ -1427,10 +1427,9 @@
                     </div>
 
                 </div>
-                <div class="md:[grid-area:item2]">
+                <div class="md:[grid-area:item3]">
                     <h2>3. 入場数等</h2>
-                    <div role="table" class="grid w-full"
-                        style="grid-template-columns: auto repeat(4, minmax(0, 1fr));">
+                    <div role="table" class="grid grid-cols-[max-content_repeat(4,minmax(0,1fr))] w-full">
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">大人入浴券枚数</div>
                             <div role="cell"><input class="numCell border" type="text"
@@ -1584,7 +1583,7 @@
                             <div role="cell">&nbsp;</div>
                         </div>
                     </div>
-                    <div role="table" class="grid w-full" style="grid-template-columns: auto 1fr 1fr;">
+                    <div role="table" class="grid grid-cols-[max-content_repeat(2,minmax(0,1fr))] w-full">
                         <div role="rowgroup" class="contents font-medium text-gray-600">
                             <div role="row" class="contents">
                                 <div role="columnheader">&nbsp;</div>
@@ -1610,9 +1609,12 @@
                         </div>
                     </div>
                 </div>
-                <div>
+
+
+            </div><!-- 右側エリア -->
+                <div class="md:[grid-area:item4]">
                     <h2>4. 優待券販売</h2>
-                    <div role="table" class="grid w-full" style="grid-template-columns: auto 1fr 1fr;">
+                    <div role="table" class="grid grid-cols-[max-content_repeat(2,minmax(0,1fr))] w-full">
                         <div role="rowgroup" class="contents font-medium text-gray-600">
                             <div role="row" class="contents">
                                 <div role="columnheader">&nbsp;</div>
@@ -1631,8 +1633,8 @@
                         </div>
                     </div>
             </div>
-            <div><h2>5. ｴｽｶｯﾄ来客数</h2>
-                <div role="table" class="grid w-full grid-cols-4">
+            <div class="md:[grid-area:item5]"><h2>5. ｴｽｶｯﾄ来客数</h2>
+                <div role="table" class="grid grid-cols-[repeat(4,minmax(0,1fr))] w-full">
                     <div role="rowgroup" class="contents font-medium text-gray-600">
                         <div role="row" class="contents">
                             <div role="columnheader">男性</div>
@@ -1643,29 +1645,36 @@
                     </div>
                     <div role="rowgroup" class="contents">
                         <div role="row" class="contents">
-                            <div role="cell"><input type="text" x-currency="data.Record.SCutMale"
+                            <div role="cell"><input class="w-full" type="text" x-currency="data.Record.SCutMale"
                                     @keydown.enter="focusNextTabbable($el)" tabindex="111" class="numCell border"/></div>
-                            <div role="cell"><input type="text" x-currency="data.Record.SCutFemale"
+                            <div role="cell"><input class="w-full" type="text" x-currency="data.Record.SCutFemale"
                                     @keydown.enter="focusNextTabbable($el)" tabindex="112" class="numCell border"/></div>
-                            <div role="cell"><input type="text" x-currency="data.Record.SCutChild"
+                            <div role="cell"><input class="w-full" type="text" x-currency="data.Record.SCutChild"
                                     @keydown.enter="focusNextTabbable($el)" tabindex="113" class="numCell border"/></div>
-                            <div role="cell"><input type="text" disabled :value="TicketTotals.SCutTotal" class="numCell border"/></div>
+                            <div role="cell"><input class="w-full" type="text" disabled :value="TicketTotals.SCutTotal" class="numCell border"/></div>
                         </div>
                     </div>
                 </div>
                 </div>
-                <div>
+                <div  class="md:[grid-area:item6]">
                     <h2>6. ｸｰﾎﾟﾝ回収</h2><input type="text" x-currency="data.Record.CouponCount"
                         @keydown.enter="focusNextTabbable($el)" tabindex="114" />
                 </div>
-                <div class="col-span-2">
+                
+                <div class="md:[grid-area:item7]">
                     <h2>報告スペース</h2>
                     <textarea class="w-full border rounded-md p-2" x-model="data.Record.ReportSpace" rows="4"
                         @keydown.enter="focusNextTabbable($el)" tabindex="115"></textarea>
 
                 </div>
 
-            </div><!-- 右側エリア -->
+                <div class="flex justify-end p-4">
+            <button @click="saveRecord()"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg">
+                保存
+            </button>
+        </div>
+
 
         </div>
         <!-- Toast Notification -->
@@ -1681,12 +1690,6 @@
             <span x-text="toast.message"></span>
         </div>
 
-        <div class="flex justify-end p-4">
-            <button @click="saveRecord()"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg">
-                保存
-            </button>
-        </div>
         <script>
             function userMenu() {
                 return {
