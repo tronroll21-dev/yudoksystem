@@ -445,8 +445,17 @@ func GetSalesRecordByDate(targetDate time.Time) (*DailyReportRaw, bool, error) {
 
 	switch {
 	case err == sql.ErrNoRows:
-		fmt.Printf("No user found for the date %s\n", formattedDate)
-		return &DailyReportRaw{}, false, nil
+		fmt.Printf("No user with date %s found, creating a new preliminary record\n", formattedDate)
+		var maxID int
+		err := db.QueryRow("SELECT COALESCE(MAX(ID), 0) FROM 日次報告ﾃｰﾌﾞﾙ").Scan(&maxID)
+		if err != nil {
+			log.Fatalf("Failed to query max ID: %v", err)
+			return nil, false, err
+		}
+		newRecord := &DailyReportRaw{
+			ID: maxID + 1,
+		}
+		return newRecord, false, nil
 	case err != nil:
 		log.Fatalf("An SQL error occurred: %v\n", err)
 

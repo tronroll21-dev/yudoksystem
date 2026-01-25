@@ -43,7 +43,7 @@ func ConnectDB() error {
 	return nil
 }
 
-func InsertOrUpdateSalesRecord(input *DailyReportRaw) (record interface{}, found bool, mode string, err error) {
+func InsertOrUpdateSalesRecord(input *DailyReportRaw, foundFromClient bool) (record interface{}, found bool, mode string, err error) {
 	if input == nil {
 		return nil, false, "", fmt.Errorf("input cannot be nil")
 	}
@@ -53,17 +53,7 @@ func InsertOrUpdateSalesRecord(input *DailyReportRaw) (record interface{}, found
 		return nil, false, "", fmt.Errorf("invalid date format: %v", err)
 	}
 
-	// Check if the record exists
-	var existingID int
-	query := `SELECT id FROM 日次報告ﾃｰﾌﾞﾙ WHERE id = ?`
-	err = db.QueryRow(query, input.ID).Scan(&existingID)
-
-	if err != nil && err != sql.ErrNoRows {
-		// Return if there's an error other than no rows found
-		return nil, false, "", fmt.Errorf("error checking for existing record: %v", err)
-	}
-
-	if err == nil {
+	if foundFromClient {
 		// Record exists, perform an update
 		fmt.Println("Record exists, performing update...")
 		updateQuery := `
@@ -344,15 +334,27 @@ T1.報告ｽﾍﾟｰｽ = ?
 		return input, true, "更新", nil
 	}
 
-	// Check if the record exists
-	var existingMaxID int
-	query = `SELECT Max(id) FROM 日次報告ﾃｰﾌﾞﾙ`
-	err = db.QueryRow(query).Scan(&existingMaxID)
-	if err != nil {
-		return nil, false, "取得", fmt.Errorf("error checking existing record: %v", err)
+	// foundFromClient is false
+	// Check if the preliminary ID is already taken
+	var existingID int
+	query := "SELECT id FROM 日次報告ﾃｰﾌﾞﾙ WHERE id = ?"
+	err = db.QueryRow(query, input.ID).Scan(&existingID)
+
+	// If the preliminary ID is taken, generate a new ID
+	if err == nil {
+		// The preliminary ID is taken, generate a new ID
+		var maxID int
+		err = db.QueryRow("SELECT COALESCE(MAX(ID), 0) FROM 日次報告ﾃｰﾌﾞﾙ").Scan(&maxID)
+		if err != nil {
+			return nil, false, "登録", fmt.Errorf("failed to query max ID: %v", err)
+		}
+		input.ID = maxID + 1
+	} else if err != sql.ErrNoRows {
+		// Another error occurred
+		return nil, false, "登録", fmt.Errorf("error checking for preliminary ID: %v", err)
 	}
 
-	// Record does not exist, perform an insert
+	// Insert new record
 	insertQuery := `
         INSERT INTO 日次報告ﾃｰﾌﾞﾙ (ID,
 日付,
@@ -490,7 +492,7 @@ T1.報告ｽﾍﾟｰｽ = ?
 報告ｽﾍﾟｰｽ)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
-	_, err = db.Exec(insertQuery, existingMaxID+1,
+	_, err = db.Exec(insertQuery, input.ID,
 		parsedDate,
 		input.WeatherCode,
 		input.StaffCode,
@@ -628,5 +630,5 @@ T1.報告ｽﾍﾟｰｽ = ?
 		return nil, false, "登録", fmt.Errorf("error inserting record: %v", err)
 	}
 
-	return input, false, "登録", nil
+	return input, true, "登録", nil
 }

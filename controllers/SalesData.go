@@ -10,6 +10,11 @@ import (
 	"tronroll21-dev/yudoksystem/models"
 )
 
+type SalesDataPayload struct {
+	Record models.DailyReportRaw `json:"Record"`
+	Found  bool                `json:"Found"`
+}
+
 func SalesDataHandler(c *gin.Context) {
 	//jsonBytese selected date from the query parameters
 	dateStr := c.Query("date")
@@ -51,13 +56,13 @@ func SalesDataHandler(c *gin.Context) {
 }
 
 func PostSalesDataHandler(c *gin.Context) {
-	var input models.DailyReportRaw
-	if err := c.ShouldBindJSON(&input); err != nil {
+	var payload SalesDataPayload
+	if err := c.ShouldBindJSON(&payload); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
 
-	record, found, mode, err := models.InsertOrUpdateSalesRecord(&input)
+	record, found, mode, err := models.InsertOrUpdateSalesRecord(&payload.Record, payload.Found)
 	if err != nil {
 		log.Printf("Error inserting/updating sales record: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})

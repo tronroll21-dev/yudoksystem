@@ -530,7 +530,10 @@ get TicketTotals() {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(recordToSend),
+                    body: JSON.stringify({
+                        Record: recordToSend,
+                        Found: this.data.Found,
+                    }),
                 });
 
                 if (!response.ok) {
