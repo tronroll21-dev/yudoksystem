@@ -237,7 +237,9 @@ document.addEventListener('alpine:init', () => {
                    date.getDate() === today.getDate();
         },
 
-        init() {
+        userId: null,
+
+        async init() {
             const today = new Date();
             const year = today.getFullYear();
             const month = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -247,6 +249,7 @@ document.addEventListener('alpine:init', () => {
             this.data.Record.DateString = this.selectedDate;
             this.$dispatch('update-date', { data: this.selectedDate });
 
+            await this.fetchCurrentUser();
             this.fetchData(this.selectedDate);
             this.fetchTantoushas();
         },
@@ -298,6 +301,24 @@ document.addEventListener('alpine:init', () => {
             }, 2000);
         },
 
+        async fetchCurrentUser() {
+            try {
+                const response = await fetch('/api/user/me');
+                if (!response.ok) {
+                    throw new Error('Not authenticated');
+                }
+                const userData = await response.json();
+                if (userData.id) {
+                    this.userId = userData.id;
+                } else {
+                    throw new Error('User ID not found in response');
+                }
+            } catch (e) {
+                console.error('Failed to fetch user data, redirecting to login.', e);
+                window.location.href = '/login';
+            }
+        },
+
         // サーバーからデータを取得する関数
         async fetchTantoushas() {
             this.loading = true;
@@ -341,6 +362,10 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 this.data = rawData;
+
+                if (this.data.Found === false && this.data.Mode === '登録') {
+                    this.data.Record.StaffCode = this.userId;
+                }
                 console.log('Fetched Data:', this.data);
             } catch (e) {
                 this.error = `データの取得に失敗しました: ${e.message}`;
