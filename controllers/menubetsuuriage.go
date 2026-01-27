@@ -64,3 +64,23 @@ func MenubetsuUriageHandler(c *gin.Context) {
 	c.Data(http.StatusOK, "application/pdf", pdfBytes)
 
 }
+
+func SaveMenubetsuUriage(c *gin.Context) {
+	var reqBody struct {
+		Date         string              `json:"date"`
+		SoldProducts []models.SoldProduct `json:"soldProducts"`
+	}
+
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	if err := models.SaveMenubetsuUriage(reqBody.Date, reqBody.SoldProducts); err != nil {
+		log.Printf("Failed to save menubetsu uriage: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save data"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
+}

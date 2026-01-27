@@ -292,8 +292,38 @@ Alpine.data('uploader', () => ({
                     }
                 }
 
-                this.successMessage = 'データが正常に処理されました！';
                 this.$dispatch('data-updated', { data: combinedData });
+
+                const paymentStatKeys = Object.keys(combinedData.paymentStats).map(Number);
+                const areKeysValid = paymentStatKeys.length > 0 && paymentStatKeys.every(key => key >= 1 && key <= 5);
+
+                if (areKeysValid) {
+                    try {
+                        const payload = {
+                            date: this.formData.date,
+                            soldProducts: Object.values(combinedData.soldProducts)
+                        };
+
+                        const response = await fetch('/api/menubetsu-uriage', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || 'メニュー別売上データの更新に失敗しました。');
+                        }
+                        this.successMessage = 'データが正常に処理され、メニュー別売上データが更新されました！';
+                    } catch (error) {
+                        console.error('Error sending sold products:', error);
+                        this.errorMessage = (this.errorMessage ? this.errorMessage + '\n' : '') + error.message;
+                    }
+                } else {
+                    this.successMessage = 'データが正常に処理されました！';
+                }
 
             } catch (error) {
                 console.error('Processing error:', error);

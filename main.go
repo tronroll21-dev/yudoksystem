@@ -74,6 +74,7 @@ func main() {
 
 	// Use the controller handler for /menubetsuuriage
 	router.GET("/api/menubetsuuriage", controllers.MenubetsuUriageHandler)
+	router.POST("/api/menubetsu-uriage", controllers.SaveMenubetsuUriage)
 
 	// Define the HTMX endpoint to fetch sales data based on the date
 	router.GET("/api/sales-data", controllers.SalesDataHandler)

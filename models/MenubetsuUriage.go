@@ -1,6 +1,7 @@
 package models
 
 import (
+	"log"
 	"sort"
 )
 
@@ -16,6 +17,19 @@ type SalesDetail struct {
 	MakanaiKubun        string  `json:"まかない区分"`
 	UriageMaisuu        int     `json:"売上枚数"`
 	Hiduke              []uint8 `json:"日付"`
+}
+
+type SoldProduct struct {
+	Bumon         int    `json:"bumon"`
+	BumonName     string `json:"bumonName"`
+	UriageKingaku int    `json:"uriageKingaku"`
+	HanbaiMaisuu  int    `json:"hanbaiMaisuu"`
+	ProductID     int    `json:"productID"`
+	MenuName      string `json:"menuName"`
+	TekiyouKakaku int    `json:"tekiyouKakaku"`
+	MakanaiKubun  string `json:"makanaiKubun"`
+	Date          string `json:"date"`
+	Category      string `json:"category"`
 }
 
 // Sale represents a row in your sales table.
@@ -190,4 +204,34 @@ func GetMenubetsuUriage(start_date string, end_date string) (*GroupedSale, error
 	// Marshal the processedSales to JSON and return
 	return &processedSales, nil
 
+}
+
+func SaveMenubetsuUriage(date string, products []SoldProduct) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	_, err = tx.Exec("DELETE FROM t_メニュー別売上 WHERE 日付 = ?", date)
+	if err != nil {
+		return err
+	}
+
+	stmt, err := tx.Prepare("INSERT INTO t_メニュー別売上 (部門, カテゴリー名, メニューコード, メニュー名, 単価, 売上金額, まかない区分, 売上枚数, 日付) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, p := range products {
+		log.Printf("Inserting product: %+v", p)
+		_, err := stmt.Exec(p.Bumon, p.Category, p.ProductID, p.MenuName, p.TekiyouKakaku, p.UriageKingaku, p.MakanaiKubun, p.HanbaiMaisuu, date)
+		if err != nil {
+			log.Printf("Failed to insert product: %+v, error: %v", p, err)
+			return err
+		}
+	}
+
+	return tx.Commit()
 }
