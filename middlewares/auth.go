@@ -17,10 +17,13 @@ func RequireAuth(c *gin.Context) {
 	tokenString, err := c.Cookie("Authorization")
 
 	if err != nil {
+		fmt.Println("No Authorization cookie found:", err)
 		c.Redirect(http.StatusSeeOther, "/login")
 		c.Abort()
 		return
 	}
+
+	fmt.Println("Authorization cookie found:", tokenString)
 
 	// Decode/validate it
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -31,6 +34,7 @@ func RequireAuth(c *gin.Context) {
 	})
 
 	if err != nil {
+		fmt.Println("Invalid token:", err)
 		c.Redirect(http.StatusSeeOther, "/login")
 		c.Abort()
 		return
@@ -39,6 +43,7 @@ func RequireAuth(c *gin.Context) {
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// Check the expiration
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
+			fmt.Println("Token expired")
 			c.Redirect(http.StatusSeeOther, "/login")
 			c.Abort()
 			return
@@ -49,7 +54,10 @@ func RequireAuth(c *gin.Context) {
 		userID := uint(claims["sub"].(float64))
 		user, err := models.GetUserById(userID)
 
+		fmt.Println("User ID from token:", userID)
+
 		if err != nil || user.ID == 0 {
+			fmt.Println("User not found")
 			c.Redirect(http.StatusSeeOther, "/login")
 			c.Abort()
 			return
@@ -61,6 +69,7 @@ func RequireAuth(c *gin.Context) {
 		// Continue
 		c.Next()
 	} else {
+		fmt.Println("Invalid token claims")
 		c.Redirect(http.StatusSeeOther, "/login")
 		c.Abort()
 	}

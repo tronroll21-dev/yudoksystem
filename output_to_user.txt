@@ -1,0 +1,1 @@
+The `task dev` command is not executable from my environment. Please run `task dev` in your terminal and then attempt to log in. Provide me with any output from the terminal where the Go application is running after you try to log in. This output will contain the debugging information I added to `models/UserModel.go` which is crucial for diagnosing the issue.

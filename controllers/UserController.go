@@ -111,7 +111,7 @@ func Login(c *gin.Context) {
 
 	c.SetSameSite(http.SameSiteLaxMode)
 	// クッキーにトークンをセット(キー, 値, 有効期限, パス, ドメイン, https, httponly)
-	c.SetCookie("Authorization", tokenString, 3600, "/", "", false, true)
+	c.SetCookie("Authorization", tokenString, 3600*24, "/", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{
 		"token": tokenString,
