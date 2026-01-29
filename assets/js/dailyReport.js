@@ -248,10 +248,10 @@ document.addEventListener('alpine:init', () => {
 
             this.data.Record.DateString = this.selectedDate;
             this.$dispatch('update-date', { data: this.selectedDate });
-
+            
+            this.fetchTantoushas();
             await this.fetchCurrentUser();
             this.fetchData(this.selectedDate);
-            this.fetchTantoushas();
         },
 
         selectDate(date) {
@@ -302,16 +302,29 @@ document.addEventListener('alpine:init', () => {
         },
 
         async fetchCurrentUser() {
+            console.log('Fetching current user data...');
             try {
-                const response = await fetch('/api/user/me');
+                debugger;
+                console.log('Before fetch current user response:');
+                const response = await fetch('/api/user/me', { credentials: 'include' });
+                console.log('Fetch current user response:', response);
                 if (!response.ok) {
                     throw new Error('Not authenticated');
                 }
                 const userData = await response.json();
-                if (userData.id) {
-                    this.userId = userData.id;
+                console.log('Fetched user data:', userData);
+                if (userData.username) {
+                    // Assuming tantoushas is already loaded or will be loaded
+                    // Find the user ID from the tantoushas list based on the username
+                    const currentUser = Object.values(this.tantoushas).find(t => t.name === userData.username);
+                    if (currentUser && currentUser.id) {
+                        this.userId = currentUser.id;
+                    } else {
+                        console.warn('Current user found, but ID not found in tantoushas list.');
+                        throw new Error('User ID not found in tantoushas list');
+                    }
                 } else {
-                    throw new Error('User ID not found in response');
+                    throw new Error('Username not found in response');
                 }
             } catch (e) {
                 console.error('Failed to fetch user data, redirecting to login.', e);
@@ -324,7 +337,7 @@ document.addEventListener('alpine:init', () => {
             this.loading = true;
             this.error = null;
             try {
-                const response = await fetch(`${this.api_tantousha_url}`);
+                const response = await fetch(`${this.api_tantousha_url}`, { credentials: 'include' });
                 if (!response.ok) {
                     throw new Error('ネットワーク応答が正常ではありませんでした');
                 }
@@ -343,7 +356,7 @@ document.addEventListener('alpine:init', () => {
             this.loading = true;
             this.error = null;
             try {
-                const response = await fetch(`${this.api_url}${date}`);
+                const response = await fetch(`${this.api_url}${date}`, { credentials: 'include' });
                 if (!response.ok) {
                     throw new Error('ネットワーク応答が正常ではありませんでした');
                 }
@@ -552,6 +565,7 @@ get TicketTotals() {
 
                 const response = await fetch('/api/sales-data', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
