@@ -297,7 +297,7 @@ Alpine.data('uploader', () => ({
                 const paymentStatKeys = Object.keys(combinedData.paymentStats).map(Number);
                 const areKeysValid = paymentStatKeys.length > 0 && paymentStatKeys.every(key => key >= 1 && key <= 5);
 
-                if (areKeysValid) {
+                if (areKeysValid && this.formData.files.length === 5) {
                     try {
                         const payload = {
                             date: this.formData.date,
