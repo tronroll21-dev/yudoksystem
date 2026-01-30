@@ -18,7 +18,19 @@ const isSameDay = (d1, d2) => {
  * @param {string} processDateStr 処理対象日 (YYYY-MM-DD形式)
  * @returns {Promise<object>} 集計結果を含むPromise
  */
-function processFileOnFrontend(file, processDateStr) {
+async function processFileOnFrontend(file, processDateStr) {
+    let colCategoryRngs = [];
+    try {
+        const response = await fetch('/api/ranges');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        colCategoryRngs = await response.json();
+    } catch (error) {
+        console.error("Failed to fetch category ranges:", error);
+        throw error;
+    }
+
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
@@ -36,17 +48,11 @@ function processFileOnFrontend(file, processDateStr) {
 
                 const dictSoldProducts = {};
                 const paymentStats = {};
-                const colCategoryRngs = [
-                    { BumonID: "入浴", CategoryStart: 1, CategoryEnd: 100, CategoryName: "入浴券" },
-                    { BumonID: "入浴", CategoryStart: 150, CategoryEnd: 200, CategoryName: "入浴セット券" },
-                    { BumonID: "飲食", CategoryStart: 201, CategoryEnd: 300, CategoryName: "食事" },
-                    { BumonID: "エステ", CategoryStart: 301, CategoryEnd: 400, CategoryName: "エステ" }
-                ];
-
+                
                 const getCategoryName = (bumonID, menuCode) => {
                     for (const elem of colCategoryRngs) {
-                        if (elem.BumonID === bumonID && menuCode >= elem.CategoryStart && menuCode <= elem.CategoryEnd) {
-                            return elem.CategoryName;
+                        if (elem.bumon_id === bumonID && menuCode >= elem.han_i_kaishi && menuCode <= elem.han_i_shuryo) {
+                            return elem.category_name;
                         }
                     }
                     return "";
