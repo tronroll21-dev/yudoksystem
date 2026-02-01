@@ -49,3 +49,17 @@ func GetUserById(id uint) (*User, error) {
 
 	return &result, nil
 }
+
+func GetUserByName(name string) (*User, error) {
+
+	var result User
+
+	log.Printf("Attempting to get user by name: %s", name)
+	err := db.QueryRow("SELECT * FROM 担当ﾏｽﾀ WHERE 担当 = ?;", name).Scan(&result.ID, &result.Username, &result.Password)
+	if err != nil {
+		log.Printf("Error getting user by name %s: %v", name, err)
+		return nil, err
+	}
+
+	return &result, nil
+}

@@ -216,7 +216,6 @@ Alpine.data('uploader', () => ({
             this.formData.files = event.dataTransfer.files;
             this.updateFileStatus();
             this.submitForm();
-            this.$dispatch('close-menu');
         },
         updateFileStatus() {
             if (this.formData.files && this.formData.files.length > 0) {
@@ -301,7 +300,12 @@ Alpine.data('uploader', () => ({
                 this.$dispatch('data-updated', { data: combinedData });
 
                 const paymentStatKeys = Object.keys(combinedData.paymentStats).map(Number);
-                const areKeysValid = paymentStatKeys.length > 0 && paymentStatKeys.every(key => key >= 1 && key <= 5);
+                const areKeysValid = paymentStatKeys.length > 0
+                && paymentStatKeys.some(key => key == 1)
+                && paymentStatKeys.some(key => key == 2)
+                && paymentStatKeys.some(key => key == 3)
+                && paymentStatKeys.some(key => key == 4)
+                && paymentStatKeys.some(key => key == 5);
 
                 if (areKeysValid && this.formData.files.length === 5) {
                     try {
@@ -327,8 +331,17 @@ Alpine.data('uploader', () => ({
                         console.error('Error sending sold products:', error);
                         this.errorMessage = (this.errorMessage ? this.errorMessage + '\n' : '') + error.message;
                     }
-                } else {
-                    this.successMessage = 'データが正常に処理されました！';
+                }  else if (this.formData.files.length !== 5) {
+                    this.errorMessage = `５機分のデータファイルが揃っておらず、\n
+                    メニュー別売上データの保存はスキップされました。\n\n
+                    ５機分のデータファイルが揃ったらアップロードを再度実行してください。`;
+                }
+                else {
+                    this.errorMessage = '同一券売機のデータが複数含まれている様です。';
+                }
+                
+                if (this.errorMessage === '') {
+                    this.$dispatch('close-menu');
                 }
 
             } catch (error) {

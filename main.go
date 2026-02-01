@@ -88,7 +88,6 @@ func main() {
 	router.GET("/api/uriage-nikkei-report", controllers.UriageNikkeiReportHandler)
 
 	router.GET("/api/nyuuyokushasuushuukei", controllers.NyuuyokushasuuShuukeiHandler)
-
 	router.GET("/api/jissekiyosoku", controllers.JissekiyosokuHandler)
 
 	router.GET("/api/tantoushas", controllers.TantoushasHandler)

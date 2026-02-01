@@ -61,7 +61,7 @@ func SignUp(c *gin.Context) {
 func Login(c *gin.Context) {
 
 	var body struct {
-		UserID   uint
+		UserID   string
 		Username string
 		Password string
 	}
@@ -75,7 +75,7 @@ func Login(c *gin.Context) {
 
 	var user *models.User
 
-	user, err := models.GetUserById(body.UserID)
+	user, err := models.GetUserByName(body.Username)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -94,7 +94,7 @@ func Login(c *gin.Context) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID,
+		"sub":  user.ID,
 		"name": user.Username,
 		// 有効期限を1日に設定
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
