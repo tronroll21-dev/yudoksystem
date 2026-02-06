@@ -304,7 +304,6 @@ document.addEventListener('alpine:init', () => {
         async fetchCurrentUser() {
             console.log('Fetching current user data...');
             try {
-                debugger;
                 console.log('Before fetch current user response:');
                 const response = await fetch('/api/user/me', { credentials: 'include' });
                 console.log('Fetch current user response:', response);

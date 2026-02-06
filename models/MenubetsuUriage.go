@@ -154,7 +154,7 @@ func processSales(sales []SalesDetail) GroupedSale {
 	}
 }
 
-func GetMenubetsuUriage(start_date string, end_date string) (*GroupedSale, error) {
+func GetMenubetsuUriage(start_date string, end_date string, bumon_id string, makanai_kubun string) (*GroupedSale, error) {
 
 	// Placeholder: Replace with actual DB query logic.
 
@@ -164,8 +164,8 @@ func GetMenubetsuUriage(start_date string, end_date string) (*GroupedSale, error
 	// Execute the SQL query to fetch all data from the t_メニュー別売上 table.
 	rows, err := db.Query(
 		"SELECT `ID`, `部門`, `カテゴリー名`, `カテゴリー名讃岐`, `メニューコード`, `メニュー名`, `単価`, `売上金額`, `まかない区分`, `売上枚数`, `日付` FROM `t_メニュー別売上` "+
-			"WHERE `日付` BETWEEN ? AND ? ORDER BY `部門`, `カテゴリー名`, `メニューコード`",
-		start_date, end_date)
+			"WHERE `日付` BETWEEN ? AND ? AND (`部門` = ? OR ? = 0) AND (`まかない区分` = 'まかない' OR ? = 0) ORDER BY `部門`, `カテゴリー名`, `メニューコード`",
+		start_date, end_date, bumon_id, bumon_id, makanai_kubun)
 	if err != nil {
 		return nil, err
 	}

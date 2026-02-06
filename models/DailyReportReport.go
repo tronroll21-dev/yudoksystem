@@ -55,6 +55,8 @@ type ReportRecordData struct {
 	ECountGoukei             int
 	EAmountGoukei            int
 	ESettleCountGoukei       int
+	KaisuukenLoss            int
+	SixKaisuukenLoss         int
 	ESettleAmountGoukei      int
 	ECountGoukeiGoukei       int
 	EAmountGoukeiGoukei      int
@@ -99,6 +101,7 @@ type ReportRecordData struct {
 	TounyuuGoukei            int
 	Nyuukinyoteikingaku      int
 	Nyuukinyoteibi           string
+	SCutGoukei               int
 }
 
 // Define a struct to pass data to the template
@@ -411,9 +414,13 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		TounyuuGoukei:       TounyuuGoukei,
 		Nyuukinyoteikingaku: Nyuukinyoteikingaku,
 		Nyuukinyoteibi:      Nyuukinyoteibi,
+		KaisuukenLoss:       record.TicketSalesCount - (record.SalesNoEnd - record.SalesNoStart + 1),
+		SixKaisuukenLoss:    record.SixTicketSalesCount - (record.SixSalesNoEnd - record.SixSalesNoStart + 1),
+		SCutGoukei:          record.SCutMale + record.SCutFemale + record.SCutChild,
 	}
 
-	record.JapaneseWeekday, _ = helpers.GetJapaneseWeekdayKanji(record.Date)
+	reportRecordData.DailyReportRaw.JapaneseWeekday, _ = helpers.GetJapaneseWeekdayKanji(reportRecordData.DailyReportRaw.Date)
+	//record.JapaneseWeekday, _ = helpers.GetJapaneseWeekdayKanji(record.Date)
 
 	// Prepare the data for the template
 	data := ReportData{

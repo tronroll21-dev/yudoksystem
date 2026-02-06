@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -14,31 +13,16 @@ import (
 
 func UriageNikkeiReportHandler(c *gin.Context) {
 
-	// dateStr := c.Query("date")
-	// if dateStr == "" {
-	// 	c.String(http.StatusBadRequest, "Date parameter is missing")
-	// 	return
-	// }
-	// date, err := time.Parse("2006-01-02", dateStr)
-	// if err != nil {
-	// 	c.String(http.StatusBadRequest, "Invalid date format")
-	// 	return
-	// }
+	start_date := c.Query("start_date")
+	end_date := c.Query("end_date")
 
-	// reportHTML, err := models.GetUriageNikkeiReportByDate(time.Date(2025, 8, 21, 0, 0, 0, 0, time.UTC), time.Date(2025, 9, 20, 0, 0, 0, 0, time.UTC))
-	// if err != nil {
-	// 	log.Printf("Error generating sales report: %v", err)
-	// 	c.String(http.StatusInternalServerError, "Failed to generate report")
-	// 	return
-	// }
-
-	UriagenikkeiData, err := models.GetUriageNikkeiDataByDate(time.Date(2025, 8, 21, 0, 0, 0, 0, time.UTC).Format("2006-01-02"), time.Date(2025, 9, 20, 0, 0, 0, 0, time.UTC).Format("2006-01-02"))
+	UriagenikkeiData, err := models.GetUriageNikkeiDataByDate(start_date, end_date)
 	if err != nil {
 		c.String(http.StatusInternalServerError, "Failed to get uriage nikkei data")
 		return
 	}
 
-	UriageRuikeiData, err := models.GetUriageRuikeiDataByDate(time.Date(2025, 8, 21, 0, 0, 0, 0, time.UTC).Format("2006-01-02"), time.Date(2025, 9, 20, 0, 0, 0, 0, time.UTC).Format("2006-01-02"))
+	UriageRuikeiData, err := models.GetUriageRuikeiDataByDate(start_date, end_date)
 	if err != nil {
 		c.String(http.StatusInternalServerError, "Failed to get uriage ruikei data"+err.Error())
 		return

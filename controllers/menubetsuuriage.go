@@ -16,7 +16,10 @@ func MenubetsuUriageHandler(c *gin.Context) {
 
 	start_date := c.Query("start_date")
 	end_date := c.Query("end_date")
-	groupedSale, err := models.GetMenubetsuUriage(start_date, end_date)
+	bumon_id := c.DefaultQuery("bumon_id", "0")
+	makanai_kubun := c.DefaultQuery("makanai_kubun", "0")
+
+	groupedSale, err := models.GetMenubetsuUriage(start_date, end_date, bumon_id, makanai_kubun)
 	if err != nil {
 		log.Printf("Error generating sales report: %v", err)
 		c.String(http.StatusInternalServerError, "Failed to generate report")
@@ -60,14 +63,13 @@ func MenubetsuUriageHandler(c *gin.Context) {
 	}
 
 	c.Header("Content-Type", "application/pdf")
-	c.Header("Content-Disposition", "attachment; filename=report.pdf")
 	c.Data(http.StatusOK, "application/pdf", pdfBytes)
 
 }
 
 func SaveMenubetsuUriage(c *gin.Context) {
 	var reqBody struct {
-		Date         string              `json:"date"`
+		Date         string               `json:"date"`
 		SoldProducts []models.SoldProduct `json:"soldProducts"`
 	}
 
