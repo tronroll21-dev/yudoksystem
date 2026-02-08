@@ -90,19 +90,19 @@
                     <td style="width: 33.3%;">
                         <div class="box has-text-centered has-border-dark-black p-4">
                             <div>売上高</div>
-                            <div class="is-size-4 has-text-weight-bold">¥2,041,040</div>
+                            <div class="is-size-4 has-text-weight-bold">¥{{ format .ReportData.Record.TotalGoukei }}</div>
                         </div>
                     </td>
                     <td style="width: 33.3%;">
                         <div class="box has-text-centered has-border-dark-black p-4">
                             <div>入場者合計</div>
-                            <div class="is-size-4 has-text-weight-bold">1,395</div>
+                            <div class="is-size-4 has-text-weight-bold">{{ .ReportData.Record.NyuujoushaGoukei }}</div>
                         </div>
                     </td>
                     <td style="width: 33.3%;">
                         <div class="box has-text-centered has-border-dark-black p-4">
                             <div>客単価</div>
-                            <div class="is-size-4 has-text-weight-bold">¥1,463</div>
+                            <div class="is-size-4 has-text-weight-bold">¥{{ format .ReportData.Record.KyakuTanka }}</div>
                         </div>
                     </td>
                 </tr>
@@ -115,15 +115,15 @@
                         <table class="table is-fullwidth">
                             <tr>
                                 <td class="has-text-left">温浴</td>
-                                <td class="has-text-right">¥1,294,300</td>
+                                <td class="has-text-right">¥{{ format .ReportData.Record.NyuuyokuTotal }}</td>
                             </tr>
                             <tr>
                                 <td class="has-text-left">飲食</td>
-                                <td class="has-text-right">¥493,840</td>
+                                <td class="has-text-right">¥{{ format .ReportData.Record.InshokuTotal }}</td>
                             </tr>
                             <tr>
                                 <td class="has-text-left">リラク</td>
-                                <td class="has-text-right">¥252,900</td>
+                                <td class="has-text-right">¥{{ format .ReportData.Record.SeitaiTotal }}</td>
                             </tr>
                         </table>
                     </td>
@@ -152,6 +152,7 @@
 
             <div class="mt-6 has-text-left is-size-6">報告スペース</div>
             <div class="mt-2 is-size-7" style="line-height: 1.5rem;">
+                {{ .ReportData.Record.ReportSpace }}
             </div>
 
         </div>
@@ -322,15 +323,15 @@
                     </tr>
                     <tr>
                         <td>番号始</td>
-                        <td class="has-text-right">{{ .ReportData.Record.SalesNoStart }}</td>
-                        <td class="has-text-right">{{ .ReportData.Record.SixSalesNoStart }}</td>
+                        <td class="has-text-right">{{ format .ReportData.Record.SalesNoStart }}</td>
+                        <td class="has-text-right">{{ format .ReportData.Record.SixSalesNoStart }}</td>
                         <td></td>
                         <td></td>
                     </tr>
                     <tr>
                         <td>番号終</td>
-                        <td class="has-text-right">{{ .ReportData.Record.SalesNoEnd }}</td>
-                        <td class="has-text-right">{{ .ReportData.Record.SixSalesNoEnd }}</td>
+                        <td class="has-text-right">{{ format .ReportData.Record.SalesNoEnd }}</td>
+                        <td class="has-text-right">{{ format .ReportData.Record.SixSalesNoEnd }}</td>
                         <td></td>
                         <td></td>
                     </tr>
@@ -659,7 +660,7 @@
                 <td class="has-text-right">{{ format .ReportData.Record.TotalGoukei }}</td>
                 </tr>
                 <tr>
-                <th colspan="2" rowspan="2">構成比（%）</th>
+                <th colspan="2" rowspan="2">（%）</th>
                 <th colspan="2">入浴</th>
                 <th colspan="2">飲食</th>
                 <th colspan="1">リラク</th>

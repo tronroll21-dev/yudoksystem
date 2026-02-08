@@ -94,6 +94,9 @@ type ReportRecordData struct {
 	Machine4TotalGoukei      int
 	Machine5TotalGoukei      int
 	TotalGoukei              int
+	NyuuyokuTotal            int
+	InshokuTotal             int
+	SeitaiTotal              int
 	NyuuyokuWariai           float64
 	InshokuWariai            float64
 	SeitaiWariai             float64
@@ -102,6 +105,8 @@ type ReportRecordData struct {
 	Nyuukinyoteikingaku      int
 	Nyuukinyoteibi           string
 	SCutGoukei               int
+	NyuujoushaGoukei         int
+	KyakuTanka               int
 }
 
 // Define a struct to pass data to the template
@@ -205,7 +210,11 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 	Machine4TotalGoukei := Machine4CashAmountGoukeiWithUnsettled + Machine4EAmountGoukei + Machine4QrAmountGoukei + Machine4CAmountGoukei
 	Machine5TotalGoukei := Machine5CashAmountGoukeiWithUnsettled + Machine5EAmountGoukei + Machine5QrAmountGoukei + Machine5CAmountGoukei
 
-	TotalGoukei := Machine1TotalGoukei + Machine2TotalGoukei + Machine3TotalGoukei + Machine4TotalGoukei + Machine5TotalGoukei
+	var NyuuyokuTotal = Machine1TotalGoukei + Machine2TotalGoukei + record.RearegiTicketAmount
+	var InshokuTotal = Machine3TotalGoukei + Machine4TotalGoukei
+	var SeitaiTotal = Machine5TotalGoukei + record.RearegiRelaxAmount
+
+	TotalGoukei := Machine1TotalGoukei + Machine2TotalGoukei + Machine3TotalGoukei + Machine4TotalGoukei + Machine5TotalGoukei + record.RearegiTicketAmount + record.RearegiRelaxAmount
 
 	Miseisan_Tousha :=
 		record.Machine1UnsettledAmount +
@@ -224,6 +233,8 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 	Nyuukinyoteibi := getNyuukinyouteibi(originalDate)
 
 	Nyuukinyoteikingaku := TounyuuGoukei - record.Change
+
+	var NyuujoushaGoukei int = record.AdultTicketCount + record.AdultSetTicketCount + record.ChildTicketCount + record.SixTicketCount + record.TicketCount + record.InvitationTicketCount + record.YuutaikenTicketCount + record.InfantTicketCount + record.PointCardAdultCount + record.PointCardChildCount + record.OldTicketCount
 
 	reportRecordData := ReportRecordData{
 		DailyReportRaw: *record,
@@ -407,9 +418,12 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		Machine4TotalGoukei: Machine4TotalGoukei,
 		Machine5TotalGoukei: Machine5TotalGoukei,
 		TotalGoukei:         TotalGoukei,
-		NyuuyokuWariai:      helpers.CalculateWariai(float64(Machine1TotalGoukei+Machine2TotalGoukei), float64(TotalGoukei)),
-		InshokuWariai:       helpers.CalculateWariai(float64(Machine3TotalGoukei+Machine4TotalGoukei), float64(TotalGoukei)),
-		SeitaiWariai:        helpers.CalculateWariai(float64(Machine5TotalGoukei), float64(TotalGoukei)),
+		NyuuyokuTotal:       NyuuyokuTotal,
+		InshokuTotal:        InshokuTotal,
+		SeitaiTotal:         SeitaiTotal,
+		NyuuyokuWariai:      helpers.CalculateWariai(float64(NyuuyokuTotal), float64(TotalGoukei)),
+		InshokuWariai:       helpers.CalculateWariai(float64(InshokuTotal), float64(TotalGoukei)),
+		SeitaiWariai:        helpers.CalculateWariai(float64(SeitaiTotal), float64(TotalGoukei)),
 		Miseisan_Tousha:     Miseisan_Tousha,
 		TounyuuGoukei:       TounyuuGoukei,
 		Nyuukinyoteikingaku: Nyuukinyoteikingaku,
@@ -417,7 +431,11 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		KaisuukenLoss:       record.TicketSalesCount - (record.SalesNoEnd - record.SalesNoStart + 1),
 		SixKaisuukenLoss:    record.SixTicketSalesCount - (record.SixSalesNoEnd - record.SixSalesNoStart + 1),
 		SCutGoukei:          record.SCutMale + record.SCutFemale + record.SCutChild,
+		NyuujoushaGoukei:    NyuujoushaGoukei,
+		KyakuTanka:          int(helpers.RoundFloat(float64(TotalGoukei)/float64(NyuujoushaGoukei), 0)),
 	}
+
+	//[大人入浴券枚数]+[大人入浴セット券枚数]+[小人入浴券枚数]+[6回数券回収]+[回数券回収]+[招待券回収]+[優待券回収]+[感謝祭招待券回収]+[ﾎﾟｲﾝﾄｶｰﾄﾞ大人回収]+[ﾎﾟｲﾝﾄｶｰﾄﾞﾞ小人回収]+[過去回数券回収] AS 入場者合計
 
 	reportRecordData.DailyReportRaw.JapaneseWeekday, _ = helpers.GetJapaneseWeekdayKanji(reportRecordData.DailyReportRaw.Date)
 	//record.JapaneseWeekday, _ = helpers.GetJapaneseWeekdayKanji(record.Date)

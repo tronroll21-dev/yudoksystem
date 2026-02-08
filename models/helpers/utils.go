@@ -40,7 +40,7 @@ func GetJapaneseWeekdayKanji(dateBytes []uint8) (string, error) {
 	}
 }
 
-func roundFloat(val float64, precision uint) float64 {
+func RoundFloat(val float64, precision uint) float64 {
 	ratio := math.Pow(10, float64(precision))
 	return math.Round(val*ratio) / ratio
 }
@@ -59,5 +59,5 @@ func CalculateWariai(numerator, denominator float64) float64 {
 	if denominator == 0 {
 		return 0.0
 	}
-	return roundFloat((numerator*100)/denominator, 1)
+	return RoundFloat((numerator*100)/denominator, 1)
 }
