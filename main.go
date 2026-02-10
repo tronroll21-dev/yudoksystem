@@ -85,6 +85,8 @@ func main() {
 	// 新しいGETリクエストハンドラ：日次報告レポートをPDFで生成
 	router.GET("/api/sales-data-report", controllers.SalesDataReportHandler)
 
+	router.GET("/api/sales-data-report-pdf", controllers.SalesDataReportHandlerPDF)
+
 	router.GET("/api/uriage-nikkei-report", controllers.UriageNikkeiReportHandler)
 
 	router.GET("/api/nyuuyokushasuushuukei", controllers.NyuuyokushasuuShuukeiHandler)

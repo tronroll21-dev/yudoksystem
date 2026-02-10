@@ -2,7 +2,10 @@ package models
 
 import (
 	"fmt"
+	"html/template"
 	"log"
+	"os"
+	"strings"
 	"time"
 
 	"tronroll21-dev/yudoksystem/models/helpers"
@@ -10,103 +13,105 @@ import (
 
 type ReportRecordData struct {
 	DailyReportRaw
-	CashCountGoukei          int
-	CashAmountGoukei         int
-	SettleCountGoukei        int
-	SettleAmountGoukei       int
-	Machine1CashCountGoukei  int
-	Machine2CashCountGoukei  int
-	Machine3CashCountGoukei  int
-	Machine4CashCountGoukei  int
-	Machine5CashCountGoukei  int
-	Machine1CashAmountGoukei int
-	Machine2CashAmountGoukei int
-	Machine3CashAmountGoukei int
-	Machine4CashAmountGoukei int
-	Machine5CashAmountGoukei int
-	CashCountGoukeiGoukei    int
-	CashAmountGoukeiGoukei   int
-	UnsettledCountGoukei     int
-	UnsettledAmountGoukei    int
-	UriageGoukeiNyuuyoku     int
-	UriageGoukeiInshoku      int
-	UriageGoukeiSeitai       int
-	UriageGoukeiTotal        int
-	Machine1ECountGoukei     int
-	Machine2ECountGoukei     int
-	Machine3ECountGoukei     int
-	Machine4ECountGoukei     int
-	Machine5ECountGoukei     int
-	Machine1EAmountGoukei    int
-	Machine2EAmountGoukei    int
-	Machine3EAmountGoukei    int
-	Machine4EAmountGoukei    int
-	Machine5EAmountGoukei    int
-	Machine1CCountGoukei     int
-	Machine2CCountGoukei     int
-	Machine3CCountGoukei     int
-	Machine4CCountGoukei     int
-	Machine5CCountGoukei     int
-	Machine1CAmountGoukei    int
-	Machine2CAmountGoukei    int
-	Machine3CAmountGoukei    int
-	Machine4CAmountGoukei    int
-	Machine5CAmountGoukei    int
-	ECountGoukei             int
-	EAmountGoukei            int
-	ESettleCountGoukei       int
-	KaisuukenLoss            int
-	SixKaisuukenLoss         int
-	ESettleAmountGoukei      int
-	ECountGoukeiGoukei       int
-	EAmountGoukeiGoukei      int
-	CCountGoukei             int
-	CAmountGoukei            int
-	CSettleCountGoukei       int
-	CSettleAmountGoukei      int
-	CCountGoukeiGoukei       int
-	CAmountGoukeiGoukei      int
-	Machine1QrCountGoukei    int
-	Machine2QrCountGoukei    int
-	Machine3QrCountGoukei    int
-	Machine4QrCountGoukei    int
-	Machine5QrCountGoukei    int
-	Machine1QrAmountGoukei   int
-	Machine2QrAmountGoukei   int
-	Machine3QrAmountGoukei   int
-	Machine4QrAmountGoukei   int
-	Machine5QrAmountGoukei   int
-	QrCountGoukei            int
-	QrAmountGoukei           int
-	QrSettleCountGoukei      int
-	QrSettleAmountGoukei     int
-	QrCountGoukeiGoukei      int
-	QrAmountGoukeiGoukei     int
-	Machine1CashlessGoukei   int
-	Machine2CashlessGoukei   int
-	Machine3CashlessGoukei   int
-	Machine4CashlessGoukei   int
-	Machine5CashlessGoukei   int
-	CashlessGoukei           int
-	Machine1TotalGoukei      int
-	Machine2TotalGoukei      int
-	Machine3TotalGoukei      int
-	Machine4TotalGoukei      int
-	Machine5TotalGoukei      int
-	TotalGoukei              int
-	NyuuyokuTotal            int
-	InshokuTotal             int
-	SeitaiTotal              int
-	NyuuyokuWariai           float64
-	InshokuWariai            float64
-	SeitaiWariai             float64
-	Miseisan_Tousha          int
-	TounyuuGoukei            int
-	Nyuukinyoteikingaku      int
-	Nyuukinyoteibi           string
-	SCutGoukei               int
-	NyuujoushaGoukei         int
-	KyakuTanka               int
+	CashCountGoukei            int
+	CashAmountGoukei           int
+	SettleCountGoukei          int
+	SettleAmountGoukei         int
+	Machine1CashCountGoukei    int
+	Machine2CashCountGoukei    int
+	Machine3CashCountGoukei    int
+	Machine4CashCountGoukei    int
+	Machine5CashCountGoukei    int
+	Machine1CashAmountGoukei   int
+	Machine2CashAmountGoukei   int
+	Machine3CashAmountGoukei   int
+	Machine4CashAmountGoukei   int
+	Machine5CashAmountGoukei   int
+	CashCountGoukeiGoukei      int
+	CashAmountGoukeiGoukei     int
+	UnsettledCountGoukei       int
+	UnsettledAmountGoukei      int
+	UriageGoukeiNyuuyoku       int
+	UriageGoukeiInshoku        int
+	UriageGoukeiSeitai         int
+	UriageGoukeiTotal          int
+	Machine1ECountGoukei       int
+	Machine2ECountGoukei       int
+	Machine3ECountGoukei       int
+	Machine4ECountGoukei       int
+	Machine5ECountGoukei       int
+	Machine1EAmountGoukei      int
+	Machine2EAmountGoukei      int
+	Machine3EAmountGoukei      int
+	Machine4EAmountGoukei      int
+	Machine5EAmountGoukei      int
+	Machine1CCountGoukei       int
+	Machine2CCountGoukei       int
+	Machine3CCountGoukei       int
+	Machine4CCountGoukei       int
+	Machine5CCountGoukei       int
+	Machine1CAmountGoukei      int
+	Machine2CAmountGoukei      int
+	Machine3CAmountGoukei      int
+	Machine4CAmountGoukei      int
+	Machine5CAmountGoukei      int
+	ECountGoukei               int
+	EAmountGoukei              int
+	ESettleCountGoukei         int
+	KaisuukenLoss              int
+	SixKaisuukenLoss           int
+	ESettleAmountGoukei        int
+	ECountGoukeiGoukei         int
+	EAmountGoukeiGoukei        int
+	CCountGoukei               int
+	CAmountGoukei              int
+	CSettleCountGoukei         int
+	CSettleAmountGoukei        int
+	CCountGoukeiGoukei         int
+	CAmountGoukeiGoukei        int
+	Machine1QrCountGoukei      int
+	Machine2QrCountGoukei      int
+	Machine3QrCountGoukei      int
+	Machine4QrCountGoukei      int
+	Machine5QrCountGoukei      int
+	Machine1QrAmountGoukei     int
+	Machine2QrAmountGoukei     int
+	Machine3QrAmountGoukei     int
+	Machine4QrAmountGoukei     int
+	Machine5QrAmountGoukei     int
+	QrCountGoukei              int
+	QrAmountGoukei             int
+	QrSettleCountGoukei        int
+	QrSettleAmountGoukei       int
+	QrCountGoukeiGoukei        int
+	QrAmountGoukeiGoukei       int
+	Machine1CashlessGoukei     int
+	Machine2CashlessGoukei     int
+	Machine3CashlessGoukei     int
+	Machine4CashlessGoukei     int
+	Machine5CashlessGoukei     int
+	CashlessGoukei             int
+	Machine1TotalGoukei        int
+	Machine2TotalGoukei        int
+	Machine3TotalGoukei        int
+	Machine4TotalGoukei        int
+	Machine5TotalGoukei        int
+	TotalGoukei                int
+	NyuuyokuTotal              int
+	InshokuTotal               int
+	SeitaiTotal                int
+	NyuuyokuWariai             float64
+	InshokuWariai              float64
+	SeitaiWariai               float64
+	Miseisan_Tousha            int
+	TounyuuGoukei              int
+	Nyuukinyoteikingaku        int
+	Nyuukinyoteibi             string
+	SCutGoukei                 int
+	NyuujoushaGoukei           int
+	KyakuTanka                 int
+	MonthAvgRevenuePerCustomer int
+	ReportSpaceHTML            template.HTML
 }
 
 // Define a struct to pass data to the template
@@ -126,6 +131,23 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		return string(dateUint8)
 	}
 
+	queryBytes, err := os.ReadFile("sql/monthAvgRevPerCustomer.sql")
+	if err != nil {
+		return ReportData{}, fmt.Errorf("failed to read SQL file: %w", err)
+	}
+	query := string(queryBytes)
+
+	var MonthAvgRevenuePerCustomerFloat float64
+	var MonthAvgRevenuePerCustomer int
+	var startDate string = "2025-06-21"
+
+	err = db.QueryRow(query, startDate, targetDate.Format("2006-01-02")).Scan(&MonthAvgRevenuePerCustomerFloat) //, startDate, endDate)
+	if err != nil {
+		return ReportData{}, err
+	}
+
+	MonthAvgRevenuePerCustomer = int(helpers.RoundFloat(MonthAvgRevenuePerCustomerFloat, 0))
+
 	record, found, err := GetSalesRecordByDate(targetDate)
 	if err != nil {
 		return ReportData{}, fmt.Errorf("failed to get sales record: %w", err)
@@ -138,6 +160,7 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		dateStr = targetDate.Format("2006-01-02")
 	}
 	log.Printf("Record date: %s", dateStr)
+	record.DateString = dateStr
 
 	var Machine1CashCountGoukei, Machine2CashCountGoukei, Machine3CashCountGoukei, Machine4CashCountGoukei, Machine5CashCountGoukei,
 		Machine1CashAmountGoukei, Machine2CashAmountGoukei, Machine3CashAmountGoukei, Machine4CashAmountGoukei, Machine5CashAmountGoukei int
@@ -237,7 +260,8 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 	var NyuujoushaGoukei int = record.AdultTicketCount + record.AdultSetTicketCount + record.ChildTicketCount + record.SixTicketCount + record.TicketCount + record.InvitationTicketCount + record.YuutaikenTicketCount + record.InfantTicketCount + record.PointCardAdultCount + record.PointCardChildCount + record.OldTicketCount
 
 	reportRecordData := ReportRecordData{
-		DailyReportRaw: *record,
+		DailyReportRaw:             *record,
+		MonthAvgRevenuePerCustomer: MonthAvgRevenuePerCustomer,
 		CashCountGoukei: record.Machine1CashCount +
 			record.Machine2CashCount +
 			record.Machine3CashCount +
@@ -433,6 +457,7 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		SCutGoukei:          record.SCutMale + record.SCutFemale + record.SCutChild,
 		NyuujoushaGoukei:    NyuujoushaGoukei,
 		KyakuTanka:          int(helpers.RoundFloat(float64(TotalGoukei)/float64(NyuujoushaGoukei), 0)),
+		ReportSpaceHTML:     template.HTML(strings.ReplaceAll(record.ReportSpace, "\n", "<br>")),
 	}
 
 	//[大人入浴券枚数]+[大人入浴セット券枚数]+[小人入浴券枚数]+[6回数券回収]+[回数券回収]+[招待券回収]+[優待券回収]+[感謝祭招待券回収]+[ﾎﾟｲﾝﾄｶｰﾄﾞ大人回収]+[ﾎﾟｲﾝﾄｶｰﾄﾞﾞ小人回収]+[過去回数券回収] AS 入場者合計
