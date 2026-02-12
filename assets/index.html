@@ -185,7 +185,7 @@
                         <input type="text" id="dateField"
                             class="w-full p-2 border-2 border-gray-300 rounded bg-gray-50 cursor-pointer transition-colors hover:border-green-500"
                             :value="selectedDateDisplay" readonly placeholder="日付をホバーして選択"
-                            @click="showModal = true">
+                            @click="showModal = true" @wheel.prevent.debounce300ms="$event.deltaY > 0 ? prevNextDate(1) : prevNextDate(-1)">
 
                         <div x-show="showModal"
                             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"

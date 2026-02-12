@@ -195,9 +195,6 @@ Alpine.data('uploader', () => ({
             date: '',
             files: null,
         },
-        get curDate() {
-            return this.formData.date || '2026-01-01';
-        },
         get curGetsudoRange() {
             if (!this.formData || !this.formData.date) return '';
             const parts = String(this.formData.date).split('-');
@@ -212,7 +209,6 @@ Alpine.data('uploader', () => ({
             const month = today.getMonth(); // 0-based
             const day = today.getDate();
             let target;
-            let target20;
             if (day >= 21) {
                 target = new Date(year, month, 21);
             } else {
@@ -275,10 +271,7 @@ Alpine.data('uploader', () => ({
                 this.fileStatus = 'ファイルが選択されていません。';
             }
         },
-
-
         
-
         async submitForm() {
             this.isLoading = true;
             this.errorMessage = '';

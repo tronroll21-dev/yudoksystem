@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"bytes"
 	"log"
 	"net/http"
 	"time"
@@ -54,7 +55,24 @@ func SalesDataReportHandlerPDF(c *gin.Context) {
 		return
 	}
 
-	reportHTML := controllerHelpers.GenerateReportHTML(ReportData)
+	// Render the template to a buffer instead of directly to the response
+	tmpl, err := controllerHelpers.ParseTemplateWithFunc("templates/report.html")
+	if err != nil {
+		c.String(http.StatusInternalServerError, "failed to parse HTML template: %v", err)
+		return
+	}
+
+	var buf bytes.Buffer
+	if err := tmpl.ExecuteTemplate(&buf, "report.html", gin.H{
+		"ReportData": ReportData,
+	}); err != nil {
+		log.Printf("Failed to execute template: %v", err)
+		c.String(http.StatusInternalServerError, "Failed to render template")
+		return
+	}
+
+	reportHTML := buf.Bytes()
+
 	pdfBytes, err := controllerHelpers.GeneratePDFfromHTML(reportHTML)
 	if err != nil {
 		// handle error with c.String(...)

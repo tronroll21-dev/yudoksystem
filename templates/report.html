@@ -69,20 +69,26 @@
         <div class="is-size-7">
             <!-- Header Table -->
             <table class="layout-table mb-4">
-                <tr>
-                    <td style="width: 50%;"><div class="is-size-5">売上日次報告書1/2 現金</div></td>
-                    <td class="header-cell" style="width: 50%;">
+                <tbody><tr>
+                    <td style="width: 33%;"><div class="">売上日次報告書1/2 現金</div></td>
+                    
+                    <td class="has-text-centered header-cell" style="width: 33%;">
                         <div class="header-cell-content">
                             <div>{{ .ReportData.Date }}（{{ .ReportData.Record.JapaneseWeekday }}） {{ .ReportData.Record.WeatherCondition }}</div>
-                            <div class="is-flex is-align-items-center is-justify-content-end">
+                            
+                        </div>
+                    </td>
+                    <td class="header-cell has-text-right" style="width: 33%;">
+                        <div class="header-cell-content">
+                            
+                            <div class="is-align-items-center is-justify-content-end">
                                 <div>[日計表 クリップ止め]</div>
-                                <div>ID</div>
-                                <div class="has-border-dark-black px-2 mx-1">{{ .ReportData.Record.ID }}</div>
+                                <div>ID<span class="has-border-dark-black px-2 mx-1">{{ .ReportData.Record.ID }}</span></div>
                             </div>
                         </div>
                     </td>
                 </tr>
-            </table>
+            </tbody></table>
 
             <!-- Main Metrics Table -->
             <table class="layout-table mb-4">
@@ -371,11 +377,12 @@
 
 <style>
     div#page2 td, th {
-    padding: 0px 1px;
-    font-size: 0.8rem
+    padding: 1px 12px;
+    font-size: 0.9rem;
 }
 </style>
     <div id="page2">
+        <div style="display: table; margin: 0 auto;">
         <table id="kenbaikiData">
             <thead>
                 <tr><th colspan="8">1a. 券売機ﾚｼｰﾄより転記&nbsp;現金</th></tr>
@@ -684,16 +691,16 @@
             <tr>
                 <th colspan="8">２. 現金在高</th>
             </tr>
-            <tr><td>券売機計</td><td>{{ format .ReportData.Record.TotalGoukei}}</td></tr>
-            <tr><td>金銭(ﾌﾛﾝﾄ含む)</td><td>{{ format .ReportData.Record.Change}}</td></tr>
-            <tr><td>精算券未処理</td><td>{{ format .ReportData.Record.Miseisan_Tousha}}</td></tr>
-            <tr><td>電話料入金</td><td>{{ format .ReportData.Record.PhoneFee}}</td></tr>
-            <tr><td>本日未投入金額（未確定）</td><td>{{ format .ReportData.Record.HonjitsuMitounyuuAmountUncertain}}</td></tr>
-            <tr><td>本日未投入金額（確定）</td><td>{{ format .ReportData.Record.HonjitsuMitounyuuAmountCertain}}</td></tr>
-            <tr><td>過不足</td><td>{{ format .ReportData.Record.Deficiency}}</td></tr>
-            <tr><td>前日未投入金額</td><td>{{ format .ReportData.Record.ZenjitsuMitounyuuAmount}}</td></tr>
-            <tr><td>投入合計</td><td>{{ format .ReportData.Record.TounyuuGoukei}}</td></tr>
-            <tr><td>投入ﾚｼﾞｰﾄ合計</td><td>{{ format .ReportData.Record.ReceiptTotalAmount }}</td></tr>
+            <tr><td>券売機計</td><td class="has-text-right">{{ format .ReportData.Record.TotalGoukei}}</td></tr>
+            <tr><td>金銭(ﾌﾛﾝﾄ含む)</td><td class="has-text-right">{{ format .ReportData.Record.Change}}</td></tr>
+            <tr><td>精算券未処理</td><td class="has-text-right">{{ format .ReportData.Record.Miseisan_Tousha}}</td></tr>
+            <tr><td>電話料入金</td><td class="has-text-right">{{ format .ReportData.Record.PhoneFee}}</td></tr>
+            <tr><td>本日未投入金額（未確定）</td><td class="has-text-right">{{ format .ReportData.Record.HonjitsuMitounyuuAmountUncertain}}</td></tr>
+            <tr><td>本日未投入金額（確定）</td><td class="has-text-right">{{ format .ReportData.Record.HonjitsuMitounyuuAmountCertain}}</td></tr>
+            <tr><td>過不足</td><td class="has-text-right">{{ format .ReportData.Record.Deficiency}}</td></tr>
+            <tr><td>前日未投入金額</td><td class="has-text-right">{{ format .ReportData.Record.ZenjitsuMitounyuuAmount}}</td></tr>
+            <tr><td>投入合計</td><td class="has-text-right">{{ format .ReportData.Record.TounyuuGoukei}}</td></tr>
+            <tr><td>投入ﾚｼﾞｰﾄ合計</td><td class="has-text-right">{{ format .ReportData.Record.ReceiptTotalAmount }}</td></tr>
 
             <tr><td>入金予定金額</td><td>入金予定金額</td><td>入金予定日付</td><td>入金予定日付</td></tr>
 

@@ -139,7 +139,14 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 
 	var MonthAvgRevenuePerCustomerFloat float64
 	var MonthAvgRevenuePerCustomer int
-	var startDate string = "2025-06-21"
+	var startDate string
+
+	if targetDate.Day() >= 21 {
+		startDate = time.Date(targetDate.Year(), targetDate.Month(), 21, 0, 0, 0, 0, time.Local).Format("2006-01-02")
+	} else {
+		previousMonth := targetDate.AddDate(0, -1, 0)
+		startDate = time.Date(previousMonth.Year(), previousMonth.Month(), 21, 0, 0, 0, 0, time.Local).Format("2006-01-02")
+	}
 
 	err = db.QueryRow(query, startDate, targetDate.Format("2006-01-02")).Scan(&MonthAvgRevenuePerCustomerFloat) //, startDate, endDate)
 	if err != nil {

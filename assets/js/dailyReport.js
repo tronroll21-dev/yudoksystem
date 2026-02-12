@@ -176,6 +176,15 @@ document.addEventListener('alpine:init', () => {
         selectedDate: '', // This will hold 'YYYY-MM-DD'
         currentMonth: new Date().getMonth(),
         currentYear: new Date().getFullYear(),
+        prevNextDate(offset) {
+            const date      = new Date(this.selectedDate);
+            next_date = new Date(date.setDate(date.getDate() + offset));
+            this.selectedDate = ('' + next_date.getFullYear() + '-' + ('0' + (next_date.getMonth() + 1)).slice(-2) + '-' + ('0' + next_date.getDate()).slice(-2));
+
+            this.$dispatch('update-date', { data: this.selectedDate });
+            this.fetchData(this.selectedDate);
+        },
+
         loading: true,
         error: null,
         tantoushas: {},
@@ -184,11 +193,16 @@ document.addEventListener('alpine:init', () => {
         api_url: '/api/sales-data?date=',
         api_tantousha_url: '/api/tantoushas',
         get tenkiIconUrl() {
-            const code = this.data.Record.WeatherCode;
-            if (code >= 1) {
-                return `/assets/img/${this.tenkiOptions[code]}.svg`;
+            if (this.data && this.data.Record && this.data.Record.WeatherCode !== undefined) {
+
+                const code = this.data.Record.WeatherCode;
+                if (code >= 1) {
+                    return `/assets/img/${this.tenkiOptions[code]}.svg`;
+                }
+
+                return `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==`;
+                
             }
-            return `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==`;
         },
 
         get currentMonthYear() {
@@ -388,6 +402,11 @@ document.addEventListener('alpine:init', () => {
         },    
 
         get Totals() {
+
+            if (!this.data || !this.data.Record) {
+                return {}; 
+            }
+
             let totals = {};
             let cashCountTotal = 0, cashAmountTotal = 0, settleCountTotal = 0, settleAmountTotal = 0,
                 unsettledCountTotal = 0, unsettledAmountTotal = 0,
@@ -500,7 +519,7 @@ document.addEventListener('alpine:init', () => {
             totals.NetEAmountTotal = netEAmountTotal.toLocaleString('ja-JP');
             totals.NetQrCountTotal = netQrCountTotal.toLocaleString('ja-JP');
             totals.NetQrAmountTotal = netQrAmountTotal.toLocaleString('ja-JP');
-            totals.TounyuuGoukei = (netCashAmountTotal + 
+            totals.TounyuuGoukei = this.data ? (netCashAmountTotal + 
                 Number(this.data.Record.Change) -
                 (Number(this.data.Record.Machine1UnsettledAmount) +
                  Number(this.data.Record.Machine2UnsettledAmount) +
@@ -512,12 +531,16 @@ document.addEventListener('alpine:init', () => {
                 Number(this.data.Record.HonjitsuMitounyuuAmountCertain) +
                 Number(this.data.Record.Deficiency) +
                 Number(this.data.Record.ZenjitsuMitounyuuAmount)
-            ).toLocaleString('ja-JP');
+            ).toLocaleString('ja-JP') : 0;
 
             return totals;
         },
 
 get TicketTotals() {
+
+    if (!this.data || !this.data.Record) {
+        return {}; 
+    }
     const totals = {
  
         MaleTicketCountTotalNumber: Number(this.data.Record.MaleTicketCount) +
