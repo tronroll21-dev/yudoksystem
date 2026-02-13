@@ -107,13 +107,13 @@
                     </div>
                 </div>
                 <div class="mt-8">
-                    <a  target="_blank" :href="`/api/sales-data-report?date=${curDate}`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-gray-700">売上日次報告</a>
+                    <a  target="_blank" :href="`/api/sales-data-report?date=${formData.date}`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-gray-700">売上日次報告</a>
                     <a  target="_blank" :href="`/api/uriage-nikkei-report?start_date=${curGetsudoRange.mostRecent21}&end_date=${curGetsudoRange.closest20th}`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-gray-700">売上日計報告</a>
                     <a  target="_blank" :href="`/api/nyuuyokushasuushuukei?start_date=${curGetsudoRange.mostRecent21}&end_date=${curGetsudoRange.closest20th}`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-gray-700">入浴者集計</a>
                     <br>
-                    <a  target="_blank" :href="`/api/menubetsuuriage?start_date=${curDate}&end_date=${curDate}&bumon_id=2`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-blue-700">メニュー別売上飲食</a>
-                    <a  target="_blank" :href="`/api/menubetsuuriage?start_date=${curDate}&end_date=${curDate}`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-blue-700">メニュー別売上</a>
-                    <a  target="_blank" :href="`/api/menubetsuuriage?start_date=${curDate}&end_date=${curDate}&makanai_kubun=1`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-blue-700">メニュー別売上まかない</a>
+                    <a  target="_blank" :href="`/api/menubetsuuriage?start_date=${formData.date}&end_date=${formData.date}&bumon_id=2`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-blue-700">メニュー別売上飲食</a>
+                    <a  target="_blank" :href="`/api/menubetsuuriage?start_date=${formData.date}&end_date=${formData.date}`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-blue-700">メニュー別売上</a>
+                    <a  target="_blank" :href="`/api/menubetsuuriage?start_date=${formData.date}&end_date=${formData.date}&makanai_kubun=1`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-blue-700">メニュー別売上まかない</a>
                     <a  target="_blank" :href="`/api/menubetsuuriage?start_date=${curCalendarMonth.startDate}&end_date=${curCalendarMonth.endDate}&bumon_id=2`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-green-700">飲食1ヵ月分ｶﾚﾝﾀﾞｰ通り</a>
                     <a  target="_blank" :href="`/api/menubetsuuriage?start_date=${curGetsudoRange.mostRecent21}&end_date=${curGetsudoRange.closest20th}&bumon_id=2`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-green-700">飲食1ヵ月分20日締め</a>
                     <a  target="_blank" :href="`/api/menubetsuuriage?start_date=${curGetsudoRange.mostRecent21}&end_date=${curGetsudoRange.closest20th}`" class="block px-4 py-2 hover:bg-gray-200 rounded-md text-green-700">全品1ヵ月分20日締め</a>
