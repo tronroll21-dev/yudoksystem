@@ -126,7 +126,7 @@ async function processFileOnFrontend(file, processDateStr) {
                     updateSoldProducts(intBumon, bumon, hanbaiMaisuu, menuCode, tekiyouKakaku, menuMei, kessaiKingaku, factor);
                     
                     if (!paymentStats[vendingmachineNo]) {
-                        paymentStats[vendingmachineNo] = { vendingMachineNo: vendingmachineNo, GenkinGrossMaisuu: 0, GenkinGrossKingaku: 0, GenkinSeisanMaisuu: 0, GenkinSeisanKingaku: 0, QrcodeGrossMaisuu: 0, QrcodeGrossKingaku: 0, QrcodeSeisanMaisuu: 0, QrcodeSeisanKingaku: 0, DenshimaneeGrossMaisuu: 0, DenshimaneeGrossKingaku: 0 };
+                        paymentStats[vendingmachineNo] = { vendingMachineNo: vendingmachineNo, GenkinGrossMaisuu: 0, GenkinGrossKingaku: 0, GenkinSeisanMaisuu: 0, GenkinSeisanKingaku: 0, QrcodeGrossMaisuu: 0, QrcodeGrossKingaku: 0, QrcodeSeisanMaisuu: 0, QrcodeSeisanKingaku: 0, CreditcardGrossMaisuu: 0, CreditcardGrossKingaku: 0, CreditcardSeisanMaisuu: 0, CreditcardSeisanKingaku: 0, DenshimaneeGrossMaisuu: 0, DenshimaneeGrossKingaku: 0 };
                     }
                     
                     switch (kaadoKessai) {
@@ -146,6 +146,15 @@ async function processFileOnFrontend(file, processDateStr) {
                             } else {
                                 paymentStats[vendingmachineNo].QrcodeSeisanKingaku += kessaiKingaku;
                                 paymentStats[vendingmachineNo].QrcodeSeisanMaisuu += hanbaiMaisuu;
+                            }
+                            break;
+                        case 6: // QRコード
+                            if (factor === 1) {
+                                paymentStats[vendingmachineNo].CreditcardGrossKingaku += kessaiKingaku;
+                                paymentStats[vendingmachineNo].CreditcardGrossMaisuu += hanbaiMaisuu;
+                            } else {
+                                paymentStats[vendingmachineNo].CreditcardSeisanKingaku += kessaiKingaku;
+                                paymentStats[vendingmachineNo].CreditcardSeisanMaisuu += hanbaiMaisuu;
                             }
                             break;
                         case 7: // 電子マネー
@@ -323,6 +332,10 @@ Alpine.data('uploader', () => ({
                             existing.QrcodeGrossKingaku += newStats.QrcodeGrossKingaku;
                             existing.QrcodeSeisanMaisuu += newStats.QrcodeSeisanMaisuu;
                             existing.QrcodeSeisanKingaku += newStats.QrcodeSeisanKingaku;
+                            existing.CreditcardGrossMaisuu += newStats.CreditcardGrossMaisuu;
+                            existing.CreditcardGrossKingaku += newStats.CreditcardGrossKingaku;
+                            existing.CreditcardSeisanMaisuu += newStats.CreditcardSeisanMaisuu;
+                            existing.CreditcardSeisanKingaku += newStats.CreditcardSeisanKingaku;
                             existing.DenshimaneeGrossMaisuu += newStats.DenshimaneeGrossMaisuu;
                             existing.DenshimaneeGrossKingaku += newStats.DenshimaneeGrossKingaku;
                         }

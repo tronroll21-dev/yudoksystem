@@ -622,11 +622,15 @@ get TicketTotals() {
                     this.data.Record['Machine' + key + 'QrAmount'] = combinedData.paymentStats[key].QrcodeGrossKingaku;
                     this.data.Record['Machine' + key + 'ECount'] = combinedData.paymentStats[key].DenshimaneeGrossMaisuu;
                     this.data.Record['Machine' + key + 'EAmount'] = combinedData.paymentStats[key].DenshimaneeGrossKingaku;
-
+                    this.data.Record['Machine' + key + 'CCount'] = combinedData.paymentStats[key].CreditcardGrossMaisuu;
+                    this.data.Record['Machine' + key + 'CAmount'] = combinedData.paymentStats[key].CreditcardGrossKingaku;
+                                        
                     this.data.Record['Machine' + key + 'CashSettleCount'] = combinedData.paymentStats[key].GenkinSeisanMaisuu;
                     this.data.Record['Machine' + key + 'CashSettleAmount'] = combinedData.paymentStats[key].GenkinSeisanKingaku;
                     this.data.Record['Machine' + key + 'QrSettleCount'] = combinedData.paymentStats[key].QrcodeSeisanMaisuu;
                     this.data.Record['Machine' + key + 'QrSettleAmount'] = combinedData.paymentStats[key].QrcodeSeisanKingaku;
+                    this.data.Record['Machine' + key + 'CSettleCount'] = combinedData.paymentStats[key].CreditcardSeisanMaisuu;
+                    this.data.Record['Machine' + key + 'CSettleAmount'] = combinedData.paymentStats[key].CreditcardSeisanKingaku;
                 }
             }
 

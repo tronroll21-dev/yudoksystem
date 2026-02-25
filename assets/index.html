@@ -1338,7 +1338,7 @@
                         </td> -->
                         </div>
                     </div>
-                </div>
+                </div>                
             </div>
 
             <div
@@ -1357,39 +1357,39 @@
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">釣銭(ﾌﾛﾝﾄ含む)</div>
                             <div role="cell"><input class="w-full text-right border" type="text" x-currency="data.Record.Change"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="77" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="78" /></div>
                             <div role="cell" class="w-full text-right">1,052,000</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">未清算(当社)</div>
                             <div role="cell"><input class="w-full text-right border" type="text" x-currency="Totals.UnsettledAmountTotal"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="78" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="79" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">電話料投入</div>
                             <div role="cell"><input class="w-full text-right border" type="text" x-currency="data.Record.PhoneFee"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="79" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="80" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">本日未投入金額(未確定)</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.HonjitsuMitounyuuAmountUncertain"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="80" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="81" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">本日未投入金額(確定)</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.HonjitsuMitounyuuAmountCertain"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="81" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="82" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">過不足</div>
                             <div role="cell"><input class="w-full text-right border" type="text" x-currency="data.Record.Deficiency"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="82" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="83" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" disabled :value="Totals.TounyuuGoukei" />
                             </div>
                         </div>
@@ -1397,7 +1397,7 @@
                             <div role="cell" class="whitespace-nowrap">前日未投入金額</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.ZenjitsuMitounyuuAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="83" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="84" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
@@ -1410,7 +1410,7 @@
                             <div role="cell" class="whitespace-nowrap">投入ﾚｼｰﾄ合計金額</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.ReceiptTotalAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="84" /></div>
+                                    tabindex="85" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                     </div>
@@ -1423,7 +1423,7 @@
                             <div role="cell" class="whitespace-nowrap">大人入浴券枚数</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.AdultTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="85" /></div>
+                                    tabindex="86" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1432,7 +1432,7 @@
                             <div role="cell" class="whitespace-nowrap">大人入浴セット券枚数</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.AdultSetTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="86" /></div>
+                                    tabindex="87" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1441,7 +1441,7 @@
                             <div role="cell" class="whitespace-nowrap">小人入浴券枚数</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="Totals.ChildTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="87" /></div>
+                                    tabindex="88" /></div>
                             <div role="cell" class="text-center">男</div>
                             <div role="cell" class="text-center">女</div>
                             <div role="cell">&nbsp;</div>
@@ -1450,7 +1450,7 @@
                             <div role="cell" class="whitespace-nowrap">幼児入浴券枚数</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.InfantTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="88" /></div>
+                                    tabindex="89" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1459,31 +1459,31 @@
                             <div role="cell" class="whitespace-nowrap">平日回数券回収(枚)</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.TicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="89" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text"
-                                    x-currency="data.Record.MaleTicketCount" @keydown.enter="focusNextTabbable($el)"
                                     tabindex="90" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text"
-                                    x-currency="data.Record.FemaleTicketCount" @keydown.enter="focusNextTabbable($el)"
+                                    x-currency="data.Record.MaleTicketCount" @keydown.enter="focusNextTabbable($el)"
                                     tabindex="91" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text"
+                                    x-currency="data.Record.FemaleTicketCount" @keydown.enter="focusNextTabbable($el)"
+                                    tabindex="92" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" disabled
                                     :value="TicketTotals.TicketCountTotal" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="92"></div>
+                                    tabindex="93"></div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">全日回数券回収（枚）</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.SixTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="93" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text"
-                                    x-currency="data.Record.SixMaleTicketCount" @keydown.enter="focusNextTabbable($el)"
                                     tabindex="94" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text"
+                                    x-currency="data.Record.SixMaleTicketCount" @keydown.enter="focusNextTabbable($el)"
+                                    tabindex="95" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.SixFemaleTicketCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="95" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="96" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" disabled
                                     :value="TicketTotals.SixTicketCountTotal" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="96"></div>
+                                    tabindex="97"></div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">福利厚生</div>
@@ -1499,33 +1499,33 @@
                             <div role="cell" class="whitespace-nowrap">招待券回収</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.InvitationTicketCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="97" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="98" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" disabled
                                     :value="TicketTotals.MaleTicketCountTotal" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="98" /></div>
+                                    tabindex="99" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" disabled
                                     :value="TicketTotals.FemaleTicketCountTotal" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="99" /></div>
+                                    tabindex="100" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">優待券回収</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="Totals.YuutaikenTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="100" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text" disabled
-                                    :value="TicketTotals.MaleTicketShare" @keydown.enter="focusNextTabbable($el)"
                                     tabindex="101" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" disabled
-                                    :value="TicketTotals.FemaleTicketShare" @keydown.enter="focusNextTabbable($el)"
+                                    :value="TicketTotals.MaleTicketShare" @keydown.enter="focusNextTabbable($el)"
                                     tabindex="102" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" disabled
+                                    :value="TicketTotals.FemaleTicketShare" @keydown.enter="focusNextTabbable($el)"
+                                    tabindex="103" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">ﾎﾟｲﾝﾄｶｰﾄﾞ大人回収</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.PointCardAdultCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="103" /></div>
+                                    tabindex="104" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1534,7 +1534,7 @@
                             <div role="cell" class="whitespace-nowrap">ﾎﾟｲﾝﾄｶｰﾄﾞﾞ小人回収</div>
                             <div role="cell"><input class="w-full text-right border" type="text"
                                     x-currency="data.Record.PointCardChildCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="104" /></div>
+                                    tabindex="105" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1584,16 +1584,16 @@
                             <div role="row" class="contents">
                                 <div role="cell">平日回数</div>
                                 <div role="cell"><input type="text" x-currency="data.Record.SalesNoStart"
-                                        @keydown.enter="focusNextTabbable($el)" tabindex="105" class="numCell border"/></td>
+                                        @keydown.enter="focusNextTabbable($el)" tabindex="106" class="numCell border"/></td>
                                 <div role="cell"><input type="text" x-currency="data.Record.SalesNoEnd"
-                                        @keydown.enter="focusNextTabbable($el)" tabindex="106" class="numCell border"/></div>
+                                        @keydown.enter="focusNextTabbable($el)" tabindex="107" class="numCell border"/></div>
                             </div>
                             <div role="row" class="contents">
                                 <div role="cell">全日回数</div>
                                 <div role="cell"><input type="text" x-currency="data.Record.SixSalesNoStart"
-                                        @keydown.enter="focusNextTabbable($el)" tabindex="107" class="numCell border"/></div>
-                                <div role="cell"><input type="text" x-currency="data.Record.SixSalesNoEnd"
                                         @keydown.enter="focusNextTabbable($el)" tabindex="108" class="numCell border"/></div>
+                                <div role="cell"><input type="text" x-currency="data.Record.SixSalesNoEnd"
+                                        @keydown.enter="focusNextTabbable($el)" tabindex="109" class="numCell border"/></div>
                             </div>
                         </div>
                     </div>
@@ -1615,9 +1615,9 @@
                             <div role="row" class="contents">
                                 <div role="cell">優待券販売（金額）・（枚数）</div>
                                 <div role="cell"><input type="text" x-currency="data.Record.YuutaikenSalesAmount"
-                                        @keydown.enter="focusNextTabbable($el)" tabindex="109" class="w-full border text-right"/></div>
-                                <div role="cell"><input type="text" x-currency="data.Record.YuutaikenSalesCount"
                                         @keydown.enter="focusNextTabbable($el)" tabindex="110" class="w-full border text-right"/></div>
+                                <div role="cell"><input type="text" x-currency="data.Record.YuutaikenSalesCount"
+                                        @keydown.enter="focusNextTabbable($el)" tabindex="111" class="w-full border text-right"/></div>
                             </div>
                         </div>
                     </div>
@@ -1635,11 +1635,11 @@
                     <div role="rowgroup" class="contents">
                         <div role="row" class="contents">
                             <div role="cell"><input class="w-full border text-right" type="text" x-currency="data.Record.SCutMale"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="111"/></div>
-                            <div role="cell"><input class="w-full border text-right" type="text" x-currency="data.Record.SCutFemale"
                                     @keydown.enter="focusNextTabbable($el)" tabindex="112"/></div>
-                            <div role="cell"><input class="w-full border text-right" type="text" x-currency="data.Record.SCutChild"
+                            <div role="cell"><input class="w-full border text-right" type="text" x-currency="data.Record.SCutFemale"
                                     @keydown.enter="focusNextTabbable($el)" tabindex="113"/></div>
+                            <div role="cell"><input class="w-full border text-right" type="text" x-currency="data.Record.SCutChild"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="114"/></div>
                             <div role="cell"><input class="w-full border text-right" type="text" disabled :value="TicketTotals.SCutTotal"/></div>
                         </div>
                     </div>
@@ -1647,21 +1647,33 @@
                 </div>
                 <div  class="md:[grid-area:item6] p-4">
                     <h2>6. ｸｰﾎﾟﾝ回収</h2><input class="w-full border" type="text" x-currency="data.Record.CouponCount"
-                        @keydown.enter="focusNextTabbable($el)" tabindex="114" />
+                        @keydown.enter="focusNextTabbable($el)" tabindex="115" />
                 </div>
                 
                 <div class="md:[grid-area:item7] p-4">
                     <h2>報告スペース</h2>
                     <textarea class="w-full border rounded-md p-2" x-model="data.Record.ReportSpace" rows="4"
-                        @keydown.enter="focusNextTabbable($el)" tabindex="115"></textarea>
+                        @keydown.enter="focusNextTabbable($el)" tabindex="116"></textarea>
 
                 </div>
-
-                <div class="flex justify-end p-4">
-            <button @click="saveRecord()"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg">
-                保存
-            </button>
+            </div>
+            </div>
+                
+            <div class="flex">
+                    
+                    <div class="mt-2">
+                        <h2>備考</h2>
+                        <textarea class="w-full border rounded-md p-2" x-model="data.Record.Remarks" rows="2"
+                        @keydown.enter="focusNextTabbable($el)" tabindex="77"></textarea>
+                        
+                    </div>
+                    
+                    <div class="flex justify-end p-4">
+                        <button @click="saveRecord()"
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg">
+                            保存
+                        </button>
+                    </div>
         </div>
 
 
