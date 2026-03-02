@@ -55,7 +55,7 @@
             </button>
         </div>
 
-        <div x-data="uploader()" class="min-h-screen flex inset-0">
+        <div x-data="uploader()" class="min-h-screen flex inset-0" @update-date.window="updateDate($event.detail.data)">
             <div class="w-full max-w-2xl p-6 sm:p-10 shadow-lg">
                 <div class="mt-8">
                     <a target="_blank" :href="`/api/sales-data-report?date=${formData.date}`"

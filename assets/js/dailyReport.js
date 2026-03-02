@@ -873,11 +873,6 @@ get TicketTotals() {
         successMessage: '',
         responseData: null,
 
-        updateDate(newDate) {
-            console.log('Updating date to:', newDate);
-            this.formData.date = newDate;
-        },
-
         handleFileChange(event) {
             this.formData.files = event.target.files;
             this.updateFileStatus();

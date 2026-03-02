@@ -3,8 +3,12 @@ Alpine.data('uploader', () => ({
         formData: {
             date: '',
             files: null,
+        },       
+        updateDate(newDate) {
+            console.log('Updating date to:', newDate);
+            this.formData.date = newDate;
         },
-                get curCalendarMonth() {
+        get curCalendarMonth() {
             if (!this.formData || !this.formData.date) return '';
             const parts = String(this.formData.date).split('-');
             if (parts.length !== 3) return '';
