@@ -174,7 +174,7 @@ async function processFileOnFrontend(file, processDateStr) {
                 summary["大人入浴券枚数"] = getHanbaiMaisuu("入浴_051") + getHanbaiMaisuu("入浴_155");
                 summary["大人入浴セット券枚数"] = getHanbaiMaisuu("入浴_054");
                 summary["小人入浴券枚数"] = getHanbaiMaisuu("入浴_052") + getHanbaiMaisuu("入浴_156");
-                summary["感謝祭招待券回収"] = getHanbaiMaisuu("入浴_053") + getHanbaiMaisuu("入浴_157");
+                summary["乳幼児入浴券枚数"] = getHanbaiMaisuu("入浴_053") + getHanbaiMaisuu("入浴_157");
                 summary["6回数券売数"] = getHanbaiMaisuu("入浴_057");
                 summary["回数券売数"] = getHanbaiMaisuu("入浴_055");
                 
@@ -315,6 +315,7 @@ document.addEventListener('alpine:init', () => {
                 AdultTicketCount: 0,
                 AdultSetTicketCount: 0,
                 ChildTicketCount: 0,
+                InfantTicketCount: 0,
                 TicketCount: 0,
                 SixTicketCount: 0,
                 MaleTicketCount: 0,
@@ -787,8 +788,6 @@ get TicketTotals() {
                 //     recordToSend.DateString = this.selectDate;
                 // }
 
-                debugger;
-
                 const response = await fetch('/api/sales-data', {
                     method: 'POST',
                     credentials: 'include',
@@ -838,6 +837,14 @@ get TicketTotals() {
                 }
             }
 
+            if (combinedData.summary) {
+                this.data.Record.AdultTicketCount = combinedData.summary["大人入浴券枚数"] || 0;
+                this.data.Record.AdultSetTicketCount = combinedData.summary["大人入浴セット券枚数"] || 0;
+                this.data.Record.ChildTicketCount = combinedData.summary["小人入浴券枚数"] || 0;
+                this.data.Record.InfantTicketCount = combinedData.summary["乳幼児入浴券枚数"] || 0;
+                this.data.Record.SixTicketCount = combinedData.summary["6回数券売数"] || 0;
+                this.data.Record.TicketCount = combinedData.summary["回数券売数"] || 0;
+            }  
         },
                 get curGetsudoRange() {
             if (!this.formData || !this.formData.date) return '';
@@ -879,7 +886,6 @@ get TicketTotals() {
             this.submitForm();
         },
         handleDrop(event) {
-            debugger;
             this.formData.files = event.dataTransfer.files;
             this.updateFileStatus();
             this.submitForm();
@@ -915,15 +921,15 @@ get TicketTotals() {
                     paymentStats: {},
                     soldProducts: {},
                     summary: {
-                        "大人入浴券枚数": 0,
-                        "大人入浴セット券枚数": 0,
-                        "小人入浴券枚数": 0,
-                        "感謝祭招待券回収": 0,
-                        "6回数券売数": 0,
-                        "回数券売数": 0,
-                    }
+                            "大人入浴券枚数": 0,
+                            "大人入浴セット券枚数": 0,
+                            "小人入浴券枚数": 0,
+                            "乳幼児入浴券枚数": 0,
+                            "6回数券売数": 0,
+                            "回数券売数": 0,
+                        }
                 };
-                
+
                 for (const file of this.formData.files) {
                     const result = await processFileOnFrontend(file, this.selectedDate);
                     
@@ -961,12 +967,29 @@ get TicketTotals() {
                             existing.uriageKingaku += newProduct.uriageKingaku;
                             existing.hanbaiMaisuu += newProduct.hanbaiMaisuu;
                         }
+                        if (key == '入浴_301') {
+                            combinedData.summary["大人入浴券枚数"] += result.soldProducts[key].hanbaiMaisuu;
+                        }
+                        if (key == '入浴_302') {
+                            combinedData.summary["小人入浴券枚数"] += result.soldProducts[key].hanbaiMaisuu;
+                        }
+                        if (key == '入浴_303') {
+                            combinedData.summary["乳幼児入浴券枚数"] += result.soldProducts[key].hanbaiMaisuu;
+                        }
                     }
+
                     
                     for (const key in result.summary) {
                         combinedData.summary[key] += result.summary[key];
                     }
                 }
+
+                if(
+                    combinedData.paymentStats['1'] == undefined || 
+                    combinedData.paymentStats['2'] == undefined) {
+                    combinedData.summary = {};        
+                }
+
 
                 this.$dispatch('data-updated', { data: combinedData });
 
@@ -981,7 +1004,7 @@ get TicketTotals() {
                 if (areKeysValid && this.formData.files.length === 5) {
                     try {
                         const payload = {
-                            date: this.formData.date,
+                            date: this.selectedDate,
                             soldProducts: Object.values(combinedData.soldProducts)
                         };
 
