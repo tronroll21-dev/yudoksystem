@@ -64,6 +64,17 @@ func main() {
 			c.File("./assets/index.html")
 		})
 		authorized.GET("/api/user/me", controllers.GetCurrentUser)
+		authorized.GET("/power-readings", func(c *gin.Context) {
+			c.File("./assets/power-readings/index.html")
+		})
+		authorized.GET("/api/power-readings", controllers.PowerReadingsHandler)
+		authorized.POST("/api/power-readings", controllers.SavePowerReadingHandler)
+
+		authorized.GET("/gas-readings", func(c *gin.Context) {
+			c.File("./assets/gas-readings/index.html")
+		})
+		authorized.GET("/api/gas-readings", controllers.GasReadingsHandler)
+		authorized.POST("/api/gas-readings", controllers.SaveGasReadingHandler)
 	}
 
 	// Define the route for the main page
