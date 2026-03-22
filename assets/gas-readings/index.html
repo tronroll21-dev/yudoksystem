@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>検針入力</title>
+    <link rel="icon" href="/assets/img/favicon.ico" type="image/ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="/assets/gas-readings/index.js"></script>
+    <style>
+        input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+    <div x-data="gasReadings" class="max-w-[1400px] mx-auto bg-white p-6 rounded shadow">
+        <div class="flex items-center gap-4">
+            <button @click="prevMonth()" class="text-2xl font-bold hover:text-blue-500 cursor-pointer">&lt;</button>
+            <h1 class="font-bold" x-text="title"></h1>
+            <button @click="nextMonth()" class="text-2xl font-bold hover:text-blue-500 cursor-pointer">&gt;</button>
+        </div>
+        
+        <div x-show="isLoading" class="text-center py-4">
+            読み込み中...
+        </div>
+
+        <div x-show="!isLoading" class="overflow-hidden border border-gray-300 rounded">
+
+        <div id="gridwrapper" class="grid grid-cols-[repeat(19,minmax(0,1fr))] border-t border-l border-gray-300">
+            <div class="grid grid-cols-subgrid col-span-[19] row-span-3 bg-gray-200 font-bold text-center text-sm" style="grid-column: span 20 / span 20">
+                <!-- 一行目 -->
+                <div class="row-span-3 flex items-center justify-center border-r border-b border-gray-300 px-2">月日</div>
+                <div class="row-span-3 flex items-center justify-center border-r border-b border-gray-300 px-2">曜日</div>
+                
+                <div class="col-span-12 border-b border-r border-gray-300 py-1">ガスメーター別使用量（㎥）</div>
+                
+                <div class="row-span-3 flex items-center justify-center border-r border-b border-gray-300 px-2">当日計</div>
+                <div class="row-span-3 flex items-center justify-center border-r border-b border-gray-300 px-2">当月累計</div>
+                
+                <div class="col-span-3 border-b border-gray-300 py-1">&nbsp;</div>
+                
+                <!-- 二行目 -->
+                <div class="col-span-3 border-b border-r border-gray-300">ボイラー（NO．１）乾燥機</div>
+                <div class="col-span-3 border-b border-r border-gray-300">ボイラー（NO．２）</div>
+                <div class="col-span-3 border-b border-r border-gray-300">厨房（NO．３）</div>
+                <div class="col-span-3 border-b border-r border-gray-300">空調（NO．４）</div>
+                
+                <div class="col-span-3 border-b border-gray-300">炭酸ガス㎏（1本30㎏）</div>
+                <div class="border-b border-gray-300 py-1">&nbsp;</div>
+                
+                <!-- 三行目 -->
+                <div class="border-b border-r border-gray-300 text-xs">検針</div><div class="border-b border-r border-gray-300 text-xs">使用</div><div class="border-b border-r border-gray-300 text-xs">累計</div>
+                <div class="border-b border-r border-gray-300 text-xs">検針</div><div class="border-b border-r border-gray-300 text-xs">使用</div><div class="border-b border-r border-gray-300 text-xs">累計</div>
+                <div class="border-b border-r border-gray-300 text-xs">検針</div><div class="border-b border-r border-gray-300 text-xs">使用</div><div class="border-b border-r border-gray-300 text-xs">累計</div>
+                <div class="border-b border-r border-gray-300 text-xs">検針</div><div class="border-b border-r border-gray-300 text-xs">使用</div><div class="border-b border-r border-gray-300 text-xs">累計</div>
+                
+                <div class="border-b border-r border-gray-300 text-xs">検針値</div>
+                <div class="border-b border-r border-gray-300 text-xs">÷50㎏</div>
+                <div class="border-b border-gray-300 text-xs">使用量</div>
+                
+                <div class="border-b border-gray-300 text-xs">備考</div>
+            </div>
+            
+            <!-- Baseline Row -->
+            <div class="grid grid-cols-subgrid bg-gray-100 text-gray-500 text-center border-b border-gray-300 text-sm" style="grid-column: span 20 / span 20">            
+                <!-- <div> -->
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">前月末</div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                <!-- </div>
+            <div> -->
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2" x-text="baseline.boiler1_reading"></div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                <!-- </div>
+                <div> -->
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2" x-text="baseline.boiler2_reading"></div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                <!-- </div>
+                <div> -->
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2" x-text="baseline.boiler3_reading"></div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                <!-- </div>
+                <div> -->
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2" x-text="baseline.boiler4_reading"></div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                <!-- </div>
+                <div> -->
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2" x-text="baseline.tansan_reading"></div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">&nbsp;</div>
+                <!-- </div>
+                <div>             -->
+                    <div class="flex items-center justify-center border-r border-gray-300 px-2">備考</div>
+                <!-- </div> -->
+            </div>
+
+            <!-- Table Rows -->
+            <template x-for="(row, index) in readings" :key="index">
+                <div class="grid grid-cols-subgrid text-center border-b border-gray-200 last:border-0 text-sm h-6"   
+                        :class="getJapaneseWeekday(row.date) === '日' ? 'bg-red-50' : (getJapaneseWeekday(row.date) === '土' ? 'bg-blue-50' : '')" style="grid-column: span 21 / span 21">
+                    <!-- Date -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getFormattedDate(row)"></div>
+                    
+                    <!-- Weekday -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getJapaneseWeekday(row.date)"></div>
+                    
+                    <!-- Power Reading (Editable) -->
+                    <div class="border-r border-gray-200 h-6">
+                        <input type="number" step="0.1" 
+                                class="bg-[#FFE499] border-0 focus:outline-none focus:ring-0 px-1 text-center w-full h-6"
+                                x-model="readings[index].boiler1_reading"
+                                @input="updateAuthor(index)"
+                                placeholder="-">
+                    </div>
+                    
+                    <!-- Difference (Column 4) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getDiff(index, 'boiler1_reading')"></div>
+                    
+                    <!-- Running Total (Column 5) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getRunningTotal(index, 'boiler1_reading').toLocaleString()"></div>
+                    
+                    <!-- Power Reading (Editable) -->
+                    <div class="border-r border-gray-200 h-6">
+                        <input type="number" step="0.1" 
+                        class="bg-[#FFE499] border-0 focus:outline-none focus:ring-0 px-1 text-center w-full h-6"
+                        x-model="readings[index].boiler2_reading"
+                        @input="updateAuthor(index)"
+                        placeholder="-">
+                    </div>
+                    
+                    <!-- Difference (Column 4) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getDiff(index, 'boiler2_reading')"></div>
+                    
+                    <!-- Running Total (Column 6) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getRunningTotal(index, 'boiler2_reading').toLocaleString()"></div>
+                    
+                    <!-- Power Reading (Editable) -->
+                    <div class="border-r border-gray-200 h-6">
+                        <input type="number" step="0.1" 
+                        class="bg-[#FFE499] border-0 focus:outline-none focus:ring-0 px-1 text-center w-full h-6"
+                        x-model="readings[index].boiler3_reading"
+                        @input="updateAuthor(index)"
+                        placeholder="-">
+                    </div>
+                    
+                    <!-- Difference (Column 4) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getDiff(index, 'boiler3_reading')"></div>
+                    
+                    <!-- Running Total (Column 6) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getRunningTotal(index, 'boiler3_reading').toLocaleString()"></div>
+                    
+                    <!-- Power Reading (Editable) -->
+                    <div class="border-r border-gray-200 h-6">
+                        <input type="number" step="0.1" 
+                        class="bg-[#FFE499] border-0 focus:outline-none focus:ring-0 px-1 text-center w-full h-6"
+                        x-model="readings[index].boiler4_reading"
+                        @input="updateAuthor(index)"
+                        placeholder="-">
+                    </div>
+                    
+                    <!-- Difference (Column 4) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getDiff(index, 'boiler4_reading')"></div>
+                    
+                    <!-- Running Total (Column 6) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getRunningTotal(index, 'boiler4_reading').toLocaleString()"></div>
+                    
+                    <!-- Running Total (Column 6) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getDailyTotal(index).toLocaleString()"></div>
+                    
+                    <!-- Running Total (Column 6) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getRunningDailyTotal(index).toLocaleString()"></div>
+                    
+                    <!-- Power Reading (Editable) -->
+                    <div class="border-r border-gray-200 h-6">
+                        <input type="number" step="0.1" 
+                        class="bg-[#FFE499] border-0 focus:outline-none focus:ring-0 px-1 text-center w-full h-6"
+                        x-model="readings[index].tansan_reading"
+                        @input="updateAuthor(index)"
+                        placeholder="-">
+                    </div>
+                    
+                    <!-- Difference (Column 4) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getTansanDividedBy50(index).toLocaleString()"></div>
+                    
+                    <!-- Running Total (Column 6) -->
+                    <div class="px-2 border-r border-gray-200 h-6" x-text="getTansanDividedBy50Diff(index).toLocaleString()"></div>
+                    
+                    <!-- Memo (Column 9) -->
+                    <div class="border-r border-gray-200 h-6">
+                        <input type="text" 
+                        class="bg-[#FFE499] border-0 focus:outline-none focus:ring-0 px-1 text-center w-full h-6"
+                        x-model="readings[index].memo"                            
+                        >
+                        <!-- @blur="saverow({year: row.year, month: row.month, day: row.day, boiler1_reading: readings[index].boiler1_reading, memo: readings[index].memo})"> -->
+                    </div>
+
+                    <div class="flex items-center">
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded shadow-sm transition-colors text-xs h-5 flex items-center" @click="saverow(readings[index])">保存</button>
+                    </div>
+                    <!-- @click="saverow({year: row.year, month: row.month, day: row.day, boiler1_reading: readings[index].boiler1_reading, boiler2_reading: readings[index].boiler2_reading, boiler3_reading: readings[index].boiler3_reading, boiler4_reading: readings[index].boiler4_reading, tansan_reading: readings[index].tansan_reading, memo: readings[index].memo})"> -->
+
+                </div>
+            </template>
+
+            
+            <!-- Summary Rows (spanning 10 columns now) -->
+            <!-- 1. 税抜計 -->
+            <div class="grid grid-cols-subgrid text-center border-b border-gray-200 text-sm bg-gray-50" style="grid-column: span 20 / span 20">
+                <div class="col-span-2 px-2 border-r border-gray-200"></div>
+                <div class="col-span-14 px-2 border-r border-gray-200"></div>
+                <div class="col-span-2 px-2 border-r border-gray-200 font-bold col-span-2">&nbsp;</div>
+                <div class="px-2">&nbsp;</div>
+                <div class="px-2">&nbsp;</div>
+            </div>
+            <!-- 2. 消費税 -->
+            <div class="grid grid-cols-subgrid text-center border-b border-gray-200 text-sm bg-gray-50" style="grid-column: span 20 / span 20">
+                <div class="col-span-2 px-2 border-r border-gray-200"></div>
+                <div class="col-span-14 px-2 border-r border-gray-200"></div>
+                <div class="col-span-2 px-2 border-r border-gray-200 font-bold col-span-2">&nbsp;</div>
+                <div class="px-2">&nbsp;</div>
+                <div class="px-2">&nbsp;</div>
+            </div>
+            <!-- 3. 税込合計 -->
+            <div class="grid grid-cols-subgrid text-center border-b border-gray-200 text-sm bg-gray-50" style="grid-column: span 20 / span 20">
+                <div class="col-span-2 px-2 border-r border-gray-200"></div>
+                <div class="col-span-14 px-2 border-r border-gray-200"></div>
+                <div class="col-span-2 px-2 border-r border-gray-200 font-bold col-span-2">&nbsp;</div>
+                <div class="px-2">&nbsp;</div>
+                <div class="px-2">&nbsp;</div>
+            </div>
+            <!-- 4. 税込合計 (Input) -->
+            <div class="grid grid-cols-subgrid text-center border-b border-gray-200 text-sm" style="grid-column: span 20 / span 20">
+                <div class="col-span-2 px-2 border-r border-gray-200"></div>
+                <div class="px-2 border-r border-gray-200" style="grid-column: span 11;"></div>
+                <div class="col-span-2 px-2 border-r border-gray-200 font-bold bg-gray-50 col-span-2">支払日</div>
+                <div class="px-1 col-span-2">
+                    <input type="date" class="w-full text-center p-1 border-0 focus:outline-none h-full" x-model="manualPaymentDate">
+                </div>
+                <div class="px-2">&nbsp;</div>
+            </div>
+            <!-- 5. 消費税 (Input) -->
+            <div class="grid grid-cols-subgrid text-center border-b border-gray-200 text-sm" style="grid-column: span 20 / span 20">
+                <div class="col-span-2 px-2 border-r border-gray-200"></div>
+                <div class="px-2 border-r border-gray-200" style="grid-column: span 11;"></div>
+                <div class="col-span-2 px-2 border-r border-gray-200 font-bold bg-gray-50 col-span-2">期間</div>
+                <div class="px-1 col-span-2">
+                    <input type="number" class="w-full text-center p-1 border-0 focus:outline-none h-full" x-model.number="manualTax">
+                </div>
+                <div class="px-2">&nbsp;</div>
+            </div>
+            <!-- 6. 税抜計 -->
+            <div class="grid grid-cols-subgrid text-center text-sm bg-gray-50" style="grid-column: span 20 / span 20">
+                <div class="col-span-2 px-2 border-r border-gray-200"></div>
+                <div class="px-2 border-r border-gray-200" style="grid-column: span 11;"></div>
+                <div class="col-span-2 px-2 border-r border-gray-200 font-bold col-span-2">使用量</div>
+                <div class="px-2 col-span-2" x-text="getManualTaxExcl().toLocaleString()"></div>
+                <div class="px-2">&nbsp;</div>
+            </div>
+        </div>
+        </div>
+    </div>
+</body>
+</html>
