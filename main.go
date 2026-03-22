@@ -77,6 +77,8 @@ func main() {
 		authorized.POST("/api/gas-readings", controllers.SaveGasReadingHandler)
 	}
 
+	router.GET("/api/shiire", controllers.ShiiremeisaiHandler)
+
 	// Define the route for the main page
 	router.GET("/ranges", func(c *gin.Context) {
 		// Serve the static index.html from the assets folder

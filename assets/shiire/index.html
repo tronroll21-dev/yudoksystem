@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Matrix</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Themes ── */
+    body {
+      --bg:                    #0f1117;
+      --bg-cell:               #141720;
+      --bg-chrome:             #0f1117;
+      --bg-has-value:          #16213a;
+      --bg-focus:              #1a2035;
+      --bg-gap:                #1e2330;
+      --border:                #1e293b;
+      --text:                  #e2e8f0;
+      --text-header:           #94a3b8;
+      --text-dim:              #475569;
+      --text-muted:            #334155;
+      --text-placeholder:      #1e293b;
+      --text-placeholder-focus:#334155;
+      --accent:                #38bdf8;
+      --focus-ring:            #3b82f6;
+    }
+
+    body.light {
+      --bg:                    #f1f5f9;
+      --bg-cell:               #ffffff;
+      --bg-chrome:             #e2e8f0;
+      --bg-has-value:          #eff6ff;
+      --bg-focus:              #dbeafe;
+      --bg-gap:                #cbd5e1;
+      --border:                #cbd5e1;
+      --text:                  #0f172a;
+      --text-header:           #334155;
+      --text-dim:              #64748b;
+      --text-muted:            #94a3b8;
+      --text-placeholder:      #cbd5e1;
+      --text-placeholder-focus:#94a3b8;
+      --accent:                #0369a1;
+      --focus-ring:            #3b82f6;
+    }
+
+    body {
+      font-family: 'Courier New', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .topbar-left h1 {
+      font-size: 1.1rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 0.25rem;
+    }
+
+    .topbar-left .meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Toggle switch ── */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      user-select: none;
+      cursor: pointer;
+    }
+
+    .toggle-track {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      background: var(--border);
+      border-radius: 999px;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .toggle-track.on { background: var(--focus-ring); }
+
+    .toggle-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 14px;
+      height: 14px;
+      background: var(--bg);
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.25s;
+    }
+
+    .toggle-track.on .toggle-thumb { transform: translateX(16px); }
+
+    /* ── Grid container ── */
+    .matrix {
+      display: grid;
+      grid-template-columns: var(--grid-cols);
+      gap: 2px;
+      background: var(--bg-gap);
+      width: max-content;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    /* ── Shared cell base ── */
+    .cell {
+      background: var(--bg-chrome);
+      padding: 0;
+      min-width: 120px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background 0.25s, color 0.25s, border-color 0.25s;
+    }
+
+    /* ── Corner / header row ── */
+    .cell--corner,
+    .cell--col-header {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0 0.75rem;
+      justify-content: flex-start;
+      user-select: none;
+    }
+
+    .cell--col-header {
+      justify-content: center;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Row header (contractor) ── */
+    .cell--row-header {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: var(--text-header);
+      padding: 0 0.75rem;
+      justify-content: flex-start;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    /* ── Data cell ── */
+    .cell--data {
+      background: var(--bg-cell);
+      transition: background 0.15s;
+    }
+
+    .cell--data:focus-within {
+      background: var(--bg-focus);
+      outline: 1px solid var(--focus-ring);
+      outline-offset: -1px;
+      z-index: 1;
+    }
+
+    .cell--data.has-value { background: var(--bg-has-value); }
+
+    .cell--data input {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      text-align: right;
+      padding: 0 0.75rem;
+      cursor: text;
+    }
+
+    .cell--data input::placeholder      { color: var(--text-placeholder); }
+    .cell--data input:focus::placeholder { color: var(--text-placeholder-focus); }
+
+    /* ── Row total ── */
+    .cell--total {
+      font-size: 0.8rem;
+      color: var(--accent);
+      padding: 0 0.75rem;
+      justify-content: flex-end;
+      border-left: 1px solid var(--border);
+    }
+
+    /* ── Column total row ── */
+    .cell--col-total {
+      font-size: 0.8rem;
+      color: var(--accent);
+      padding: 0 0.75rem;
+      justify-content: flex-end;
+      border-top: 1px solid var(--border);
+    }
+
+    .cell--col-total.label {
+      color: var(--text-dim);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      justify-content: flex-start;
+    }
+
+    .cell--grand-total {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      padding: 0 0.75rem;
+      justify-content: flex-end;
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { height: 4px; background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+  </style>
+</head>
+<body x-data="expenseMatrix()" x-init="init()" :class="{ light: !darkMode }">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Expense Matrix</h1>
+      <p class="meta" x-text="yearMonth"></p>
+    </div>
+    <label class="theme-toggle">
+      <span x-text="darkMode ? 'Dark' : 'Light'"></span>
+      <div class="toggle-track" :class="{ on: darkMode }" @click="darkMode = !darkMode">
+        <div class="toggle-thumb"></div>
+      </div>
+    </label>
+  </div>
+
+  <div
+    class="matrix"
+    :style="`--grid-cols: 160px repeat(${categories.length}, 1fr) 120px`"
+  >
+
+    <!-- ── Header row ── -->
+    <div class="cell cell--corner">Contractor</div>
+    <template x-for="cat in categories" :key="cat">
+      <div class="cell cell--col-header" x-text="cat"></div>
+    </template>
+    <div class="cell cell--col-header">Total</div>
+
+    <!-- ── Data rows ── -->
+    <template x-for="contractor in contractors" :key="contractor">
+
+	
+	<div style="display:contents;">
+
+      <!-- Row header -->
+      <div class="cell cell--row-header" x-text="contractor"></div>
+
+      <!-- Data cells -->
+      <template x-for="cat in categories" :key="cat">
+        <div
+          class="cell cell--data"
+          :class="{ 'has-value': getAmount(contractor, cat) !== null }"
+        >
+          <input
+            type="number"
+            min="0"
+            step="1"
+            placeholder="—"
+            :value="getAmount(contractor, cat) ?? ''"
+            @change="setAmount(contractor, cat, $event.target.value)"
+          />
+        </div>
+
+</div>
+      </template>
+
+      <!-- Row total -->
+      <div class="cell cell--total" x-text="fmt(rowTotal(contractor))"></div>
+
+    </template>
+
+    <!-- ── Column totals row ── -->
+    <div class="cell cell--col-total label">Total</div>
+    <template x-for="cat in categories" :key="cat">
+      <div class="cell cell--col-total" x-text="fmt(colTotal(cat))"></div>
+    </template>
+    <div class="cell cell--grand-total" x-text="fmt(grandTotal())"></div>
+
+  </div>
+
+  <script>
+    function expenseMatrix() {
+      return {
+        darkMode: true,
+        yearMonth: '202603',
+        apiUrl: '/api/shiiremeisai?year_month=',
+
+        // ── Source data ─────────────────────────────────────────────────────
+        records: [],
+
+        // ── Derived axis lists (populated in init) ──────────────────────────
+        contractors: [],
+        categories:  [],
+
+        async fetchRecords() {
+                    this.loading = true;
+                    try {
+                        const response = await fetch(this.apiUrl + this.yearMonth);
+                        if (!response.ok) throw new Error('データ取得に失敗しました。');
+                        this.records = await response.json();
+                    } catch (error) {
+                        this.showNotification('データ取得中にエラーが発生しました。', 'error');
+                        console.error(error);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+        async init() {
+                          // 全データ取得 (Read All)
+          await this.fetchRecords();
+          this.contractors = [...new Set(this.records.map(r => r.contractor_id))].sort();
+          this.categories  = [...new Set(this.records.map(r => r.expense_category))].sort();
+        },
+
+        // ── Getter ──────────────────────────────────────────────────────────
+        // Returns the amount for a contractor + category, or null if absent.
+        getAmount(contractorId, category) {
+          const rec = this.records.find(
+            r => r.contractor_id    === contractorId &&
+                 r.expense_category === category
+          );
+          return rec ? rec.amount : null;
+        },
+
+        // ── Setter ──────────────────────────────────────────────────────────
+        // Updates an existing record or inserts a new one.
+        // Passing an empty / zero value removes the record.
+        setAmount(contractorId, category, rawValue) {
+          const amount = parseInt(rawValue, 10);
+          const idx = this.records.findIndex(
+            r => r.contractor_id    === contractorId &&
+                 r.expense_category === category
+          );
+
+          if (isNaN(amount) || rawValue === '') {
+            if (idx !== -1) this.records.splice(idx, 1);
+            return;
+          }
+
+          if (idx !== -1) {
+            this.records[idx].amount = amount;
+          } else {
+            this.records.push({
+              year_month:       this.yearMonth,
+              contractor_id:    contractorId,
+              expense_category: category,
+              amount,
+            });
+            if (!this.contractors.includes(contractorId)) {
+              this.contractors = [...this.contractors, contractorId].sort();
+            }
+            if (!this.categories.includes(category)) {
+              this.categories = [...this.categories, category].sort();
+            }
+          }
+        },
+
+        // ── Totals ──────────────────────────────────────────────────────────
+        rowTotal(contractorId) {
+          return this.records
+            .filter(r => r.contractor_id === contractorId)
+            .reduce((sum, r) => sum + r.amount, 0);
+        },
+
+        colTotal(category) {
+          return this.records
+            .filter(r => r.expense_category === category)
+            .reduce((sum, r) => sum + r.amount, 0);
+        },
+
+        grandTotal() {
+          return this.records.reduce((sum, r) => sum + r.amount, 0);
+        },
+
+        fmt(n) {
+          return n === 0 ? '—' : n.toLocaleString('en-US');
+        },
+      };
+    }
+  </script>
+</body>
+</html>
