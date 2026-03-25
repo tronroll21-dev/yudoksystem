@@ -4,318 +4,205 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Expense Matrix</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    /* ── Themes ── */
-    body {
-      --bg:                    #0f1117;
-      --bg-cell:               #141720;
-      --bg-chrome:             #0f1117;
-      --bg-has-value:          #16213a;
-      --bg-focus:              #1a2035;
-      --bg-gap:                #1e2330;
-      --border:                #1e293b;
-      --text:                  #e2e8f0;
-      --text-header:           #94a3b8;
-      --text-dim:              #475569;
-      --text-muted:            #334155;
-      --text-placeholder:      #1e293b;
-      --text-placeholder-focus:#334155;
-      --accent:                #38bdf8;
-      --focus-ring:            #3b82f6;
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"Courier New"', 'monospace'],
+          },
+        }
+      }
     }
+  </script>
+  <style type="text/css">
+    [x-cloak] { display: none !important; }
+    
+    /* Custom scrollbar styling to match the theme */
+    ::-webkit-scrollbar { height: 4px; }
+    .dark ::-webkit-scrollbar { background: #0f1117; }
+    .dark ::-webkit-scrollbar-thumb { background: #1e293b; }
+    ::-webkit-scrollbar { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; }
 
-    body.light {
-      --bg:                    #f1f5f9;
-      --bg-cell:               #ffffff;
-      --bg-chrome:             #e2e8f0;
-      --bg-has-value:          #eff6ff;
-      --bg-focus:              #dbeafe;
-      --bg-gap:                #cbd5e1;
-      --border:                #cbd5e1;
-      --text:                  #0f172a;
-      --text-header:           #334155;
-      --text-dim:              #64748b;
-      --text-muted:            #94a3b8;
-      --text-placeholder:      #cbd5e1;
-      --text-placeholder-focus:#94a3b8;
-      --accent:                #0369a1;
-      --focus-ring:            #3b82f6;
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
     }
-
-    body {
-      font-family: 'Courier New', monospace;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 2rem;
-      transition: background 0.25s, color 0.25s;
-    }
-
-    /* ── Topbar ── */
-    .topbar {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 2rem;
-    }
-
-    .topbar-left h1 {
-      font-size: 1.1rem;
-      font-weight: 400;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 0.25rem;
-    }
-
-    .topbar-left .meta {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-    }
-
-    /* ── Toggle switch ── */
-    .theme-toggle {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      user-select: none;
-      cursor: pointer;
-    }
-
-    .toggle-track {
-      position: relative;
-      width: 36px;
-      height: 20px;
-      background: var(--border);
-      border-radius: 999px;
-      transition: background 0.2s;
-      flex-shrink: 0;
-    }
-
-    .toggle-track.on { background: var(--focus-ring); }
-
-    .toggle-thumb {
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 14px;
-      height: 14px;
-      background: var(--bg);
-      border-radius: 50%;
-      transition: transform 0.2s, background 0.25s;
-    }
-
-    .toggle-track.on .toggle-thumb { transform: translateX(16px); }
-
-    /* ── Grid container ── */
-    .matrix {
-      display: grid;
-      grid-template-columns: var(--grid-cols);
-      gap: 2px;
-      background: var(--bg-gap);
-      width: max-content;
-      max-width: 100%;
-      overflow-x: auto;
-    }
-
-    /* ── Shared cell base ── */
-    .cell {
-      background: var(--bg-chrome);
-      padding: 0;
-      min-width: 120px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      transition: background 0.25s, color 0.25s, border-color 0.25s;
-    }
-
-    /* ── Corner / header row ── */
-    .cell--corner,
-    .cell--col-header {
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      padding: 0 0.75rem;
-      justify-content: flex-start;
-      user-select: none;
-    }
-
-    .cell--col-header {
-      justify-content: center;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
-    }
-
-    /* ── Row header (contractor) ── */
-    .cell--row-header {
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      color: var(--text-header);
-      padding: 0 0.75rem;
-      justify-content: flex-start;
-      border-right: 1px solid var(--border);
-      white-space: nowrap;
-    }
-
-    /* ── Data cell ── */
-    .cell--data {
-      background: var(--bg-cell);
-      transition: background 0.15s;
-    }
-
-    .cell--data:focus-within {
-      background: var(--bg-focus);
-      outline: 1px solid var(--focus-ring);
-      outline-offset: -1px;
-      z-index: 1;
-    }
-
-    .cell--data.has-value { background: var(--bg-has-value); }
-
-    .cell--data input {
-      width: 100%;
-      height: 100%;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.85rem;
-      text-align: right;
-      padding: 0 0.75rem;
-      cursor: text;
-    }
-
-    .cell--data input::placeholder      { color: var(--text-placeholder); }
-    .cell--data input:focus::placeholder { color: var(--text-placeholder-focus); }
-
-    /* ── Row total ── */
-    .cell--total {
-      font-size: 0.8rem;
-      color: var(--accent);
-      padding: 0 0.75rem;
-      justify-content: flex-end;
-      border-left: 1px solid var(--border);
-    }
-
-    /* ── Column total row ── */
-    .cell--col-total {
-      font-size: 0.8rem;
-      color: var(--accent);
-      padding: 0 0.75rem;
-      justify-content: flex-end;
-      border-top: 1px solid var(--border);
-    }
-
-    .cell--col-total.label {
-      color: var(--text-dim);
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      justify-content: flex-start;
-    }
-
-    .cell--grand-total {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--accent);
-      padding: 0 0.75rem;
-      justify-content: flex-end;
-      border-top: 1px solid var(--border);
-      border-left: 1px solid var(--border);
-    }
-
-    /* scrollbar */
-    ::-webkit-scrollbar { height: 4px; background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); }
   </style>
 </head>
-<body x-data="expenseMatrix()" x-init="init()" :class="{ light: !darkMode }">
+<body 
+  x-data="expenseMatrix()" 
+  x-init="init()" 
+  :class="{ 'dark': darkMode }" 
+  class="font-mono min-h-screen p-2 transition-colors duration-200 bg-slate-100 text-slate-900 dark:bg-[#0f1117] dark:text-slate-200"
+>
 
-  <div class="topbar">
-    <div class="topbar-left">
-      <h1>Expense Matrix</h1>
-      <p class="meta" x-text="yearMonth"></p>
+  <div class="flex items-baseline justify-between mb-8">
+    <div class="flex items-center gap-4">
+      <button @click="prevMonth()" class="text-2xl font-bold hover:text-blue-500 cursor-pointer transition-colors">&lt;</button>
+      <h1 class="text-2xl font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400" x-text="title"></h1>
+      <button @click="nextMonth()" class="text-2xl font-bold hover:text-blue-500 cursor-pointer transition-colors">&gt;</button>
     </div>
-    <label class="theme-toggle">
-      <span x-text="darkMode ? 'Dark' : 'Light'"></span>
-      <div class="toggle-track" :class="{ on: darkMode }" @click="darkMode = !darkMode">
-        <div class="toggle-thumb"></div>
-      </div>
-    </label>
+    <div class="flex items-center gap-6">
+      <template x-if="records.length > 0">
+        <button 
+          @click="openAddContractorModal()" 
+          class="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded text-xs tracking-widest uppercase font-bold transition-colors shadow-lg"
+        >
+          取引先追加
+        </button>
+      </template>
+      <template x-if="records.length === 0">
+        <button 
+          @click="initializeData()" 
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs tracking-widest uppercase font-bold transition-colors shadow-lg"
+        >
+          Initialize Data
+        </button>
+      </template>
+      <label class="flex items-center gap-2 text-[0.65rem] tracking-widest uppercase text-slate-500 dark:text-slate-400 cursor-pointer select-none" @click="darkMode = !darkMode">
+        <span x-text="darkMode ? 'Dark' : 'Light'"></span>
+        <div class="relative w-9 h-5 rounded-full transition-colors duration-200 shrink-0 bg-slate-300 dark:bg-slate-700" :class="{ 'bg-blue-500 dark:bg-blue-600': darkMode }">
+          <div class="absolute top-[3px] left-[3px] w-3.5 h-3.5 rounded-full transition-transform duration-200 bg-white dark:bg-[#0f1117]" :class="{ 'translate-x-4': darkMode }"></div>
+        </div>
+      </label>
+    </div>
   </div>
 
-  <div
-    class="matrix"
-    :style="`--grid-cols: 160px repeat(${categories.length}, 1fr) 120px`"
-  >
+  <div x-show="records.length > 0" x-cloak>
+    <div
+      class="grid gap-[1px] w-max max-w-full overflow-x-auto bg-slate-300 dark:bg-[#1e2330]"
+      :style="`grid-template-columns: max-content max-content max-content minmax(90px, 1fr) max-content repeat(${categories.length}, minmax(90px, 1fr))`"
+    >
 
-    <!-- ── Header row ── -->
-    <div class="cell cell--corner">Contractor</div>
-    <template x-for="cat in categories" :key="cat">
-      <div class="cell cell--col-header" x-text="cat"></div>
-    </template>
-    <div class="cell cell--col-header">Total</div>
-
-    <!-- ── Data rows ── -->
-    <template x-for="contractor in contractors" :key="contractor">
-
-	
-	<div style="display:contents;">
-
-      <!-- Row header -->
-      <div class="cell cell--row-header" x-text="contractor"></div>
-
-      <!-- Data cells -->
+      <!-- ── Header row ── -->
+      <div class=" flex items-center px-1 text-[0.65rem] tracking-widest uppercase select-none bg-slate-200 dark:bg-[#0f1117] text-slate-500 dark:text-slate-400">取引先名</div>
+      <div class=" flex items-center px-1 text-[0.65rem] tracking-widest uppercase select-none bg-slate-200 dark:bg-[#0f1117] text-slate-500 dark:text-slate-400">摘要</div>
+      <div class=" flex items-center justify-center text-center text-[0.65rem] tracking-widest uppercase select-none border-b border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-slate-500 dark:text-slate-400">合計金額</div>
+      <div class=" flex items-center justify-center text-center text-[0.65rem] tracking-widest uppercase select-none border-b border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-slate-500 dark:text-slate-400">消費税</div>
+      <div class=" flex items-center justify-center text-center text-[0.65rem] tracking-widest uppercase select-none border-b border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-slate-500 dark:text-slate-400">税抜金額</div>
       <template x-for="cat in categories" :key="cat">
-        <div
-          class="cell cell--data"
-          :class="{ 'has-value': getAmount(contractor, cat) !== null }"
-        >
-          <input
-            type="number"
-            min="0"
-            step="1"
-            placeholder="—"
-            :value="getAmount(contractor, cat) ?? ''"
-            @change="setAmount(contractor, cat, $event.target.value)"
-          />
-        </div>
-
-</div>
+        <div class=" flex items-center justify-center text-center px-1 text-[0.65rem] tracking-widest uppercase select-none border-b border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-slate-500 dark:text-slate-400" x-text="cat"></div>
       </template>
 
-      <!-- Row total -->
-      <div class="cell cell--total" x-text="fmt(rowTotal(contractor))"></div>
+      <!-- ── Data rows ── -->
+      <template x-for="contractor in contractors" :key="contractor.id">
+        <div style="display:contents;">
+          <!-- Row header -->
+          <div class=" flex items-center px-1 text-[0.7rem] tracking-wider whitespace-nowrap border-r border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-slate-700 dark:text-slate-400" x-text="contractor.name"></div>
+          <div class=" flex items-center px-1 text-[0.7rem] tracking-wider whitespace-nowrap border-r border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-slate-700 dark:text-slate-400" x-text="getTekiyou(contractor.id)"></div>
+          
+          <!-- Row total -->
+          <div class=" flex items-center justify-end text-[0.8rem] border-l border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-blue-700 dark:text-sky-400" x-text="fmt(rowTotalTax(contractor.id))"></div>
+          <!-- Shouhizei -->
+          <div class=" flex items-center justify-end text-[0.8rem] border-l border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-blue-700 dark:text-sky-400">
+            <input
+              class="w-full h-full bg-transparent border-none outline-none text-[0.85rem] text-right px-1 cursor-text text-slate-900 dark:text-slate-200 placeholder-slate-300 dark:placeholder-slate-800 focus:placeholder-slate-400 dark:focus:placeholder-slate-600"
+              type="number"
+              min="0"
+              step="1"
+              placeholder="—"
+              :value="getShouhizei(contractor.id) ?? ''"
+              @change="setShouhizei(contractor.id, $event.target.value)"
+            />
+          </div>
+          <div class=" flex items-center justify-end text-[0.8rem] border-l border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-blue-700 dark:text-sky-400" x-text="fmt(rowTotal(contractor.id))"></div>
 
-    </template>
+          <!-- Data cells -->
+          <template x-for="cat in categories" :key="cat">
+            <div
+              class=" flex items-center justify-center relative transition-colors duration-150 bg-white dark:bg-[#141720] focus-within:bg-blue-50 dark:focus-within:bg-slate-800 focus-within:ring-1 focus-within:ring-inset focus-within:ring-blue-500 focus-within:z-10"
+              :class="{ 'bg-blue-50 dark:bg-[#16213a]': getAmount(contractor.id, cat) !== null }"
+            >
+              <input
+                class="w-full h-full bg-transparent border-none outline-none text-[0.85rem] text-right px-1 cursor-text text-slate-900 dark:text-slate-200 placeholder-slate-300 dark:placeholder-slate-800 focus:placeholder-slate-400 dark:focus:placeholder-slate-600"
+                :class="{'ring-1 ring-inset ring-red-500': getAmount(contractor.id, cat) !== getOrigAmount(contractor.id, cat) }"
+                type="number"
+                min="0"
+                step="1"
+                placeholder="—"
+                :value="getAmount(contractor.id, cat) ?? ''"
+                @change="setAmount(contractor.id, cat, $event.target.value)"
+              />
+            </div>
+          </template>
+        </div>
+      </template>
 
-    <!-- ── Column totals row ── -->
-    <div class="cell cell--col-total label">Total</div>
-    <template x-for="cat in categories" :key="cat">
-      <div class="cell cell--col-total" x-text="fmt(colTotal(cat))"></div>
-    </template>
-    <div class="cell cell--grand-total" x-text="fmt(grandTotal())"></div>
+      <!-- ── Column totals row ── -->
+      <div class=" flex items-center justify-center px-1 text-[0.65rem] tracking-widest uppercase border-t border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-slate-500 dark:text-slate-400 col-span-4">合計</div>
+      <div class=" flex items-center justify-end text-[0.85rem] font-bold border-t border-l border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-blue-700 dark:text-sky-400" x-text="fmt(grandTotal())"></div>
+      <template x-for="cat in categories" :key="cat">
+        <div class=" flex items-center justify-end px-1 text-[0.8rem] border-t border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-blue-700 dark:text-sky-400" x-text="fmt(colTotal(cat))"></div>
+      </template>
 
+    </div>
+  </div>
+
+  <template x-if="records.length === 0">
+    <div class="flex flex-col items-center justify-center py-20 text-slate-500 dark:text-slate-400">
+      <p class="text-lg tracking-widest uppercase mb-4">指定された月度のデータが見つかりませんでした。</p>
+      <p class="text-sm">「データ初期化」をクリックして、前月のデータを指定月度へ転記してください。</p>
+    </div>
+  </template>
+
+  <!-- Add Contractor Modal -->
+  <div 
+    x-show="showAddModal" 
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-cloak
+  >
+    <div 
+      class="bg-white dark:bg-[#141720] rounded-lg shadow-xl max-w-md w-full max-h-[80vh] flex flex-col"
+      @click.away="showAddModal = false"
+    >
+      <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+        <h3 class="text-sm font-bold tracking-widest uppercase text-slate-500">Available Contractors</h3>
+        <button @click="showAddModal = false" class="text-slate-400 hover:text-slate-600">&times;</button>
+      </div>
+      <div class="overflow-y-auto p-2">
+        <template x-for="c in availableContractors" :key="c.contractor_id">
+          <button 
+            @click="addContractor(c)"
+            class="w-full text-left p-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded flex flex-col gap-1 border-b border-slate-100 dark:border-slate-800 last:border-0"
+          >
+            <span class="text-sm font-bold text-slate-700 dark:text-slate-200" x-text="c.contractor_name"></span>
+            <span class="text-[0.65rem] text-slate-400 uppercase tracking-wider" x-text="c.tekiyou || '(No remarks)'"></span>
+          </button>
+        </template>
+        <template x-if="availableContractors.length === 0">
+          <div class="p-8 text-center text-slate-400 text-xs uppercase tracking-widest">No contractors available to add.</div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0 transform translate-y-4"
+      x-transition:enter-end="opacity-100 transform translate-y-0"
+      x-transition:leave="transition ease-in duration-300"
+      x-transition:leave-start="opacity-100 transform translate-y-0"
+      x-transition:leave-end="opacity-0 transform translate-y-4" @click.away="toast.show = false"
+      class="fixed bottom-4 left-1/2 -translate-x-1/2 p-4 rounded-md text-white z-50 shadow-lg"
+      :class="{ 'bg-green-600': toast.type === 'success', 'bg-red-600': toast.type === 'error' }"
+      x-cloak>
+      <span x-text="toast.message"></span>
   </div>
 
   <script>
     function expenseMatrix() {
       return {
-        darkMode: true,
-        yearMonth: '202603',
-        apiUrl: '/api/shiiremeisai?year_month=',
+        darkMode: false,
+        apiUrl: '/api/shiire?year_month=',
 
         // ── Source data ─────────────────────────────────────────────────────
         records: [],
@@ -323,76 +210,380 @@
         // ── Derived axis lists (populated in init) ──────────────────────────
         contractors: [],
         categories:  [],
+        title: '',
 
-        async fetchRecords() {
-                    this.loading = true;
-                    try {
-                        const response = await fetch(this.apiUrl + this.yearMonth);
-                        if (!response.ok) throw new Error('データ取得に失敗しました。');
-                        this.records = await response.json();
-                    } catch (error) {
-                        this.showNotification('データ取得中にエラーが発生しました。', 'error');
-                        console.error(error);
-                    } finally {
-                        this.loading = false;
-                    }
-                },
+        showAddModal: false,
+        availableContractors: [],
 
-        async init() {
-                          // 全データ取得 (Read All)
-          await this.fetchRecords();
-          this.contractors = [...new Set(this.records.map(r => r.contractor_id))].sort();
-          this.categories  = [...new Set(this.records.map(r => r.expense_category))].sort();
+        toast: {
+            show: false,
+            message: '',
+            type: 'success'
         },
 
-        // ── Getter ──────────────────────────────────────────────────────────
-        // Returns the amount for a contractor + category, or null if absent.
-        getAmount(contractorId, category) {
+        getCurrentYearMonth() {
+            const now = new Date();
+            let year = now.getFullYear();
+            let month = now.getMonth(); // 0-indexed
+
+            if (now.getDate() >= 21) {
+                if (month === 11) { // December
+                    year += 1;
+                    month = 0; // January
+                } else {
+                    month += 1;
+                }
+            }
+
+            const mm = String(month + 1).padStart(2, '0'); // back to 1-indexed
+            return `${year}${mm}`;
+        },
+
+        updateAxisLists() {
+            // Sort contractors by contractor_id
+            this.contractors = this.records
+                .reduce((acc, r) => {
+                    if (!acc.some(x => x.name === r.contractor_name)) {
+                        acc.push({ id: r.contractor_id, name: r.contractor_name });
+                    }
+                    return acc;
+                }, [])
+                .sort((a, b) => a.id - b.id);
+                //.map(x => x.name);
+
+            // Sort categories by expense_category_id
+            this.categories = this.records
+                .reduce((acc, r) => {
+                    if (!acc.some(x => x.name === r.expense_category)) {
+                        acc.push({ id: r.expense_category_id, name: r.expense_category });
+                    }
+                    return acc;
+                }, [])
+                .sort((a, b) => a.id - b.id)
+                .map(x => x.name);
+        },
+
+        async fetchRecords() {
+            this.loading = true;
+
+            const params = new URLSearchParams(window.location.search);
+            const yearMonth = params.get('year_month') ?? this.getCurrentYearMonth();
+            
+            this.title = `仕入明細 - ${yearMonth.slice(0, 4)}年${yearMonth.slice(4)}月`;
+
+            try {
+                const response = await fetch(this.apiUrl + yearMonth);
+                if (!response.ok) throw new Error('データ取得に失敗しました。');
+                let fetchedRecords = await response.json();
+                this.records = (fetchedRecords || []).map(r => ({
+                    ...r,
+                    original_amount: r.amount
+                }));
+
+            } catch (error) {
+                this.showToast('データ取得中にエラーが発生しました。', 'error');
+                console.error(error);
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async initializeData() {
+            const params = new URLSearchParams(window.location.search);
+            const yearMonthStr = params.get('year_month') ?? this.getCurrentYearMonth();
+            const yearMonth = parseInt(yearMonthStr, 10);
+
+            try {
+                const response = await fetch('/api/shiire/init', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ year_month: yearMonth })
+                });
+                if (!response.ok) throw new Error('初期化に失敗しました。');
+                
+                let initializedRecords = await response.json();
+                this.records = (initializedRecords || []).map(r => ({
+                    ...r,
+                    original_amount: r.amount
+                }));
+                
+                this.updateAxisLists();
+                this.showToast('データを初期化しました。', 'success');
+            } catch (error) {
+                this.showToast('初期化中にエラーが発生しました。', 'error');
+                console.error(error);
+            }
+        },
+
+        async openAddContractorModal() {
+          const params = new URLSearchParams(window.location.search);
+          const yearMonth = params.get('year_month') ?? this.getCurrentYearMonth();
+          
+          try {
+            const response = await fetch(`/api/shiire/available-contractors?year_month=${yearMonth}`);
+            if (!response.ok) throw new Error('Failed to fetch available contractors');
+            this.availableContractors = await response.json();
+            this.showAddModal = true;
+          } catch (error) {
+            this.showToast('取引先リストの取得に失敗しました。', 'error');
+            console.error(error);
+          }
+        },
+
+        async addContractor(c) {
+          const params = new URLSearchParams(window.location.search);
+          const yearMonthStr = params.get('year_month') ?? this.getCurrentYearMonth();
+          const yearMonth = parseInt(yearMonthStr, 10);
+
+          try {
+            const response = await fetch('/api/shiire/add-contractor', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                year_month: yearMonth,
+                contractor_id: c.contractor_id,
+                tekiyou: c.tekiyou
+              })
+            });
+
+            if (!response.ok) throw new Error('Failed to add contractor');
+            
+            let updatedRecords = await response.json();
+            this.records = (updatedRecords || []).map(r => ({
+                ...r,
+                original_amount: r.amount
+            }));
+            
+            this.updateAxisLists();
+            this.showAddModal = false;
+            this.showToast('取引先を追加しました。', 'success');
+          } catch (error) {
+            this.showToast('取引先の追加に失敗しました。', 'error');
+            console.error(error);
+          }
+        },
+
+        deleteRecord(record, idx) {
+            fetch('/api/shiire', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(record)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('削除に失敗しました。');
+                return response.json();
+            })
+            .then(data => {
+              const idx = this.records.findIndex(
+              r => r.contractor_id    === data.record.contractor_id &&
+                  r.expense_category_id === data.record.expense_category_id
+              );
+              if (idx !== -1) this.records.splice(idx, 1);
+
+              if(!this.records.some(r => r.contractor_id === data.record.contractor_id)){
+                const contractorIdx = this.contractors.findIndex(
+                    c => c.id == data.record.contractor_id
+                );
+                this.contractors.splice(contractorIdx, 1);
+              }
+
+
+              this.showToast('削除しました。', 'success');
+
+            })
+            .catch(error => {
+                this.showToast('削除中にエラーが発生しました。', 'error');
+                console.error(error);
+            });
+        },
+
+        updateRecord(record) {
+            fetch('/api/shiire', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(record)
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('保存に失敗しました。');
+                return response.json();
+            })
+            .then(data => {
+              const idx = this.records.findIndex(
+              r => r.contractor_id    === data.record.contractor_id &&
+                  r.expense_category_id === data.record.expense_category_id
+              );
+              if(idx !== -1){
+                this.records[idx].amount = data.record.amount;
+              } else {
+                // this.records.push({
+                //   year_month:       data.record.year_month,
+                //   contractor_id:    data.record.contractor_id,
+                //   expense_category_id: data.record.expense_category_id,
+                //   amount: data.record.amount,
+                // });
+              }
+                this.showToast('保存しました。', 'success');
+            })
+            .catch(error => {
+                this.showToast('保存中にエラーが発生しました。', 'error');
+                console.error(error);
+            });
+        },
+
+        goToMonth(yearMonth) {
+          const url = new URL(window.location);
+          url.searchParams.set('year_month', yearMonth);
+          history.pushState({}, '', url);
+          this.init();
+        },
+
+        async prevMonth() {
+          const params = new URLSearchParams(window.location.search);
+          const yearMonth = params.get('year_month') ?? this.getCurrentYearMonth();
+
+          if(yearMonth == '202510'){
+            alert("2025年10月より前のデータはありません。");
+            return;
+          }
+
+          let year = parseInt(yearMonth.slice(0, 4), 10);
+          let month = parseInt(yearMonth.slice(4), 10);
+
+          if (month === 1) {
+              month = 12;
+              year -= 1;
+          } else {
+              month -= 1;
+          }
+
+          this.goToMonth(`${year}${String(month).padStart(2, '0')}`);
+        },
+
+        async nextMonth() {
+          const params = new URLSearchParams(window.location.search);
+          const yearMonth = params.get('year_month') ?? this.getCurrentYearMonth();
+          let year = parseInt(yearMonth.slice(0, 4), 10);
+          let month = parseInt(yearMonth.slice(4), 10);
+
+          if (month === 12) {
+              month = 1;
+              year++;
+          } else {
+              month++;
+          }
+          this.goToMonth(`${year}${String(month).padStart(2, '0')}`);
+        },
+
+        async init() {
+          await this.fetchRecords();
+          this.updateAxisLists();
+        },
+
+        getTekiyou(contractorID){
           const rec = this.records.find(
-            r => r.contractor_id    === contractorId &&
+            r => r.contractor_id    === contractorID
+                    );
+          return rec ? rec.contractor_tekiyou : null;
+        },
+
+        async setShouhizei(contractorID, value){
+          const rec = this.records.find(r => r.contractor_id === contractorID);
+          if (!rec) return;
+
+          const params = new URLSearchParams(window.location.search);
+          const yearMonthStr = params.get('year_month') ?? this.getCurrentYearMonth();
+          const yearMonth = parseInt(yearMonthStr, 10);
+
+          try {
+            const response = await fetch('/api/shiire/shouhizei', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                year_month: yearMonth,
+                contractor_id: rec.contractor_id,
+                shouhizei: value
+              })
+            });
+
+            if (!response.ok) throw new Error('消費税の保存に失敗しました。');
+            
+            // Update local state for all records of this contractor
+            this.records.filter(r => r.contractor_id === contractorID)
+                        .forEach(r => r.shouhizei = value);
+
+            this.showToast('摘要を保存しました。', 'success');
+          } catch (error) {
+            this.showToast('摘要の保存中にエラーが発生しました。', 'error');
+            console.error(error);
+          }
+        },
+
+        getShouhizei(contractorID) {
+          const rec = this.records.find(
+            r => r.contractor_id    === contractorID
+          );
+          return rec ? parseInt(rec.shouhizei, 10) : null;
+        },
+
+        getAmount(contractorID, category) {
+          const rec = this.records.find(
+            r => r.contractor_id    === contractorID &&
                  r.expense_category === category
           );
           return rec ? rec.amount : null;
         },
 
-        // ── Setter ──────────────────────────────────────────────────────────
-        // Updates an existing record or inserts a new one.
-        // Passing an empty / zero value removes the record.
-        setAmount(contractorId, category, rawValue) {
+        getOrigAmount(contractorID, category) {
+          const rec = this.records.find(
+            r => r.contractor_id    === contractorID &&
+                 r.expense_category === category
+          );
+          return rec ? rec.original_amount : null;
+        },
+
+        setAmount(contractorID, category, rawValue) {
           const amount = parseInt(rawValue, 10);
           const idx = this.records.findIndex(
-            r => r.contractor_id    === contractorId &&
+            r => r.contractor_id    === contractorID &&
                  r.expense_category === category
           );
 
           if (isNaN(amount) || rawValue === '') {
-            if (idx !== -1) this.records.splice(idx, 1);
+             this.deleteRecord(this.records[idx]);
             return;
           }
 
           if (idx !== -1) {
             this.records[idx].amount = amount;
-          } else {
-            this.records.push({
-              year_month:       this.yearMonth,
-              contractor_id:    contractorId,
-              expense_category: category,
-              amount,
+            this.updateRecord(this.records[idx]);
+          } else {            
+            const params = new URLSearchParams(window.location.search);
+            const yearMonthStr = params.get('year_month') ?? this.getCurrentYearMonth();
+            const yearMonth = parseInt(yearMonthStr, 10);
+
+            const rec = this.records.find(
+              r => r.expense_category == category
+            )
+
+            const expense_category_id = rec ? rec.expense_category_id : null;
+
+            this.updateRecord({
+                  year_month:       yearMonth,
+                  contractor_id:    contractorID,
+                  expense_category_id: expense_category_id,
+                  amount: amount,
             });
-            if (!this.contractors.includes(contractorId)) {
-              this.contractors = [...this.contractors, contractorId].sort();
-            }
-            if (!this.categories.includes(category)) {
-              this.categories = [...this.categories, category].sort();
-            }
           }
         },
 
-        // ── Totals ──────────────────────────────────────────────────────────
-        rowTotal(contractorId) {
+        rowTotal(contractorID) {
           return this.records
-            .filter(r => r.contractor_id === contractorId)
+            .filter(r => r.contractor_id === contractorID)
             .reduce((sum, r) => sum + r.amount, 0);
+        },
+
+        rowTotalTax(contractorID){  
+          return this.rowTotal(contractorID) + this.getShouhizei(contractorID);
         },
 
         colTotal(category) {
@@ -407,6 +598,15 @@
 
         fmt(n) {
           return n === 0 ? '—' : n.toLocaleString('en-US');
+        },
+
+        showToast(message, type = 'success') {
+            this.toast.message = message;
+            this.toast.type = type;
+            this.toast.show = true;
+            setTimeout(() => {
+                this.toast.show = false;
+            }, 2000);
         },
       };
     }

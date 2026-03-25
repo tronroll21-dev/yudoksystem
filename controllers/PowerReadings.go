@@ -5,8 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"tronroll21-dev/yudoksystem/models"
+
+	"github.com/gin-gonic/gin"
 )
 
 func PowerReadingsHandler(c *gin.Context) {
@@ -38,6 +39,7 @@ func PowerReadingsHandler(c *gin.Context) {
 
 func SavePowerReadingHandler(c *gin.Context) {
 	var payload struct {
+		ID           int     `json:"id"`
 		Year         int     `json:"year"`
 		Month        int     `json:"month"`
 		Day          int     `json:"day"`
@@ -52,6 +54,7 @@ func SavePowerReadingHandler(c *gin.Context) {
 	}
 
 	reading := models.PowerReading{
+		ID:           payload.ID,
 		Year:         payload.Year,
 		Month:        payload.Month,
 		Day:          payload.Day,

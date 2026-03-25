@@ -11,6 +11,21 @@ document.addEventListener('alpine:init', () => {
         currentUser: null,
         manualTotalWithTax: 0,
         manualTax: 0,
+        
+        toast: {
+            show: false,
+            message: '',
+            type: 'success'
+        },
+
+        showToast(message, type = 'success') {
+            this.toast.message = message;
+            this.toast.type = type;
+            this.toast.show = true;
+            setTimeout(() => {
+                this.toast.show = false;
+            }, 2000);
+        },
 
         async init() {
             await this.fetchUser();
@@ -53,6 +68,8 @@ document.addEventListener('alpine:init', () => {
             let prevYearNum = this.year;
             if (prevMonthNum === 0) {
                 prevMonthNum = 12;
+            }
+            if (prevMonthNum === 9){
                 prevYearNum = this.year - 1;
             }
 
@@ -88,8 +105,10 @@ document.addEventListener('alpine:init', () => {
                     month: this.month,
                     day: d,
                     power_reading: record ? record.power_reading : null,
+                    power_reading_original: record ? record.power_reading : null,
                     author: record ? record.author : '',
-                    memo: record ? (record.memo && record.memo.Valid ? record.memo.String : '') : ''
+                    memo: record ? (record.memo && record.memo.Valid ? record.memo.String : '') : '',
+                    memo_original: record ? (record.memo && record.memo.Valid ? record.memo.String : '') : ''
                 });
 
                 currentDate.setDate(currentDate.getDate() + 1);
@@ -99,22 +118,36 @@ document.addEventListener('alpine:init', () => {
         },
 
         async prevMonth() {
-            if (this.month === 1) {
-                this.month = 12;
-                this.year--;
-            } else {
-                this.month--;
+
+            let prevMonthNum = this.month - 1;
+            let prevYearNum = this.year;
+            if (prevMonthNum === 0) {
+                prevMonthNum = 12;
             }
+            if (prevMonthNum === 9){
+                prevYearNum = this.year - 1;
+            }
+            
+            this.month = prevMonthNum;
+            this.year = prevYearNum;
+
             await this.fetchData();
         },
 
         async nextMonth() {
-            if (this.month === 12) {
-                this.month = 1;
-                this.year++;
-            } else {
-                this.month++;
+
+            let nextMonthNum = this.month + 1;
+            let nextYearNum = this.year;
+            if (nextMonthNum === 13) {
+                nextMonthNum = 1;
             }
+            if (nextMonthNum === 10){
+                nextYearNum = this.year + 1;
+            }
+            
+            this.month = nextMonthNum;
+            this.year = nextYearNum;
+
             await this.fetchData();
         },
 
@@ -126,6 +159,10 @@ document.addEventListener('alpine:init', () => {
 
         async saverow(data) {
             // Ensure we have an author
+
+            if(!data.power_reading) return;
+            if(data.power_reading === data.power_reading_original && data.memo === data.memo_original) return;
+
             if (!data.author && this.currentUser) {
                 data.author = this.currentUser.username;
             }
@@ -135,7 +172,7 @@ document.addEventListener('alpine:init', () => {
                 let id_month = (data.day >= 22 && data.month != 1) ? data.month - 1 : data.month;
                 let mdd = id_month * 100 + data.day; // e.g., 122 for Jan 22, 301 for Mar 1
                 let id_year = (mdd >= 922) ? data.year -1 : data.year;
-                let id = `${id_year}${String(mdd).padStart(4, '0')}`; // e.g., "2023122" for Jan 22, 2024
+                let id = parseInt(`${id_year}${String(mdd).padStart(4, '0')}`, 10); // e.g., "2023122" for Jan 22, 2024
 
                 const response = await fetch('/api/power-readings', {
                     method: 'POST',
@@ -143,7 +180,7 @@ document.addEventListener('alpine:init', () => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        ID: data.ID || id,
+                        id: data.ID || id,
                         year: parseInt(data.year),
                         month: parseInt(data.month),
                         day: parseInt(data.day),
@@ -156,10 +193,11 @@ document.addEventListener('alpine:init', () => {
                 if (!response.ok) {
                     throw new Error('Failed to save data');
                 }
-                console.log('Row saved successfully');
+                this.showToast('データを保存しました。', 'success');
+                
             } catch (error) {
                 console.error('Error saving row:', error);
-                alert('データの保存に失敗しました。');
+                this.showToast('データの保存に失敗しました。', 'error');
             }
         },
 

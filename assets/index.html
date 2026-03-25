@@ -119,6 +119,7 @@
                         style="display: none;">
                         <a @click.prevent="logout()" href="#"
                             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ログアウト</a>
+                        <div x-html="menuhtml"></div>
                     </div>
                 </div>
             </div>
@@ -1735,6 +1736,7 @@
             return {
                 open: false,
                 initial: '',
+                menuhtml: '',
                 async init() {
                     try {
                         const response = await fetch('/api/user/me');
@@ -1745,6 +1747,7 @@
                         const userData = await response.json();
                         if (userData.username) {
                             this.initial = userData.username.charAt(0).toUpperCase();
+                            this.menuhtml = userData.menuhtml;
                         } else {
                             throw new Error('Username not found in response');
                         }

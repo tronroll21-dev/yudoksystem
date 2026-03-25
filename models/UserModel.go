@@ -5,6 +5,7 @@ import "log"
 type User struct {
 	ID       uint   `db:"担当ｺｰﾄﾞ"`
 	Username string `db:"担当"`
+	MenuHtml string `db:"menu_html"`
 	Password string `db:"password"`
 }
 
@@ -26,7 +27,7 @@ func UpdatePassword(user *User) (*User, error) {
 
 	var result User
 
-	err = db.QueryRow("SELECT * FROM 担当ﾏｽﾀ WHERE 担当ｺｰﾄﾞ = ?;", user.ID).Scan(&result.ID, &result.Username, &result.Password)
+	err = db.QueryRow("SELECT * FROM 担当ﾏｽﾀ WHERE 担当ｺｰﾄﾞ = ?;", user.ID).Scan(&result.ID, &result.Username, &result.MenuHtml, &result.Password)
 
 	if err != nil {
 		log.Printf("Error fetching user after password update for ID %d: %v", user.ID, err)
@@ -41,7 +42,7 @@ func GetUserById(id uint) (*User, error) {
 	var result User
 
 	log.Printf("Attempting to get user by ID: %d", id)
-	err := db.QueryRow("SELECT * FROM 担当ﾏｽﾀ WHERE 担当ｺｰﾄﾞ = ?;", id).Scan(&result.ID, &result.Username, &result.Password)
+	err := db.QueryRow("SELECT * FROM 担当ﾏｽﾀ WHERE 担当ｺｰﾄﾞ = ?;", id).Scan(&result.ID, &result.Username, &result.MenuHtml, &result.Password)
 	if err != nil {
 		log.Printf("Error getting user by ID %d: %v", id, err)
 		return nil, err
@@ -55,7 +56,7 @@ func GetUserByName(name string) (*User, error) {
 	var result User
 
 	log.Printf("Attempting to get user by name: %s", name)
-	err := db.QueryRow("SELECT * FROM 担当ﾏｽﾀ WHERE 担当 = ?;", name).Scan(&result.ID, &result.Username, &result.Password)
+	err := db.QueryRow("SELECT * FROM 担当ﾏｽﾀ WHERE 担当 = ?;", name).Scan(&result.ID, &result.Username, &result.MenuHtml, &result.Password)
 	if err != nil {
 		log.Printf("Error getting user by name %s: %v", name, err)
 		return nil, err

@@ -144,5 +144,6 @@ func GetCurrentUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"username": userModel.Username,
+		"menuhtml": userModel.MenuHtml,
 	})
 }

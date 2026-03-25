@@ -75,7 +75,7 @@ input::-webkit-inner-spin-button {
                                x-model="readings[index].power_reading"
                                @input="updateAuthor(index)"
                                placeholder="-"
-                               @blur="saverow({year: row.year, month: row.month, day: row.day, power_reading: readings[index].power_reading, memo: readings[index].memo})">
+                               @blur="saverow({year: row.year, month: row.month, day: row.day, power_reading: readings[index].power_reading, power_reading_original: readings[index].power_reading_original, memo: readings[index].memo, memo_original: readings[index].memo_original})">
                     </div>
                     
                     <!-- Difference (Column 4) -->
@@ -98,8 +98,7 @@ input::-webkit-inner-spin-button {
                         <input type="text" 
                                class="bg-[#FFE499] border-0 focus:outline-none focus:ring-0 px-1 text-center w-full h-6"
                                x-model="readings[index].memo"                            
-                               @blur="saverow({year: row.year, month: row.month, day: row.day, power_reading: readings[index].power_reading, memo: readings[index].memo})">
-                               >
+                               @blur="saverow({year: row.year, month: row.month, day: row.day, power_reading: readings[index].power_reading, power_reading_original: readings[index].power_reading_original, memo: readings[index].memo, memo_original: readings[index].memo_original})">                               >
                     </div>
 
                     <!-- Author (Column 10) -->
@@ -155,6 +154,20 @@ input::-webkit-inner-spin-button {
                 <div class="px-2 col-span-2" x-text="getManualTaxExcl().toLocaleString()"></div>
             </div>
         </div>
+
+        <!-- Toast Notification -->
+        <div x-show="toast.show" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform translate-y-4"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-300"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform translate-y-4" @click.away="toast.show = false"
+            class="fixed bottom-4 left-1/2 -translate-x-1/2 p-4 rounded-md text-white z-50 shadow-lg"
+            :class="{ 'bg-green-600': toast.type === 'success', 'bg-red-600': toast.type === 'error' }"
+            x-cloak>
+            <span x-text="toast.message"></span>
+        </div>
     </div>
+    
 </body>
 </html>

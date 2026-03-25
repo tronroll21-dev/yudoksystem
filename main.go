@@ -77,7 +77,16 @@ func main() {
 		authorized.POST("/api/gas-readings", controllers.SaveGasReadingHandler)
 	}
 
+	router.GET("/shiire", func(c *gin.Context) {
+		c.File("./assets/shiire/index.html")
+	})
 	router.GET("/api/shiire", controllers.ShiiremeisaiHandler)
+	router.POST("/api/shiire", controllers.SaveShiiremeisaiHandler)
+	router.DELETE("/api/shiire", controllers.DeleteShiiremeisaiHandler)
+	router.POST("/api/shiire/shouhizei", controllers.SaveShiireshouhizeiHandler)
+	router.POST("/api/shiire/init", controllers.InitializeShiiremeisaiHandler)
+	router.GET("/api/shiire/available-contractors", controllers.GetAvailableContractorsHandler)
+	router.POST("/api/shiire/add-contractor", controllers.AddContractorHandler)
 
 	// Define the route for the main page
 	router.GET("/ranges", func(c *gin.Context) {

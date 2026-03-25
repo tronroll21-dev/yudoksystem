@@ -30,6 +30,8 @@ func GetPowerReadingsByYearAndMonth(yearStr string, monthStr string) ([]PowerRea
 	prevYear := year
 	if prevMonth == 0 {
 		prevMonth = 12
+	}
+	if prevMonth == 9 {
 		prevYear = year - 1
 	}
 
@@ -92,12 +94,6 @@ func GetPowerReadingsByYearAndMonth(yearStr string, monthStr string) ([]PowerRea
 
 // SavePowerReading inserts or updates a power reading record
 func SavePowerReading(r *PowerReading) error {
-	log.Printf("Saving power reading: %f", r.PowerReading)
-	log.Printf("Saving power reading: %s", r.Author)
-	log.Printf("Saving power reading: %s", r.Memo.String)
-	log.Printf("Saving power reading: %d", r.Day)
-	log.Printf("Saving power reading: %d", r.Month)
-	log.Printf("Saving power reading: %d", r.Year)
 
 	query := `
 	INSERT INTO daily_power_readings (ID, year, month, day, power_reading, author, memo)
