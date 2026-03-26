@@ -72,6 +72,16 @@ func SaveShiireshouhizeiHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Successfully saved shouhizei"})
 }
 
+func GetFixedContractorsHandler(c *gin.Context) {
+
+	contractors, err := models.GetFixedContractors()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch fixed contractors"})
+		return
+	}
+	c.JSON(http.StatusOK, contractors)
+}
+
 func GetAvailableContractorsHandler(c *gin.Context) {
 	yearMonthStr := c.Query("year_month")
 	yearMonth, _ := strconv.Atoi(yearMonthStr)

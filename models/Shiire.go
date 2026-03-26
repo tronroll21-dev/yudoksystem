@@ -12,6 +12,7 @@ type Shiiremeisai struct {
 	HimokuID        int    `db:"himokuID" json:"expense_category_id"`
 	Torihikisakimei string `db:"torihikisakimei" json:"contractor_name"`
 	Tekiyou         string `db:"tekiyou" json:"contractor_tekiyou"`
+	Hyoujijun       int    `db:"hyoujijun" json:"hyoujijun"`
 	Himokumei       string `db:"himokumei" json:"expense_category"`
 	Shouhizei       string `db:"tekiyou" json:"shouhizei"`
 	Amount          int    `db:"amount" json:"amount"`
@@ -21,6 +22,7 @@ type AvailableContractor struct {
 	TorihikisakiID  int    `json:"contractor_id"`
 	Torihikisakimei string `json:"contractor_name"`
 	Tekiyou         string `json:"tekiyou"`
+	Hyoujijun       int    `json:"hyoujijun"`
 }
 
 // SaveShiiremeisai performs an upsert on the shiiremeisai table based on IDs.
@@ -75,9 +77,34 @@ func SaveShiireshouhizei(nengetsu int, torihikisakiID int, shouhizei string) err
 }
 
 // GetAvailableContractors returns a list of contractors not in the specified month, with their last used remarks.
+func GetFixedContractors() ([]AvailableContractor, error) {
+	query := `
+		SELECT tm.torihikisakiID, tm.torihikisakimei, tm.tekiyou, tm.hyoujijun
+		FROM torihikisaki_master tm
+		WHERE tm.joujihyouji = 1 
+		ORDER BY tm.torihikisakiID
+	`
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var contractors []AvailableContractor
+	for rows.Next() {
+		var c AvailableContractor
+		if err := rows.Scan(&c.TorihikisakiID, &c.Torihikisakimei, &c.Tekiyou, &c.Hyoujijun); err != nil {
+			return nil, err
+		}
+		contractors = append(contractors, c)
+	}
+	return contractors, nil
+}
+
+// GetAvailableContractors returns a list of contractors not in the specified month, with their last used remarks.
 func GetAvailableContractors(yearMonth int) ([]AvailableContractor, error) {
 	query := `
-		SELECT tm.torihikisakiID, tm.torihikisakimei, tm.tekiyou
+		SELECT tm.torihikisakiID, tm.torihikisakimei, tm.tekiyou, tm.hyoujijun
 		FROM torihikisaki_master tm
 		WHERE tm.torihikisakiID NOT IN (
 			SELECT torihikisakiID FROM shiiremeisai WHERE nengetsu = ?
@@ -93,7 +120,7 @@ func GetAvailableContractors(yearMonth int) ([]AvailableContractor, error) {
 	var contractors []AvailableContractor
 	for rows.Next() {
 		var c AvailableContractor
-		if err := rows.Scan(&c.TorihikisakiID, &c.Torihikisakimei, &c.Tekiyou); err != nil {
+		if err := rows.Scan(&c.TorihikisakiID, &c.Torihikisakimei, &c.Tekiyou, &c.Hyoujijun); err != nil {
 			return nil, err
 		}
 		contractors = append(contractors, c)
@@ -166,11 +193,20 @@ func InitializeShiiremeisai(newYearMonth int) error {
 	// 1. Copy records from latestNengetsu to newYearMonth with amount = 0
 	queryCopyMeisai := `
 		INSERT INTO shiiremeisai (nengetsu, torihikisakiID, himokuID, amount)
-		SELECT ?, torihikisakiID, himokuID, 0
+		SELECT ?, torihikisakiID, himokuID, CASE WHEN torihikisakiID = 12 then 667 ELSE 0 END
 		FROM shiiremeisai
 		WHERE nengetsu = ?
 	`
 	if _, err := tx.Exec(queryCopyMeisai, newYearMonth, latestNengetsu); err != nil {
+		return err
+	}
+
+	// 1. Copy records from latestNengetsu to newYearMonth with amount = 0
+	queryCopyShouhizei := `
+		INSERT INTO shiireshouhizei(nengetsu, torihikisakiID, shouhizei)
+		 VALUES (?,12,66)
+	`
+	if _, err := tx.Exec(queryCopyShouhizei, newYearMonth); err != nil {
 		return err
 	}
 
@@ -183,7 +219,7 @@ func FindAllShiiremeisai(year_month string) ([]Shiiremeisai, error) {
 
 	// SQL SELECT文を実行
 	// Changed to LEFT JOIN for shiiretekiyou to ensure initialized records (without tekiyou) are returned.
-	query := `SELECT sm.nengetsu, sm.torihikisakiID, sm.himokuID, tm.torihikisakimei, tm.tekiyou, hm.himokumei, COALESCE(st.shouhizei, 0), sm.amount
+	query := `SELECT sm.nengetsu, sm.torihikisakiID, sm.himokuID, tm.torihikisakimei, tm.tekiyou, tm.hyoujijun, hm.himokumei, COALESCE(st.shouhizei, 0), sm.amount
 	FROM shiiremeisai sm LEFT JOIN shiireshouhizei st
 	ON sm.nengetsu = st.nengetsu AND sm.torihikisakiID = st.torihikisakiID INNER JOIN
 	himokumaster hm ON sm.himokuID = hm.himokuID INNER JOIN
@@ -199,7 +235,7 @@ func FindAllShiiremeisai(year_month string) ([]Shiiremeisai, error) {
 	// 結果をループしてスキャン
 	for rows.Next() {
 		var r Shiiremeisai
-		if err := rows.Scan(&r.Nengetsu, &r.TorihikisakiID, &r.HimokuID, &r.Torihikisakimei, &r.Tekiyou, &r.Himokumei, &r.Shouhizei, &r.Amount); err != nil {
+		if err := rows.Scan(&r.Nengetsu, &r.TorihikisakiID, &r.HimokuID, &r.Torihikisakimei, &r.Tekiyou, &r.Hyoujijun, &r.Himokumei, &r.Shouhizei, &r.Amount); err != nil {
 			return nil, err
 		}
 		shiiremeisaiData = append(shiiremeisaiData, r)

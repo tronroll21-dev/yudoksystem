@@ -86,6 +86,7 @@ func main() {
 	router.POST("/api/shiire/shouhizei", controllers.SaveShiireshouhizeiHandler)
 	router.POST("/api/shiire/init", controllers.InitializeShiiremeisaiHandler)
 	router.GET("/api/shiire/available-contractors", controllers.GetAvailableContractorsHandler)
+	router.GET("/api/shiire/fixed_contractors", controllers.GetFixedContractorsHandler)
 	router.POST("/api/shiire/add-contractor", controllers.AddContractorHandler)
 
 	// Define the route for the main page

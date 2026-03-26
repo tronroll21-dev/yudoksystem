@@ -22,7 +22,7 @@
     [x-cloak] { display: none !important; }
     
     /* Custom scrollbar styling to match the theme */
-    ::-webkit-scrollbar { height: 4px; }
+    ::-webkit-scrollbar { height: 16px; }
     .dark ::-webkit-scrollbar { background: #0f1117; }
     .dark ::-webkit-scrollbar-thumb { background: #1e293b; }
     ::-webkit-scrollbar { background: #f1f5f9; }
@@ -62,7 +62,7 @@
           @click="initializeData()" 
           class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs tracking-widest uppercase font-bold transition-colors shadow-lg"
         >
-          Initialize Data
+          データ初期化
         </button>
       </template>
       <label class="flex items-center gap-2 text-[0.65rem] tracking-widest uppercase text-slate-500 dark:text-slate-400 cursor-pointer select-none" @click="darkMode = !darkMode">
@@ -76,7 +76,7 @@
 
   <div x-show="records.length > 0" x-cloak>
     <div
-      class="grid gap-[1px] w-max max-w-full overflow-x-auto bg-slate-300 dark:bg-[#1e2330]"
+      class="grid gap-[1px] w-max max-w-full overflow-x-auto bg-slate-300 dark:bg-[#1e2330] h-[90vh]"
       :style="`grid-template-columns: max-content max-content max-content minmax(90px, 1fr) max-content repeat(${categories.length}, minmax(90px, 1fr))`"
     >
 
@@ -109,6 +109,7 @@
               placeholder="—"
               :value="getShouhizei(contractor.id) ?? ''"
               @change="setShouhizei(contractor.id, $event.target.value)"
+              x-bind:disabled="contractor.id === 12"
             />
           </div>
           <div class=" flex items-center justify-end text-[0.8rem] border-l border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-blue-700 dark:text-sky-400" x-text="fmt(rowTotal(contractor.id))"></div>
@@ -117,7 +118,7 @@
           <template x-for="cat in categories" :key="cat">
             <div
               class=" flex items-center justify-center relative transition-colors duration-150 bg-white dark:bg-[#141720] focus-within:bg-blue-50 dark:focus-within:bg-slate-800 focus-within:ring-1 focus-within:ring-inset focus-within:ring-blue-500 focus-within:z-10"
-              :class="{ 'bg-blue-50 dark:bg-[#16213a]': getAmount(contractor.id, cat) !== null }"
+              :class="{ 'bg-blue-50 dark:bg-[#16213a]': getAmount(contractor.id, cat) !== null && contractor.id != 12, 'bg-[#FFFF00]': contractor.id === 12 }"
             >
               <input
                 class="w-full h-full bg-transparent border-none outline-none text-[0.85rem] text-right px-1 cursor-text text-slate-900 dark:text-slate-200 placeholder-slate-300 dark:placeholder-slate-800 focus:placeholder-slate-400 dark:focus:placeholder-slate-600"
@@ -128,6 +129,7 @@
                 placeholder="—"
                 :value="getAmount(contractor.id, cat) ?? ''"
                 @change="setAmount(contractor.id, cat, $event.target.value)"
+                :disabled="contractor.id === 12"
               />
             </div>
           </template>
@@ -165,21 +167,30 @@
       @click.away="showAddModal = false"
     >
       <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-        <h3 class="text-sm font-bold tracking-widest uppercase text-slate-500">Available Contractors</h3>
+        <h3 class="text-sm font-bold tracking-widest uppercase text-slate-500">選択できる取引先</h3>
         <button @click="showAddModal = false" class="text-slate-400 hover:text-slate-600">&times;</button>
       </div>
+      <div class="p-2 border-b border-slate-100 dark:border-slate-800">
+        <input 
+          type="text" 
+          x-model="searchTerm" 
+          placeholder="検索 (名前・摘要)..." 
+          class="w-full p-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded outline-none focus:ring-1 focus:ring-blue-500 text-slate-700 dark:text-slate-200"
+        >
+      </div>
       <div class="overflow-y-auto p-2">
-        <template x-for="c in availableContractors" :key="c.contractor_id">
+        <template x-for="c in filteredAvailableContractors" :key="c.contractor_id">
           <button 
             @click="addContractor(c)"
             class="w-full text-left p-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded flex flex-col gap-1 border-b border-slate-100 dark:border-slate-800 last:border-0"
           >
             <span class="text-sm font-bold text-slate-700 dark:text-slate-200" x-text="c.contractor_name"></span>
-            <span class="text-[0.65rem] text-slate-400 uppercase tracking-wider" x-text="c.tekiyou || '(No remarks)'"></span>
+            <span class="text-sm font-bold text-slate-700 dark:text-slate-200" x-text="c.contractor_id"></span>
+            <span class="text-[0.65rem] text-slate-400 uppercase tracking-wider" x-text="c.tekiyou || '(摘要無し)'"></span>
           </button>
         </template>
-        <template x-if="availableContractors.length === 0">
-          <div class="p-8 text-center text-slate-400 text-xs uppercase tracking-widest">No contractors available to add.</div>
+        <template x-if="filteredAvailableContractors.length === 0">
+          <div class="p-8 text-center text-slate-400 text-xs uppercase tracking-widest" x-text="searchTerm ? '合致する取引先はありません。' : '追加できる取引先はありません。'"></div>
         </template>
       </div>
     </div>
@@ -209,11 +220,23 @@
 
         // ── Derived axis lists (populated in init) ──────────────────────────
         contractors: [],
+        contractors_fixed: [],
         categories:  [],
         title: '',
 
         showAddModal: false,
+        searchTerm: '',
         availableContractors: [],
+
+        get filteredAvailableContractors() {
+          if (!this.searchTerm) return this.availableContractors;
+          const term = this.searchTerm.toLowerCase().normalize('NFKC');
+          return this.availableContractors.filter(c => {
+            const name = (c.contractor_name || '').toLowerCase().normalize('NFKC');
+            const tekiyou = (c.tekiyou || '').toLowerCase().normalize('NFKC');
+            return name.includes(term) || tekiyou.includes(term);
+          });
+        },
 
         toast: {
             show: false,
@@ -243,12 +266,12 @@
             // Sort contractors by contractor_id
             this.contractors = this.records
                 .reduce((acc, r) => {
-                    if (!acc.some(x => x.name === r.contractor_name)) {
-                        acc.push({ id: r.contractor_id, name: r.contractor_name });
+                    if (!acc.some(x => x.id === r.contractor_id)) {
+                        acc.push({ id: r.contractor_id, name: r.contractor_name, hyoujijun: r.hyoujijun });
                     }
                     return acc;
-                }, [])
-                .sort((a, b) => a.id - b.id);
+                }, this.contractors_fixed)
+                .sort((a, b) => a.hyoujijun - b.hyoujijun);
                 //.map(x => x.name);
 
             // Sort categories by expense_category_id
@@ -261,6 +284,24 @@
                 }, [])
                 .sort((a, b) => a.id - b.id)
                 .map(x => x.name);
+        },
+
+        async fetchFixedContractors(){
+          this.loading = true;
+           try {
+                const response = await fetch('/api/shiire/fixed_contractors');
+                if (!response.ok) throw new Error('データ取得に失敗しました。');
+
+                const fetchedContractorsFixed =  await response.json();
+
+                this.contractors_fixed = fetchedContractorsFixed.map(c => ({id: c.contractor_id, name: c.contractor_name, hyoujijun: c.hyoujijun}));
+
+            } catch (error) {
+                this.showToast('常時表示取引先取得中にエラーが発生しました。', 'error');
+                console.error(error);
+            } finally {
+                this.loading = false;
+            }
         },
 
         async fetchRecords() {
@@ -316,6 +357,7 @@
         },
 
         async openAddContractorModal() {
+          this.searchTerm = '';
           const params = new URLSearchParams(window.location.search);
           const yearMonth = params.get('year_month') ?? this.getCurrentYearMonth();
           
@@ -414,13 +456,14 @@
               );
               if(idx !== -1){
                 this.records[idx].amount = data.record.amount;
+                this.records[idx].original_amount = data.record.amount;
               } else {
-                // this.records.push({
-                //   year_month:       data.record.year_month,
-                //   contractor_id:    data.record.contractor_id,
-                //   expense_category_id: data.record.expense_category_id,
-                //   amount: data.record.amount,
-                // });
+                this.records.push({
+                  year_month:       data.record.year_month,
+                  contractor_id:    data.record.contractor_id,
+                  expense_category_id: data.record.expense_category_id,
+                  amount: data.record.amount,
+                });
               }
                 this.showToast('保存しました。', 'success');
             })
@@ -475,6 +518,10 @@
         },
 
         async init() {
+
+          if(this.contractors_fixed.length == 0){
+            await this.fetchFixedContractors();
+          }
           await this.fetchRecords();
           this.updateAxisLists();
         },
