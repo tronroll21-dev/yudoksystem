@@ -2,9 +2,9 @@ package helpers
 
 import (
 	"fmt"
-	"html/template"
 	"io"
 	"os/exec"
+	"text/template"
 
 	"github.com/dustin/go-humanize"
 )

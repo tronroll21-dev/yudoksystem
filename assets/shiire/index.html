@@ -95,7 +95,7 @@
         <div style="display:contents;">
           <!-- Row header -->
           <div class=" flex items-center px-1 text-[0.7rem] tracking-wider whitespace-nowrap border-r border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-slate-700 dark:text-slate-400" x-text="contractor.name"></div>
-          <div class=" flex items-center px-1 text-[0.7rem] tracking-wider whitespace-nowrap border-r border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-slate-700 dark:text-slate-400" x-text="getTekiyou(contractor.id)"></div>
+          <div class=" flex items-center px-1 text-[0.7rem] tracking-wider whitespace-nowrap border-r border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-slate-700 dark:text-slate-400" x-text="contractor.tekiyou"></div>
           
           <!-- Row total -->
           <div class=" flex items-center justify-end text-[0.8rem] border-l border-slate-300 dark:border-slate-800 bg-slate-200 dark:bg-[#0f1117] text-blue-700 dark:text-sky-400" x-text="fmt(rowTotalTax(contractor.id))"></div>
@@ -267,7 +267,7 @@
             this.contractors = this.records
                 .reduce((acc, r) => {
                     if (!acc.some(x => x.id === r.contractor_id)) {
-                        acc.push({ id: r.contractor_id, name: r.contractor_name, hyoujijun: r.hyoujijun });
+                        acc.push({ id: r.contractor_id, name: r.contractor_name, hyoujijun: r.hyoujijun, tekiyou: r.contractor_tekiyou });
                     }
                     return acc;
                 }, this.contractors_fixed)
@@ -294,7 +294,7 @@
 
                 const fetchedContractorsFixed =  await response.json();
 
-                this.contractors_fixed = fetchedContractorsFixed.map(c => ({id: c.contractor_id, name: c.contractor_name, hyoujijun: c.hyoujijun}));
+                this.contractors_fixed = fetchedContractorsFixed.map(c => ({id: c.contractor_id, name: c.contractor_name, hyoujijun: c.hyoujijun, tekiyou: c.tekiyou}));
 
             } catch (error) {
                 this.showToast('常時表示取引先取得中にエラーが発生しました。', 'error');
@@ -524,13 +524,6 @@
           }
           await this.fetchRecords();
           this.updateAxisLists();
-        },
-
-        getTekiyou(contractorID){
-          const rec = this.records.find(
-            r => r.contractor_id    === contractorID
-                    );
-          return rec ? rec.contractor_tekiyou : null;
         },
 
         async setShouhizei(contractorID, value){

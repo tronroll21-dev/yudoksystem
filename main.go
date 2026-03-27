@@ -109,6 +109,7 @@ func main() {
 	router.GET("/api/sales-data-report", controllers.SalesDataReportHandler)
 
 	router.GET("/api/sales-data-report-pdf", controllers.SalesDataReportHandlerPDF)
+	router.GET("/api/sales-data-report-svg", controllers.SalesDataReportSVGHandler)
 
 	router.GET("/api/uriage-nikkei-report", controllers.UriageNikkeiReportHandler)
 

@@ -31,7 +31,7 @@ func SalesDataReportHandler(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "report.html", gin.H{
+	c.HTML(http.StatusOK, "uriagenichijihoukokusho.svg", gin.H{
 		"ReportData": ReportData,
 	})
 }
@@ -56,14 +56,14 @@ func SalesDataReportHandlerPDF(c *gin.Context) {
 	}
 
 	// Render the template to a buffer instead of directly to the response
-	tmpl, err := controllerHelpers.ParseTemplateWithFunc("templates/report.html")
+	tmpl, err := controllerHelpers.ParseTemplateWithFunc("templates/uriagenichijihoukokusho.svg")
 	if err != nil {
 		c.String(http.StatusInternalServerError, "failed to parse HTML template: %v", err)
 		return
 	}
 
 	var buf bytes.Buffer
-	if err := tmpl.ExecuteTemplate(&buf, "report.html", gin.H{
+	if err := tmpl.ExecuteTemplate(&buf, "uriagenichijihoukokusho.svg", gin.H{
 		"ReportData": ReportData,
 	}); err != nil {
 		log.Printf("Failed to execute template: %v", err)
@@ -71,18 +71,18 @@ func SalesDataReportHandlerPDF(c *gin.Context) {
 		return
 	}
 
-	reportHTML := buf.Bytes()
+	// reportHTML := buf.Bytes()
 
-	pdfBytes, err := controllerHelpers.GeneratePDFfromHTML(reportHTML)
-	if err != nil {
-		// handle error with c.String(...)
-		log.Printf("Error generating PDF: %v", err)
-		c.String(http.StatusInternalServerError, "Failed to generate PDF")
-		return
+	// pdfBytes, err := controllerHelpers.GeneratePDFfromHTML(reportHTML)
+	// if err != nil {
+	// 	// handle error with c.String(...)
+	// 	log.Printf("Error generating PDF: %v", err)
+	// 	c.String(http.StatusInternalServerError, "Failed to generate PDF")
+	// 	return
 
-	}
+	// }
 
-	c.Header("Content-Type", "application/pdf")
-	c.Data(http.StatusOK, "application/pdf", pdfBytes)
+	// c.Header("Content-Type", "application/pdf")
+	// c.Data(http.StatusOK, "application/pdf", pdfBytes)
 
 }
