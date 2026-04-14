@@ -163,29 +163,50 @@
     x-cloak
   >
     <div 
-      class="bg-white dark:bg-[#141720] rounded-lg shadow-xl max-w-md w-full max-h-[80vh] flex flex-col"
+      class="bg-white dark:bg-[#141720] rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col"
       @click.away="showAddModal = false"
     >
       <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-        <h3 class="text-sm font-bold tracking-widest uppercase text-slate-500">選択できる取引先</h3>
-        <button @click="showAddModal = false" class="text-slate-400 hover:text-slate-600">&times;</button>
+        <h3 class="text-sm font-bold tracking-widest uppercase text-slate-500">取引先追加</h3>
+        <button @click="showAddModal = false" class="text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
       </div>
-      <div class="p-2 border-b border-slate-100 dark:border-slate-800">
+      <div class="p-2 border-b border-slate-100 dark:border-slate-800 flex gap-2 flex-wrap items-center">
         <input 
           type="text" 
           x-model="searchTerm" 
           placeholder="検索 (名前・摘要)..." 
-          class="w-full p-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded outline-none focus:ring-1 focus:ring-blue-500 text-slate-700 dark:text-slate-200"
+          class="flex-1 min-w-[150px] p-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded outline-none focus:ring-1 focus:ring-blue-500 text-slate-700 dark:text-slate-200"
         >
+        <select x-model="selectedCategoryId" class="p-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded outline-none focus:ring-1 focus:ring-blue-500 text-slate-700 dark:text-slate-200">
+          <template x-for="cat in fullCategories" :key="cat.id">
+            <option :value="cat.id" x-text="cat.name"></option>
+          </template>
+        </select>
+        <input 
+          type="number" 
+          x-model="addAmount" 
+          placeholder="金額" 
+          class="w-24 p-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded outline-none focus:ring-1 focus:ring-blue-500 text-slate-700 dark:text-slate-200"
+        >
+        <button 
+          @click="addContractor()" 
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs tracking-widest uppercase font-bold transition-colors shadow-lg disabled:opacity-50"
+          :disabled="!selectedContractorId"
+        >
+          追加
+        </button>
       </div>
       <div class="overflow-y-auto p-2">
         <template x-for="c in filteredAvailableContractors" :key="c.contractor_id">
           <button 
-            @click="addContractor(c)"
+            @click="setContractor(c)"
             class="w-full text-left p-3 hover:bg-slate-100 dark:hover:bg-slate-800 rounded flex flex-col gap-1 border-b border-slate-100 dark:border-slate-800 last:border-0"
+            :class="{'bg-blue-50 dark:bg-slate-800 ring-1 ring-blue-500': selectedContractorId === c.contractor_id}"
           >
-            <span class="text-sm font-bold text-slate-700 dark:text-slate-200" x-text="c.contractor_name"></span>
-            <span class="text-sm font-bold text-slate-700 dark:text-slate-200" x-text="c.contractor_id"></span>
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-bold text-slate-700 dark:text-slate-200" x-text="c.contractor_name"></span>
+              <span class="text-xs text-slate-400" x-text="'ID: ' + c.contractor_id"></span>
+            </div>
             <span class="text-[0.65rem] text-slate-400 uppercase tracking-wider" x-text="c.tekiyou || '(摘要無し)'"></span>
           </button>
         </template>
@@ -227,6 +248,21 @@
         showAddModal: false,
         searchTerm: '',
         availableContractors: [],
+        selectedContractorId: null,
+        selectedCategoryId: 1,
+        addAmount: 0,
+        fullCategories: [
+          {id: 1, name: '①水光熱'}, {id: 2, name: '②入浴品'}, {id: 3, name: '③飲食材'},
+          {id: 4, name: '④ボディケア'}, {id: 5, name: '福利厚生'}, {id: 6, name: '採用教育'},
+          {id: 7, name: '交通費'}, {id: 8, name: '通信費'}, {id: 9, name: '事務消耗'},
+          {id: 10, name: 'ｺﾝﾋﾟｭｰﾀ'}, {id: 11, name: '保険'}, {id: 12, name: 'ｶﾞｰﾄﾞﾏﾝ'},
+          {id: 13, name: '広告費'}, {id: 14, name: '販促費'}, {id: 15, name: '新聞図書'},
+          {id: 16, name: '調査費'}, {id: 17, name: '清掃ﾒﾝﾃ'}, {id: 18, name: '設備保守'},
+          {id: 19, name: 'ｺﾞﾐ処理'}, {id: 20, name: '修繕費'}, {id: 21, name: '設備備品'},
+          {id: 22, name: '清掃消耗'}, {id: 23, name: '警備契約'}, {id: 24, name: '入金機オンライン'},
+          {id: 25, name: '保険2'}, {id: 26, name: '保険料'}, {id: 27, name: '資産計上'},
+          {id: 28, name: '雑費'}, {id: 29, name: '資産'}
+        ],
 
         get filteredAvailableContractors() {
           if (!this.searchTerm) return this.availableContractors;
@@ -358,6 +394,9 @@
 
         async openAddContractorModal() {
           this.searchTerm = '';
+          this.selectedContractorId = null;
+          this.addAmount = 0;
+          this.selectedCategoryId = 1;
           const params = new URLSearchParams(window.location.search);
           const yearMonth = params.get('year_month') ?? this.getCurrentYearMonth();
           
@@ -372,7 +411,14 @@
           }
         },
 
-        async addContractor(c) {
+        setContractor(c) {
+          this.searchTerm = c.contractor_name;
+          this.selectedContractorId = c.contractor_id;
+        },
+
+        async addContractor() {
+          if (!this.selectedContractorId) return;
+
           const params = new URLSearchParams(window.location.search);
           const yearMonthStr = params.get('year_month') ?? this.getCurrentYearMonth();
           const yearMonth = parseInt(yearMonthStr, 10);
@@ -383,8 +429,9 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 year_month: yearMonth,
-                contractor_id: c.contractor_id,
-                tekiyou: c.tekiyou
+                contractor_id: this.selectedContractorId,
+                category_id: parseInt(this.selectedCategoryId),
+                amount: parseInt(this.addAmount)
               })
             });
 

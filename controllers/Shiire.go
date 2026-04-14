@@ -96,16 +96,17 @@ func GetAvailableContractorsHandler(c *gin.Context) {
 
 func AddContractorHandler(c *gin.Context) {
 	var body struct {
-		YearMonth    int    `json:"year_month"`
-		ContractorID int    `json:"contractor_id"`
-		Tekiyou      string `json:"tekiyou"`
+		YearMonth    int `json:"year_month"`
+		ContractorID int `json:"contractor_id"`
+		CategoryID   int `json:"category_id"`
+		Amount       int `json:"amount"`
 	}
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := models.AddContractorToMonth(body.YearMonth, body.ContractorID, body.Tekiyou); err != nil {
+	if err := models.AddContractorToMonth(body.YearMonth, body.ContractorID, body.CategoryID, body.Amount); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add contractor"})
 		return
 	}

@@ -128,40 +128,11 @@ func GetAvailableContractors(yearMonth int) ([]AvailableContractor, error) {
 	return contractors, nil
 }
 
-// AddContractorToMonth initializes a contractor in a month with its last used category and remark.
-func AddContractorToMonth(yearMonth int, contractorID int, tekiyou string) error {
-	// Find last used himokuID for this contractor and tekiyou combination
-	var himokuID int
-	queryHimoku := `
-		SELECT sm.himokuID
-		FROM shiiremeisai sm
-		WHERE sm.torihikisakiID = ?
-		ORDER BY sm.nengetsu DESC
-		LIMIT 1
-	`
-	err := db.QueryRow(queryHimoku, contractorID).Scan(&himokuID)
-	if err != nil {
-		// Fallback: last used category regardless of remark
-		queryFallback := `SELECT himokuID FROM shiiremeisai WHERE torihikisakiID = ? ORDER BY nengetsu DESC LIMIT 1`
-		err = db.QueryRow(queryFallback, contractorID).Scan(&himokuID)
-		if err != nil {
-			himokuID = 1
-		}
-	}
-
-	tx, err := db.Begin()
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
-	// Insert into shiiremeisai
-	_, err = tx.Exec("INSERT INTO shiiremeisai (nengetsu, torihikisakiID, himokuID, amount) VALUES (?, ?, ?, 0)", yearMonth, contractorID, himokuID)
-	if err != nil {
-		return err
-	}
-
-	return tx.Commit()
+// AddContractorToMonth initializes a contractor in a month with a specified category and amount.
+func AddContractorToMonth(yearMonth int, contractorID int, himokuID int, amount int) error {
+	query := `INSERT INTO shiiremeisai (nengetsu, torihikisakiID, himokuID, amount) VALUES (?, ?, ?, ?)`
+	_, err := db.Exec(query, yearMonth, contractorID, himokuID, amount)
+	return err
 }
 
 // InitializeShiiremeisai finds the latest month with data and copies its structure to the newYearMonth.
