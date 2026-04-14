@@ -3,10 +3,10 @@ package controllers
 import (
 	"bytes"
 	"log"
-	"net/http"
-	"text/template" // Use text/template for SVG
+	"net/http" // Use text/template for SVG
 	"time"
 
+	controllerHelpers "tronroll21-dev/yudoksystem/controllers/helpers"
 	"tronroll21-dev/yudoksystem/models"
 
 	"github.com/gin-gonic/gin"
@@ -31,7 +31,7 @@ func SalesDataReportSVGHandler(c *gin.Context) {
 	}
 
 	// Parse the SVG template
-	tmpl, err := template.ParseFiles("templates/uriagenichijihoukokusho.svg")
+	tmpl, err := controllerHelpers.ParseTemplateWithFunc("templates/uriagenichijihoukokusho_p2.svg")
 	if err != nil {
 		log.Printf("Error parsing template: %v", err)
 		c.String(http.StatusInternalServerError, "Failed to parse template")
@@ -40,7 +40,7 @@ func SalesDataReportSVGHandler(c *gin.Context) {
 
 	// Execute the template into a buffer
 	var buf bytes.Buffer
-	err = tmpl.Execute(&buf, gin.H{
+	err = tmpl.ExecuteTemplate(&buf, "uriagenichijihoukokusho_p2.svg", gin.H{
 		"ReportData": ReportData,
 	})
 	if err != nil {
@@ -48,6 +48,20 @@ func SalesDataReportSVGHandler(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "Failed to execute template")
 		return
 	}
+
+	// reportSVG := buf.Bytes()
+
+	// pdfBytes, err := controllerHelpers.GeneratePDFfromSVG(reportSVG)
+	// if err != nil {
+	// 	// handle error with c.String(...)
+	// 	log.Printf("Error generating PDF: %v", err)
+	// 	c.String(http.StatusInternalServerError, "Failed to generate PDF")
+	// 	return
+
+	// }
+
+	// c.Header("Content-Type", "application/pdf")
+	// c.Data(http.StatusOK, "application/pdf", pdfBytes)
 
 	// Set the content type and return the SVG data
 	c.Header("Content-Type", "image/svg+xml")

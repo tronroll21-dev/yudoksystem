@@ -46,7 +46,7 @@ func main() {
 
 	// Load HTML templates from the 'templates' directory
 	// Gin uses the standard Go template package, so we can use partials
-	router.LoadHTMLGlob("templates/*")
+	router.LoadHTMLGlob("templates/*.html")
 
 	// Initialize the mock database in the models package
 	// In a real application, you would establish a real connection here
