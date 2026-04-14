@@ -96,6 +96,8 @@ type ReportRecordData struct {
 	Machine3TotalGoukei        int
 	Machine4TotalGoukei        int
 	Machine5TotalGoukei        int
+	PointTicketCount           int
+	ChildTicketTotal           int
 	TotalGoukei                int
 	NyuuyokuTotal              int
 	InshokuTotal               int
@@ -103,6 +105,8 @@ type ReportRecordData struct {
 	NyuuyokuWariai             float64
 	InshokuWariai              float64
 	SeitaiWariai               float64
+	OtokoWariai                float64
+	OnnaWariai                 float64
 	Miseisan_Tousha            int
 	TounyuuGoukei              int
 	Nyuukinyoteikingaku        int
@@ -112,6 +116,7 @@ type ReportRecordData struct {
 	KyakuTanka                 int
 	MonthAvgRevenuePerCustomer int
 	ReportSpaceHTML            template.HTML
+	ReportSpaceLines           []string
 }
 
 // Define a struct to pass data to the template
@@ -448,6 +453,8 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		Machine3TotalGoukei: Machine3TotalGoukei,
 		Machine4TotalGoukei: Machine4TotalGoukei,
 		Machine5TotalGoukei: Machine5TotalGoukei,
+		PointTicketCount:    record.PointCardAdultCount + record.PointCardChildCount,
+		ChildTicketTotal:    record.ChildTicketCount + record.PointCardChildCount,
 		TotalGoukei:         TotalGoukei,
 		NyuuyokuTotal:       NyuuyokuTotal,
 		InshokuTotal:        InshokuTotal,
@@ -455,6 +462,8 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		NyuuyokuWariai:      helpers.CalculateWariai(float64(NyuuyokuTotal), float64(TotalGoukei)),
 		InshokuWariai:       helpers.CalculateWariai(float64(InshokuTotal), float64(TotalGoukei)),
 		SeitaiWariai:        helpers.CalculateWariai(float64(SeitaiTotal), float64(TotalGoukei)),
+		OtokoWariai:         helpers.CalculateWariai(float64(record.MaleTicketCount+record.SixMaleTicketCount), float64(record.TicketCount+record.SixTicketCount)),
+		OnnaWariai:          helpers.CalculateWariai(float64(record.FemaleTicketCount+record.SixFemaleTicketCount), float64(record.TicketCount+record.SixTicketCount)),
 		Miseisan_Tousha:     Miseisan_Tousha,
 		TounyuuGoukei:       TounyuuGoukei,
 		Nyuukinyoteikingaku: Nyuukinyoteikingaku,
@@ -465,6 +474,7 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 		NyuujoushaGoukei:    NyuujoushaGoukei,
 		KyakuTanka:          int(helpers.RoundFloat(float64(TotalGoukei)/float64(NyuujoushaGoukei), 0)),
 		ReportSpaceHTML:     template.HTML(strings.ReplaceAll(record.ReportSpace, "\n", "<br>")),
+		ReportSpaceLines:    strings.Split(record.ReportSpace, "\n"),
 	}
 
 	//[大人入浴券枚数]+[大人入浴セット券枚数]+[小人入浴券枚数]+[6回数券回収]+[回数券回収]+[招待券回収]+[優待券回収]+[感謝祭招待券回収]+[ﾎﾟｲﾝﾄｶｰﾄﾞ大人回収]+[ﾎﾟｲﾝﾄｶｰﾄﾞﾞ小人回収]+[過去回数券回収] AS 入場者合計

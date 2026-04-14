@@ -13,6 +13,9 @@ import (
 func ParseTemplateWithFunc(path string) (*template.Template, error) {
 	funcMap := template.FuncMap{
 		"format": formatNumber,
+		"yOffset": func(i int, base, step float64) float64 {
+			return base + float64(i)*step
+		},
 	}
 	tmpl, err := template.New("").Funcs(funcMap).ParseFiles(path)
 	if err != nil {
@@ -75,5 +78,40 @@ func GeneratePDFfromHTML(html []byte) ([]byte, error) {
 		//c.String(http.StatusInternalServerError, "wkhtmltopdf failed: "+err.Error())
 		return nil, err
 	}
+	return pdfBytes, nil
+}
+
+func GeneratePDFfromSVG(svg []byte) ([]byte, error) {
+	cmd := exec.Command("rsvg-convert", "-f", "pdf", "-")
+
+	stdin, err := cmd.StdinPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cmd.Start(); err != nil {
+		return nil, err
+	}
+
+	_, err = stdin.Write(svg)
+	stdin.Close() // must close before Wait()
+	if err != nil {
+		return nil, err
+	}
+
+	pdfBytes, err := io.ReadAll(stdout)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := cmd.Wait(); err != nil {
+		return nil, err
+	}
+
 	return pdfBytes, nil
 }

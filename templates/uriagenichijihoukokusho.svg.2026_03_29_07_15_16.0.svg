@@ -29,7 +29,7 @@
        id="clipPath2">
       <path
          d="m 525.92,782.87 h 32.392 v 13.418 H 525.92 Z"
-         transform="matrix(1,0,0,-1,-558.61002,785.92002)"
+         transform="matrix(1,0,0,-1,-535.61002,785.92002)"
          clip-rule="evenodd"
          id="path2" />
     </clipPath>
@@ -452,7 +452,7 @@
        id="clipPath241">
       <path
          d="m 268.42,701.67 h 124.17 v 28.251 H 268.42 Z"
-         transform="matrix(1,0,0,-1,-390.60001,711.80002)"
+         transform="matrix(1,0,0,-1,-280.60001,711.80002)"
          clip-rule="evenodd"
          id="path241" />
     </clipPath>
@@ -506,7 +506,7 @@
        id="clipPath271">
       <path
          d="m 464.54,672.51 h 71.761 v 16.898 H 464.54 Z"
-         transform="matrix(1,0,0,-1,-522.11001,678.20001)"
+         transform="matrix(1,0,0,-1,-502.11001,678.20001)"
          clip-rule="evenodd"
          id="path271" />
     </clipPath>
@@ -560,7 +560,7 @@
        id="clipPath301">
       <path
          d="m 162.87,672.51 h 71.665 v 16.898 H 162.87 Z"
-         transform="matrix(1,0,0,-1,-229.99001,678.20001)"
+         transform="matrix(1,0,0,-1,-179.99001,678.20001)"
          clip-rule="evenodd"
          id="path301" />
     </clipPath>
@@ -3526,15 +3526,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="1171.6759"
-     inkscape:cy="213.72303"
+     inkscape:zoom="2.8756384"
+     inkscape:cx="546.66122"
+     inkscape:cy="122.23373"
      inkscape:window-width="1920"
      inkscape:window-height="1111"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g575">
+     inkscape:current-layer="g1">
     <inkscape:page
        x="0"
        y="0"
@@ -3567,13 +3567,10 @@
 <text
    id="text2"
    xml:space="preserve"
-   transform="matrix(1.3333333,0,0,1.3333333,742.75567,74.64)"
-   clip-path="url(#clipPath2)"
-   x="118.37895"
-   y="0"
-   style="text-align:end;text-anchor:end"><tspan
+   transform="matrix(1.3333333,0,0,1.3333333,714.14667,74.64)"
+   clip-path="url(#clipPath2)"><tspan
      id="tspan2"
-     style="font-variant:normal;font-weight:normal;font-size:10.981px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     style="font-variant:normal;font-weight:normal;font-size:10.981px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
      x="0"
      dx="0 0 0.032942999"
      y="0">{{ .ReportData.Record.ID }}</tspan></text>
@@ -3600,12 +3597,23 @@
 <text
    id="text6"
    xml:space="preserve"
-   transform="matrix(1.3333333,0,0,1.3333333,357.34667,41.8)"><tspan
+   transform="matrix(1.3333333,0,0,1.3333333,357.34667,41.8)"
+   clip-path="url(#clipPath7)"><tspan
      id="tspan6"
      style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.34252;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
      x="0"
      dx="0 0.083916001 0.131868 0.083916001 0 0.083916001 0.083916001 0.059939999 0.131868 0.083916001"
      y="0">{{ .ReportData.Date }}（{{ .ReportData.Record.JapaneseWeekday }}）</tspan></text>
+<text
+   id="text7"
+   xml:space="preserve"
+   transform="matrix(1.3333333,0,0,1.3333333,473.86667,41.8)"
+   clip-path="url(#clipPath8)"><tspan
+     id="tspan7"
+     style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.34252;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+     x="0"
+     dx="0 0.023976 0.107892"
+     y="0">{{ .ReportData.Record.WeatherCondition }}</tspan></text>
 <text
    id="text8"
    xml:space="preserve"
@@ -3781,10 +3789,18 @@
    xml:space="preserve"
    transform="matrix(1.3333333,0,0,1.3333333,510.53333,41.8)"
    clip-path="url(#clipPath40)"><tspan
-     id="tspan39"
-     style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.34252;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+     sodipodi:role="line"
+     id="tspan36"
      x="0"
-     y="0">{{ .ReportData.Record.WeatherCondition }}</tspan></text>
+     y="0"><tspan
+       id="tspan39"
+       style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.34252;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+       x="0"
+       y="0">{{</tspan></tspan><tspan
+     sodipodi:role="line"
+     id="tspan37"
+     x="0"
+     y="15"></tspan></text>
 <text
    id="text40"
    xml:space="preserve"
@@ -4831,13 +4847,12 @@
 <text
    id="text240"
    xml:space="preserve"
-   transform="matrix(1.3333333,0,0,1.3333333,521.81442,173.46667)"
+   transform="matrix(1.3333333,0,0,1.3333333,373.81442,173.46667)"
    clip-path="url(#clipPath241)"
-   x="525.59796"
-   y="0"
-   style="text-align:end;text-anchor:end"><tspan
+   x="175.19933"
+   y="0"><tspan
      id="tspan240"
-     style="font-variant:normal;font-weight:normal;font-size:19.996px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     style="font-variant:normal;font-weight:normal;font-size:19.996px;font-family:'MS PGothic';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
      x="0"
      y="0">{{ .ReportData.Record.NyuujoushaGoukei }}</tspan></text>
 <path
@@ -4960,7 +4975,7 @@
    transform="matrix(1.3333333,0,0,-1.3333333,0,1122.5333)" />
 <path
    id="path264"
-   d="m 551.0389,149.43103 h 163.86667 v -0.19201 H 551.0389 Z"
+   d="m 551.0389,162.04003 h 163.86667 v -0.19201 H 551.0389 Z"
    style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.33333" />
 <path
    id="path265"
@@ -5000,13 +5015,10 @@
 <text
    id="text270"
    xml:space="preserve"
-   transform="matrix(1.3333333,0,0,1.3333333,713.48,218.26667)"
-   clip-path="url(#clipPath271)"
-   x="321.32034"
-   y="0"
-   style="text-align:end;text-anchor:end"><tspan
+   transform="matrix(1.3333333,0,0,1.3333333,669.48,218.26667)"
+   clip-path="url(#clipPath271)"><tspan
      id="tspan270"
-     style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
      x="0"
      dx="0 0 0 -0.059939999 0 -0.047952"
      y="0">¥{{ format .ReportData.Record.MonthAvgRevenuePerCustomer }}</tspan></text>
@@ -5068,7 +5080,7 @@
      style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
      x="0"
      dx="0 0 -0.047952 0 -0.059939999"
-     y="0">{{ format .ReportData.Record.OtokoWariai }}%</tspan></text>
+     y="0">50.69%</tspan></text>
 <path
    id="path282"
    d="m 330.44,689.36 h 62.243 v 0.096 H 330.44 Z"
@@ -5127,7 +5139,7 @@
      style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
      x="0"
      dx="0 0 -0.047952 0 -0.059939999"
-     y="0">{{ format .ReportData.Record.OnnaWariai }}%</tspan></text>
+     y="0">49.31%</tspan></text>
 <path
    id="path292"
    d="m 330.44,672.15 h 62.243 v 0.14401 H 330.44 Z"
@@ -5180,16 +5192,13 @@
 <text
    id="text300"
    xml:space="preserve"
-   transform="matrix(1.3333333,0,0,1.3333333,311.29117,218.26667)"
-   clip-path="url(#clipPath301)"
-   x="221.60904"
-   y="0"
-   style="text-align:end;text-anchor:end"><tspan
+   transform="matrix(1.3333333,0,0,1.3333333,239.98667,218.26667)"
+   clip-path="url(#clipPath301)"><tspan
      id="tspan300"
-     style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
      x="0"
      dx="0 0 0 -0.059939999 0 -0.047952 0 -0.059939999 0 -0.047952"
-     y="0">¥{{ format .ReportData.Record.NyuuyokuTotal }}</tspan></text>
+     y="0">¥{{ format .ReportData.Record.TotalGoukei }}</tspan></text>
 <path
    id="path302"
    d="m 162.73,689.36 h 71.905 v 0.096 H 162.73 Z"
@@ -5240,6 +5249,16 @@
    d="m 93.148,637.58 h 0.0959 v 17.402 H 93.148 Z"
    style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
    transform="matrix(1.3333333,0,0,-1.3333333,0,1122.5333)" />
+<text
+   id="text310"
+   xml:space="preserve"
+   transform="matrix(1.3333333,0,0,1.3333333,251.17333,264.26667)"
+   clip-path="url(#clipPath311)"><tspan
+     id="tspan310"
+     style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     x="0"
+     dx="0 0 0 -0.047952 0 -0.059939999 0 -0.047952"
+     y="0">¥{{ format .ReportData.Record.SeitaiTotal }}</tspan></text>
 <path
    id="path312"
    d="m 162.73,654.89 h 71.905 v 0.096 H 162.73 Z"
@@ -5289,6 +5308,16 @@
    d="m 93.148,654.89 h 0.0959 v 17.402 H 93.148 Z"
    style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
    transform="matrix(1.3333333,0,0,-1.3333333,0,1122.5333)" />
+<text
+   id="text320"
+   xml:space="preserve"
+   transform="matrix(1.3333333,0,0,1.3333333,251.17333,241.28)"
+   clip-path="url(#clipPath321)"><tspan
+     id="tspan320"
+     style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     x="0"
+     dx="0 0 0 -0.047952 0 -0.059939999 0 -0.047952"
+     y="0">¥{{ .ReportData.Record.NyuujoushaGoukei }}</tspan></text>
 <path
    id="path322"
    d="m 162.73,672.15 h 71.905 v 0.14401 H 162.73 Z"
@@ -6370,8 +6399,6 @@
      dx="0 0.047952 0.095904 0.071928002 0.047952 0.095904"
      y="0">報告スペース</tspan></text>
 
-
-
       {{range $i, $line := .ReportData.Record.ReportSpaceLines}}
       <text
    id="text524-{{$i}}"
@@ -6383,8 +6410,6 @@
      x="0"
      dx="0 0 -0.0359644 0 -0.13486651 0 -0.080919899 0 -0.20679531 0 0.0359644 0.0269733 0 -0.044955499"
      y="0">{{$line}}</tspan></text>
-
-
 
       {{end}}
    <path
@@ -6661,7 +6686,7 @@
    y="686.10852"
    id="text3"><tspan
      sodipodi:role="line"
-     id="tspan3" /></text>
+     id="tspan3"></tspan></text>
 <text
    id="text4"
    xml:space="preserve"
@@ -6991,41 +7016,14 @@
 <text
    id="text35"
    xml:space="preserve"
-   transform="matrix(1.3333333,0,0,1.3333333,713.81442,173.46667)"
+   transform="matrix(1.3333333,0,0,1.3333333,567.81442,173.46667)"
    clip-path="url(#clipPath241)"
-   x="545.59399"
-   y="0"
-   style="text-align:end;text-anchor:end"><tspan
+   x="175.19933"
+   y="0"><tspan
      id="tspan35"
-     style="font-variant:normal;font-weight:normal;font-size:19.996px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     style="font-variant:normal;font-weight:normal;font-size:19.996px;font-family:'MS PGothic';text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
      x="0"
      y="0">¥{{ format .ReportData.Record.KyakuTanka }}</tspan></text>
-<text
-   id="text7"
-   xml:space="preserve"
-   transform="matrix(1.3333333,0,0,1.3333333,311.29117,242.26667)"
-   clip-path="url(#clipPath301)"
-   x="221.60904"
-   y="0"
-   style="text-align:end;text-anchor:end"><tspan
-     id="tspan7"
-     style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-     x="0"
-     dx="0 0 0 -0.059939999 0 -0.047952 0 -0.059939999 0 -0.047952"
-     y="0">¥{{ format .ReportData.Record.InshokuTotal }}</tspan></text>
-<text
-   id="text36"
-   xml:space="preserve"
-   transform="matrix(1.3333333,0,0,1.3333333,311.29117,264.26667)"
-   clip-path="url(#clipPath301)"
-   x="221.60904"
-   y="0"
-   style="text-align:end;text-anchor:end"><tspan
-     id="tspan36"
-     style="font-variant:normal;font-weight:normal;font-size:11.988px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-     x="0"
-     dx="0 0 0 -0.059939999 0 -0.047952 0 -0.059939999 0 -0.047952"
-     y="0">¥{{ format .ReportData.Record.SeitaiTotal }}</tspan></text>
 </g>
   <g
      id="g575"
@@ -7063,14 +7061,12 @@
     <text
        id="text580"
        xml:space="preserve"
-       x="1213.6533"
-       y="89.973335"
-       style="font-size:16px;stroke-width:1.33333"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1193.6533,89.973333)"
+       clip-path="url(#clipPath581)"><tspan
          id="tspan580"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1213.6533"
-         y="89.973335"
-         text-anchor="end">{{ .ReportData.Record.Machine1CashCount }}</tspan></text>
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">336</tspan></text>
     <path
        id="path582"
        d="m 257.91,783.93 h 45.124 v 0.096 H 257.91 Z"
@@ -7120,6 +7116,16 @@
        d="m 205.53,759.93 h 0.14386 v 12.097 H 205.53 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text590"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1170.76,105.97333)"
+       clip-path="url(#clipPath591)"><tspan
+         id="tspan590"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         dx="0 0.0299946 0.0299946 0 0 0.019996401 0.0299946"
+         y="0">328,600</tspan></text>
     <path
        id="path592"
        d="m 257.91,771.93 h 45.124 v 0.096 H 257.91 Z"
@@ -7169,6 +7175,15 @@
        d="m 205.53,747.92 h 0.14386 v 12.097 H 205.53 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text600"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1207.12,121.97333)"
+       clip-path="url(#clipPath601)"><tspan
+         id="tspan600"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">0</tspan></text>
     <path
        id="path602"
        d="m 257.91,759.93 h 45.124 v 0.096 H 257.91 Z"
@@ -7218,6 +7233,15 @@
        d="m 205.53,735.92 h 0.14386 v 12.097 H 205.53 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text610"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1207.12,137.97333)"
+       clip-path="url(#clipPath611)"><tspan
+         id="tspan610"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">0</tspan></text>
     <path
        id="path612"
        d="m 257.91,747.92 h 45.124 v 0.096 H 257.91 Z"
@@ -7267,6 +7291,15 @@
        d="m 205.53,723.92 h 0.14386 v 12.097 H 205.53 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text620"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1193.6533,153.97333)"
+       clip-path="url(#clipPath621)"><tspan
+         id="tspan620"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">336</tspan></text>
     <path
        id="path622"
        d="m 257.91,735.92 h 45.124 v 0.096 H 257.91 Z"
@@ -7316,6 +7349,16 @@
        d="m 205.53,711.92 h 0.14386 v 12.097 H 205.53 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text630"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1170.76,169.97333)"
+       clip-path="url(#clipPath631)"><tspan
+         id="tspan630"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         dx="0 0.0299946 0.0299946 0 0 0.019996401 0.0299946"
+         y="0">328,600</tspan></text>
     <path
        id="path632"
        d="m 257.91,723.92 h 45.124 v 0.096 H 257.91 Z"
@@ -7336,6 +7379,15 @@
        d="m 257.91,711.92 h 0.14386 v 12.097 H 257.91 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text635"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1253.5333,89.973333)"
+       clip-path="url(#clipPath636)"><tspan
+         id="tspan635"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">291</tspan></text>
     <path
        id="path637"
        d="m 302.94,783.93 h 44.956 v 0.096 H 302.94 Z"
@@ -7356,6 +7408,16 @@
        d="m 302.94,771.93 h 0.0959 v 12.097 H 302.94 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text640"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1230.64,105.97333)"
+       clip-path="url(#clipPath641)"><tspan
+         id="tspan640"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         dx="0 0.0299946 0.0299946 0 0 0.019996401 0.0299946"
+         y="0">299,970</tspan></text>
     <path
        id="path642"
        d="m 302.94,771.93 h 44.956 v 0.096 H 302.94 Z"
@@ -7376,6 +7438,15 @@
        d="m 302.94,759.93 h 0.0959 v 12.097 H 302.94 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text645"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1266.9867,121.97333)"
+       clip-path="url(#clipPath646)"><tspan
+         id="tspan645"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">2</tspan></text>
     <path
        id="path647"
        d="m 302.94,759.93 h 44.956 v 0.096 H 302.94 Z"
@@ -7396,6 +7467,16 @@
        d="m 302.94,747.92 h 0.0959 v 12.097 H 302.94 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text650"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1244.1067,137.97333)"
+       clip-path="url(#clipPath651)"><tspan
+         id="tspan650"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         dx="0 0.0299946 0 0 0.019996401"
+         y="0">2,000</tspan></text>
     <path
        id="path652"
        d="m 302.94,747.92 h 44.956 v 0.096 H 302.94 Z"
@@ -7416,6 +7497,15 @@
        d="m 302.94,735.92 h 0.0959 v 12.097 H 302.94 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text655"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1253.5333,153.97333)"
+       clip-path="url(#clipPath656)"><tspan
+         id="tspan655"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">289</tspan></text>
     <path
        id="path657"
        d="m 302.94,735.92 h 44.956 v 0.096 H 302.94 Z"
@@ -7436,6 +7526,16 @@
        d="m 302.94,723.92 h 0.0959 v 12.097 H 302.94 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text660"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1230.64,169.97333)"
+       clip-path="url(#clipPath661)"><tspan
+         id="tspan660"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         dx="0 0.0299946 0.0299946 0 0 0.019996401 0.0299946"
+         y="0">297,970</tspan></text>
     <path
        id="path662"
        d="m 302.94,723.92 h 44.956 v 0.096 H 302.94 Z"
@@ -7459,7 +7559,8 @@
     <text
        id="text665"
        xml:space="preserve"
-       transform="matrix(1.3333333,0,0,1.3333333,1313.44,89.973333)"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1313.44,89.973333)"
+       clip-path="url(#clipPath666)"><tspan
          id="tspan665"
          style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
          x="0"
@@ -7487,7 +7588,8 @@
     <text
        id="text670"
        xml:space="preserve"
-       transform="matrix(1.3333333,0,0,1.3333333,1290.5467,105.97333)"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1290.5467,105.97333)"
+       clip-path="url(#clipPath671)"><tspan
          id="tspan670"
          style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
          x="0"
@@ -7516,7 +7618,8 @@
     <text
        id="text675"
        xml:space="preserve"
-       transform="matrix(1.3333333,0,0,1.3333333,1326.8667,121.97333)"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1326.8667,121.97333)"
+       clip-path="url(#clipPath676)"><tspan
          id="tspan675"
          style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
          x="0"
@@ -7544,7 +7647,8 @@
     <text
        id="text680"
        xml:space="preserve"
-       transform="matrix(1.3333333,0,0,1.3333333,1326.8667,137.97333)"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1326.8667,137.97333)"
+       clip-path="url(#clipPath681)"><tspan
          id="tspan680"
          style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
          x="0"
@@ -7572,7 +7676,8 @@
     <text
        id="text685"
        xml:space="preserve"
-       transform="matrix(1.3333333,0,0,1.3333333,1313.44,153.97333)"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1313.44,153.97333)"
+       clip-path="url(#clipPath686)"><tspan
          id="tspan685"
          style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
          x="0"
@@ -7600,7 +7705,8 @@
     <text
        id="text690"
        xml:space="preserve"
-       transform="matrix(1.3333333,0,0,1.3333333,1290.5467,169.97333)"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1290.5467,169.97333)"
+       clip-path="url(#clipPath691)"><tspan
          id="tspan690"
          style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
          x="0"
@@ -7831,6 +7937,15 @@
        d="m 205.53,699.92 h 0.14386 v 12.097 H 205.53 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text730"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1207.12,185.97333)"
+       clip-path="url(#clipPath731)"><tspan
+         id="tspan730"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">0</tspan></text>
     <path
        id="path732"
        d="m 257.91,711.92 h 45.124 v 0.096 H 257.91 Z"
@@ -7880,6 +7995,15 @@
        d="m 205.53,687.92 h 0.14386 v 12.097 H 205.53 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text740"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1207.12,201.98667)"
+       clip-path="url(#clipPath741)"><tspan
+         id="tspan740"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">0</tspan></text>
     <path
        id="path742"
        d="m 257.91,699.92 h 45.124 v 0.096 H 257.91 Z"
@@ -7900,6 +8024,15 @@
        d="m 257.91,687.92 h 0.14386 v 12.097 H 257.91 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text745"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1266.9867,185.97333)"
+       clip-path="url(#clipPath746)"><tspan
+         id="tspan745"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">0</tspan></text>
     <path
        id="path747"
        d="m 302.94,711.92 h 44.956 v 0.096 H 302.94 Z"
@@ -7920,6 +8053,15 @@
        d="m 302.94,699.92 h 0.0959 v 12.097 H 302.94 Z"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none"
        transform="matrix(1.3333333,0,0,-1.3333333,813.77333,1122.5333)" />
+    <text
+       id="text750"
+       xml:space="preserve"
+       transform="matrix(1.3333333,0,0,1.3333333,1266.9867,201.98667)"
+       clip-path="url(#clipPath751)"><tspan
+         id="tspan750"
+         style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         x="0"
+         y="0">0</tspan></text>
     <path
        id="path752"
        d="m 302.94,699.92 h 44.956 v 0.096 H 302.94 Z"
@@ -7943,7 +8085,8 @@
     <text
        id="text755"
        xml:space="preserve"
-       transform="matrix(1.3333333,0,0,1.3333333,1326.8667,185.97333)"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1326.8667,185.97333)"
+       clip-path="url(#clipPath756)"><tspan
          id="tspan755"
          style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
          x="0"
@@ -7971,7 +8114,8 @@
     <text
        id="text760"
        xml:space="preserve"
-       transform="matrix(1.3333333,0,0,1.3333333,1326.8667,201.98667)"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1326.8667,201.98667)"
+       clip-path="url(#clipPath761)"><tspan
          id="tspan760"
          style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
          x="0"
@@ -8087,7 +8231,8 @@
     <text
        id="text780"
        xml:space="preserve"
-       transform="matrix(1.3333333,0,0,1.3333333,1230.64,217.98667)"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1230.64,217.98667)"
+       clip-path="url(#clipPath781)"><tspan
          id="tspan780"
          style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
          x="0"
@@ -8116,7 +8261,8 @@
     <text
        id="text785"
        xml:space="preserve"
-       transform="matrix(1.3333333,0,0,1.3333333,1350.4267,217.98667)"><tspan
+       transform="matrix(1.3333333,0,0,1.3333333,1350.4267,217.98667)"
+       clip-path="url(#clipPath786)"><tspan
          id="tspan785"
          style="font-variant:normal;font-weight:normal;font-size:9.9982px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
          x="0"
@@ -14792,170 +14938,5 @@
          x="0"
          dx="0 0.039896801 -0.049871001 0.039896801 0 -0.049871001 0.039896801"
          y="0">0:48:47</tspan></text>
-    <text
-       id="text37"
-       xml:space="preserve"
-       x="1213.6533"
-       y="105.61979"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan37"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1213.6533"
-         y="105.61979"
-         text-anchor="end">{{ .ReportData.Record.Machine1CashAmount }}</tspan></text>
-    <text
-       id="text38"
-       xml:space="preserve"
-       x="1213.6533"
-       y="121.61979"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan38"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1213.6533"
-         y="121.61979"
-         text-anchor="end">{{ .ReportData.Record.Machine1SettleCount }}</tspan></text>
-    <text
-       id="text41"
-       xml:space="preserve"
-       x="1213.6533"
-       y="138.55914"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan41"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1213.6533"
-         y="138.55914"
-         text-anchor="end">{{ .ReportData.Record.Machine1SettleAmount }}</tspan></text>
-    <text
-       id="text42"
-       xml:space="preserve"
-       x="1213.6533"
-       y="153.61978"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan42"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1213.6533"
-         y="153.61978"
-         text-anchor="end">{{ .ReportData.Record.Machine1CashCountGoukei }}</tspan></text>
-    <text
-       id="text43"
-       xml:space="preserve"
-       x="1213.6533"
-       y="169.61978"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan43"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1213.6533"
-         y="169.61978"
-         text-anchor="end">{{ .ReportData.Record.Machine1CashAmountGoukei }}</tspan></text>
-    <text
-       id="text44"
-       xml:space="preserve"
-       x="1213.6533"
-       y="186.32687"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan44"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1213.6533"
-         y="186.32687"
-         text-anchor="end">{{ .ReportData.Record.Machine1UnsettledCount }}</tspan></text>
-    <text
-       id="text45"
-       xml:space="preserve"
-       x="1213.6533"
-       y="201.97333"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan45"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1213.6533"
-         y="201.97333"
-         text-anchor="end">{{ .ReportData.Record.Machine1UnsettledAmount }}</tspan></text>
-    <text
-       id="text46"
-       xml:space="preserve"
-       x="1273.6533"
-       y="89.973335"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan46"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1273.6533"
-         y="89.973335"
-         text-anchor="end">{{ .ReportData.Record.Machine1CashCount }}</tspan></text>
-    <text
-       id="text47"
-       xml:space="preserve"
-       x="1273.6533"
-       y="105.61979"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan47"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1273.6533"
-         y="105.61979"
-         text-anchor="end">{{ .ReportData.Record.Machine1CashAmount }}</tspan></text>
-    <text
-       id="text48"
-       xml:space="preserve"
-       x="1273.6533"
-       y="121.61979"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan48"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1273.6533"
-         y="121.61979"
-         text-anchor="end">{{ .ReportData.Record.Machine1SettleCount }}</tspan></text>
-    <text
-       id="text49"
-       xml:space="preserve"
-       x="1273.6533"
-       y="138.55914"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan49"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1273.6533"
-         y="138.55914"
-         text-anchor="end">{{ .ReportData.Record.Machine1SettleAmount }}</tspan></text>
-    <text
-       id="text51"
-       xml:space="preserve"
-       x="1273.6533"
-       y="153.61978"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan51"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1273.6533"
-         y="153.61978"
-         text-anchor="end">{{ .ReportData.Record.Machine1CashCountGoukei }}</tspan></text>
-    <text
-       id="text52"
-       xml:space="preserve"
-       x="1273.6533"
-       y="169.61978"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan52"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1273.6533"
-         y="169.61978"
-         text-anchor="end">{{ .ReportData.Record.Machine1CashAmountGoukei }}</tspan></text>
-    <text
-       id="text53"
-       xml:space="preserve"
-       x="1273.6533"
-       y="186.32687"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan53"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1273.6533"
-         y="186.32687"
-         text-anchor="end">{{ .ReportData.Record.Machine1UnsettledCount }}</tspan></text>
-    <text
-       id="text54"
-       xml:space="preserve"
-       x="1273.6533"
-       y="201.97333"
-       style="font-size:16px;stroke-width:1.33333"><tspan
-         id="tspan54"
-         style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
-         x="1273.6533"
-         y="201.97333"
-         text-anchor="end">{{ .ReportData.Record.Machine1UnsettledAmount }}</tspan></text>
   </g>
 </svg>
