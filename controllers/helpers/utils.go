@@ -2,22 +2,34 @@ package helpers
 
 import (
 	"fmt"
+	html_template "html/template"
 	"io"
 	"os/exec"
-	"text/template"
+	text_template "text/template"
 
 	"github.com/dustin/go-humanize"
 )
 
 // ParseTemplateWithFunc parses the template at the given path and sets the formatNumber function as 'format'.
-func ParseTemplateWithFunc(path string) (*template.Template, error) {
-	funcMap := template.FuncMap{
+func ParseTemplateWithFunc(path string) (*html_template.Template, error) {
+	funcMap := html_template.FuncMap{
+		"format": formatNumber,
+	}
+	tmpl, err := html_template.New("").Funcs(funcMap).ParseFiles(path)
+	if err != nil {
+		return nil, err
+	}
+	return tmpl, nil
+}
+
+func ParseSVGTemplateWithFunc(path string) (*text_template.Template, error) {
+	funcMap := text_template.FuncMap{
 		"format": formatNumber,
 		"yOffset": func(i int, base, step float64) float64 {
 			return base + float64(i)*step
 		},
 	}
-	tmpl, err := template.New("").Funcs(funcMap).ParseFiles(path)
+	tmpl, err := text_template.New("").Funcs(funcMap).ParseFiles(path)
 	if err != nil {
 		return nil, err
 	}

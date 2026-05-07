@@ -31,7 +31,7 @@ func SalesDataReportSVGHandler(c *gin.Context) {
 	}
 
 	// Parse the SVG template
-	tmpl, err := controllerHelpers.ParseTemplateWithFunc("templates/uriagenichijihoukokusho_p2.svg")
+	tmpl, err := controllerHelpers.ParseSVGTemplateWithFunc("templates/uriagenichijihoukokusho_p2.svg")
 	if err != nil {
 		log.Printf("Error parsing template: %v", err)
 		c.String(http.StatusInternalServerError, "Failed to parse template")
@@ -64,6 +64,10 @@ func SalesDataReportSVGHandler(c *gin.Context) {
 	// c.Data(http.StatusOK, "application/pdf", pdfBytes)
 
 	// Set the content type and return the SVG data
-	c.Header("Content-Type", "image/svg+xml")
-	c.Data(http.StatusOK, "image/svg+xml", buf.Bytes())
+	//c.Header("Content-Type", "image/svg+xml")
+	c.Header("Content-Type", "application/json")
+	//c.Data(http.StatusOK, "image/svg+xml", buf.Bytes())
+	c.JSON(http.StatusOK, gin.H{
+		"data": ReportData,
+	})
 }
