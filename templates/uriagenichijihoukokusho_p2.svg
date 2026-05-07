@@ -3527,7 +3527,7 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="2"
-     inkscape:cx="457.75"
+     inkscape:cx="458"
      inkscape:cy="528.25"
      inkscape:window-width="1920"
      inkscape:window-height="1111"
@@ -3550,7 +3550,7 @@
      inkscape:groupmode="layer"
      inkscape:label="2"
      transform="translate(-813.77331)"
-     style="display:none">
+     style="display:inline">
     <g
        id="g114"
        inkscape:label="Machine3"
@@ -4099,7 +4099,7 @@
            id="tspan146"
            style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
            x="1393.7876"
-           y="522.01331">{{ format .ReportData.Record.Machine4  CAmountGoukei }}</tspan></text>
+           y="522.01331">{{ format .ReportData.Record.Machine4CAmountGoukei }}</tspan></text>
     </g>
     <g
        id="g112"
@@ -4320,12 +4320,12 @@
          xml:space="preserve"
          x="1065.7125"
          y="426.01334"
-         style="font-size:16px;text-align:end;text-anchor:end;display:inline;stroke-width:1.33333"
+         style="font-size:24px;text-align:end;text-anchor:end;display:inline;stroke-width:1.33333"
          transform="translate(400)"><tspan
            id="tspan166"
            style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
            x="1053.7876"
-           y="426.01334">{{ format .ReportData.Record.MachineQrAmountGoukei }}</tspan></text>
+           y="426.01334">{{ format .ReportData.Record.Machine5QrCountGoukei }}</tspan></text>
       <text
          id="text167"
          xml:space="preserve"
@@ -5074,7 +5074,7 @@
        xml:space="preserve"
        x="1490.0615"
        y="217.98666"
-       style="display:inline;font-size:16px;text-align:end;text-anchor:end;stroke-width:1.33333"><tspan
+       style="font-size:16px;text-align:end;text-anchor:end;display:inline;stroke-width:1.33333"><tspan
          id="tspan918"
          style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
          x="1455.0133"
@@ -5084,7 +5084,7 @@
        xml:space="preserve"
        x="1438.1284"
        y="217.98666"
-       style="display:inline;font-size:16px;text-align:end;text-anchor:end;stroke-width:1.33333"><tspan
+       style="font-size:16px;text-align:end;text-anchor:end;display:inline;stroke-width:1.33333"><tspan
          id="tspan785"
          style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
          x="1396.4268"
@@ -5094,7 +5094,7 @@
        xml:space="preserve"
        x="1316.2896"
        y="217.98666"
-       style="display:inline;font-size:16px;text-align:end;text-anchor:end;stroke-width:1.33333"><tspan
+       style="font-size:16px;text-align:end;text-anchor:end;display:inline;stroke-width:1.33333"><tspan
          id="tspan780"
          style="font-variant:normal;font-weight:normal;font-size:13.3309px;font-family:'MS PGothic';text-align:end;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.33333"
          x="1274.64"
