@@ -1,244 +1,281 @@
-/**
-         * 2つのDateオブジェクトが同じ日付を指しているか比較します。
-         * 時間は無視します。
-         * @param {Date} d1
-         * @param {Date} d2
-         * @returns {boolean}
-         */
+// ============================================================
+// Types
+// ============================================================
+// ============================================================
+// Standalone utility functions
+// ============================================================
 const isSameDay = (d1, d2) => {
     return d1.getFullYear() === d2.getFullYear() &&
-           d1.getMonth() === d2.getMonth() &&
-           d1.getDate() === d2.getDate();
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
 };
-
-/**
- * この関数は、単一のTSVファイルを処理し、集計データを返します。
- * GoのバックエンドロジックをJavaScriptに移植したものです。
- * @param {File} file 処理するファイル
- * @param {string} processDateStr 処理対象日 (YYYY-MM-DD形式)
- * @returns {Promise<object>} 集計結果を含むPromise
- */
-async function processFileOnFrontend(file, processDateStr) {
-    let colCategoryRngs = [];
-    try {
-        const response = await fetch('/api/ranges');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+const emptyPaymentStat = () => ({
+    vendingMachineNo: 0,
+    Machine1CashCount: 0, Machine1CashAmount: 0,
+    Machine1SettleCount: 0, Machine1SettleAmount: 0,
+    Machine1QrCount: 0, Machine1QrAmount: 0,
+    Machine1QrSettleCount: 0, Machine1QrSettleAmount: 0,
+    Machine1ECount: 0, Machine1EAmount: 0,
+    Machine1ESettleCount: 0, Machine1ESettleAmount: 0,
+    Machine1CCount: 0, Machine1CAmount: 0,
+    Machine1CSettleCount: 0, Machine1CSettleAmount: 0,
+    Machine2CashCount: 0, Machine2CashAmount: 0,
+    Machine2SettleCount: 0, Machine2SettleAmount: 0,
+    Machine2QrCount: 0, Machine2QrAmount: 0,
+    Machine2QrSettleCount: 0, Machine2QrSettleAmount: 0,
+    Machine2ECount: 0, Machine2EAmount: 0,
+    Machine2ESettleCount: 0, Machine2ESettleAmount: 0,
+    Machine2CCount: 0, Machine2CAmount: 0,
+    Machine2CSettleCount: 0, Machine2CSettleAmount: 0,
+    Machine3CashCount: 0, Machine3CashAmount: 0,
+    Machine3SettleCount: 0, Machine3SettleAmount: 0,
+    Machine3QrCount: 0, Machine3QrAmount: 0,
+    Machine3QrSettleCount: 0, Machine3QrSettleAmount: 0,
+    Machine3ECount: 0, Machine3EAmount: 0,
+    Machine3ESettleCount: 0, Machine3ESettleAmount: 0,
+    Machine3CCount: 0, Machine3CAmount: 0,
+    Machine3CSettleCount: 0, Machine3CSettleAmount: 0,
+    Machine4CashCount: 0, Machine4CashAmount: 0,
+    Machine4SettleCount: 0, Machine4SettleAmount: 0,
+    Machine4QrCount: 0, Machine4QrAmount: 0,
+    Machine4QrSettleCount: 0, Machine4QrSettleAmount: 0,
+    Machine4ECount: 0, Machine4EAmount: 0,
+    Machine4ESettleCount: 0, Machine4ESettleAmount: 0,
+    Machine4CCount: 0, Machine4CAmount: 0,
+    Machine4CSettleCount: 0, Machine4CSettleAmount: 0,
+    Machine5CashCount: 0, Machine5CashAmount: 0,
+    Machine5SettleCount: 0, Machine5SettleAmount: 0,
+    Machine5QrCount: 0, Machine5QrAmount: 0,
+    Machine5QrSettleCount: 0, Machine5QrSettleAmount: 0,
+    Machine5ECount: 0, Machine5EAmount: 0,
+    Machine5ESettleCount: 0, Machine5ESettleAmount: 0,
+    Machine5CCount: 0, Machine5CAmount: 0,
+    Machine5CSettleCount: 0, Machine5CSettleAmount: 0,
+});
+const emptysummary = () => ({
+    AdultTicketCount: 0,
+    AdultSetTicketCount: 0,
+    ChildTicketCount: 0,
+    InfantTicketCount: 0,
+    SixTicketCount: 0,
+    TicketCount: 0,
+});
+const mergeResults = (results) => {
+    const merged = {
+        paymentStats: emptyPaymentStat(),
+        soldProducts: {},
+        summary: emptysummary(),
+    };
+    for (const result of results) {
+        // Merge paymentStats — all properties are numeric so we can iterate
+        for (const key of Object.keys(result.paymentStats)) {
+            if (key === 'vendingMachineNo')
+                continue;
+            merged.paymentStats[key] += result.paymentStats[key];
         }
-        colCategoryRngs = await response.json();
-    } catch (error) {
-        console.error("Failed to fetch category ranges:", error);
-        throw error;
+        // Merge soldProducts
+        for (const key in result.soldProducts) {
+            if (!merged.soldProducts[key]) {
+                merged.soldProducts[key] = { ...result.soldProducts[key] };
+            }
+            else {
+                merged.soldProducts[key].uriageKingaku += result.soldProducts[key].uriageKingaku;
+                merged.soldProducts[key].hanbaiMaisuu += result.soldProducts[key].hanbaiMaisuu;
+            }
+        }
+        // Merge summary
+        for (const key of Object.keys(result.summary)) {
+            merged.summary[key] += result.summary[key];
+        }
     }
-
+    return merged;
+};
+async function processFileOnFrontend(file, processDateStr, colCategoryRngs) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-
-        reader.onload = function(event) {
+        reader.onload = (event) => {
             try {
                 const content = event.target.result;
                 const lines = content.split('\n');
                 if (lines.length < 2) {
                     throw new Error('ファイルが空であるか、ヘッダーしか含まれていません。');
                 }
-
-                // `processDateStr`から日付部分のみを考慮したDateオブジェクトを作成
                 const processDate = new Date(processDateStr);
-                processDate.setHours(0, 0, 0, 0); // タイムゾーンのずれを防ぐため、時刻をリセット
-
-                const dictSoldProducts = {};
-                const paymentStats = {};
-                
+                processDate.setHours(0, 0, 0, 0);
+                const soldProducts = {};
+                const paymentStats = emptyPaymentStat();
                 const getCategoryName = (bumonID, menuCode) => {
                     for (const elem of colCategoryRngs) {
-                        if (elem.bumon_id === bumonID && menuCode >= elem.han_i_kaishi && menuCode <= elem.han_i_shuryo) {
+                        if (elem.bumon_id === bumonID &&
+                            menuCode >= elem.han_i_kaishi &&
+                            menuCode <= elem.han_i_shuryo)
                             return elem.category_name;
-                        }
                     }
-                    return "";
+                    return '';
                 };
-
                 const updateSoldProducts = (intBumon, strBumon, hanbaiMaisuu, menuCode, tekiyouKakaku, menuMei, kessaiKingaku, factor) => {
                     const key = `${strBumon}_${String(menuCode).padStart(3, '0')}`;
-                    if (dictSoldProducts[key]) {
-                        dictSoldProducts[key].uriageKingaku += kessaiKingaku * factor;
-                        dictSoldProducts[key].hanbaiMaisuu += hanbaiMaisuu * factor;
-                    } else {
-                        const newProduct = {
+                    if (soldProducts[key]) {
+                        soldProducts[key].uriageKingaku += kessaiKingaku * factor;
+                        soldProducts[key].hanbaiMaisuu += hanbaiMaisuu * factor;
+                    }
+                    else {
+                        soldProducts[key] = {
                             bumon: intBumon,
                             bumonName: strBumon,
                             uriageKingaku: kessaiKingaku,
-                            hanbaiMaisuu: hanbaiMaisuu,
+                            hanbaiMaisuu,
                             productID: menuCode,
                             menuName: menuMei,
-                            tekiyouKakaku: tekiyouKakaku,
-                            makanaiKubun: menuMei.includes("まかない") ? "まかない" : "実売上",
+                            tekiyouKakaku,
+                            makanaiKubun: menuMei.includes('まかない') ? 'まかない' : '実売上',
                             date: processDateStr,
                             category: getCategoryName(strBumon, menuCode),
                         };
-                        dictSoldProducts[key] = newProduct;
                     }
                 };
-                
-                // ヘッダーをスキップ
+                const GOUKI = 2;
+                const TORIHIKI_KUBUN = 3;
+                const TORIHIKIKAISHIHIDUKE = 6;
+                const HANBAI_MAISUU = 16;
+                const TEKIYOU_KAKAKU = 18;
+                const KESSAI_KINGAKU = 19;
+                const MENU_CODE = 21;
+                const MENU_MEI = 22;
+                const KAADO_KESSAI = 56;
                 for (let i = 1; i < lines.length; i++) {
                     const line = lines[i].trim();
-                    if (line === '' || !line.startsWith("2")) {
+                    if (line === '' || !line.startsWith('2'))
                         continue;
-                    }
-                    
                     const fields = line.split(',');
-                    
-                    const GOUKI = 2;
-                    const TORIHIKI_KUBUN = 3;
-                    const TORIHIKIKAISHIHIDUKE = 6;
-                    const HANBAI_MAISUU = 16;
-                    const TEKIYOU_KAKAKU = 18;
-                    const KESSAI_KINGAKU = 19;
-                    const MENU_CODE = 21;
-                    const MENU_MEI = 22;
-                    const KAADO_KESSAI = 56;
-                    
                     const fileDateStr = fields[TORIHIKIKAISHIHIDUKE];
                     const parsedFileDate = new Date(fileDateStr);
                     if (!isSameDay(parsedFileDate, processDate)) {
                         throw new Error(`ファイルの日付 ${fileDateStr} が選択された日付と一致しません。`);
                     }
-                    
-                    const vendingmachineNo = parseInt(fields[GOUKI]);
-                    const torihikiKubun = parseInt(fields[TORIHIKI_KUBUN]);
-                    const kessaiKingaku = parseInt(fields[KESSAI_KINGAKU]);
-                    const hanbaiMaisuu = parseInt(fields[HANBAI_MAISUU]);
-                    const menuCode = parseInt(fields[MENU_CODE]);
-                    const tekiyouKakaku = parseInt(fields[TEKIYOU_KAKAKU]);
+                    const vendingmachineNo = parseInt(fields[GOUKI], 10);
+                    const torihikiKubun = parseInt(fields[TORIHIKI_KUBUN], 10);
+                    const kessaiKingaku = parseInt(fields[KESSAI_KINGAKU], 10);
+                    const hanbaiMaisuu = parseInt(fields[HANBAI_MAISUU], 10);
+                    const menuCode = parseInt(fields[MENU_CODE], 10);
+                    const tekiyouKakaku = parseInt(fields[TEKIYOU_KAKAKU], 10);
                     const menuMei = fields[MENU_MEI];
-                    const kaadoKessai = parseInt(fields[KAADO_KESSAI]);
-                    
-                    let bumon = "";
+                    const kaadoKessai = parseInt(fields[KAADO_KESSAI], 10);
+                    let bumon = '';
                     let intBumon = 0;
                     switch (vendingmachineNo) {
-                        case 1: case 2: intBumon = 1; bumon = "入浴"; break;
-                        case 3: case 4: intBumon = 2; bumon = "飲食"; break;
-                        case 5: intBumon = 3; bumon = "エステ"; break;
+                        case 1:
+                        case 2:
+                            intBumon = 1;
+                            bumon = '入浴';
+                            break;
+                        case 3:
+                        case 4:
+                            intBumon = 2;
+                            bumon = '飲食';
+                            break;
+                        case 5:
+                            intBumon = 3;
+                            bumon = 'エステ';
+                            break;
                     }
-                    
-                    const factor = (torihikiKubun === 1) ? -1 : 1;
+                    const factor = torihikiKubun === 1 ? -1 : 1;
                     updateSoldProducts(intBumon, bumon, hanbaiMaisuu, menuCode, tekiyouKakaku, menuMei, kessaiKingaku, factor);
-                    
-                    if (!paymentStats[vendingmachineNo]) {
-                        paymentStats[vendingmachineNo] = { vendingMachineNo: vendingmachineNo, GenkinGrossMaisuu: 0, GenkinGrossKingaku: 0, GenkinSeisanMaisuu: 0, GenkinSeisanKingaku: 0, QrcodeGrossMaisuu: 0, QrcodeGrossKingaku: 0, QrcodeSeisanMaisuu: 0, QrcodeSeisanKingaku: 0, CreditcardGrossMaisuu: 0, CreditcardGrossKingaku: 0, CreditcardSeisanMaisuu: 0, CreditcardSeisanKingaku: 0, DenshimaneeGrossMaisuu: 0, DenshimaneeGrossKingaku: 0 };
-                    }
-                    
+                    // Use the vending machine number as a prefix for PaymentStat keys
+                    const m = `Machine${vendingmachineNo}`;
                     switch (kaadoKessai) {
                         case 0: // 現金
                             if (factor === 1) {
-                                paymentStats[vendingmachineNo].GenkinGrossKingaku += kessaiKingaku;
-                                paymentStats[vendingmachineNo].GenkinGrossMaisuu += hanbaiMaisuu;
-                            } else {
-                                paymentStats[vendingmachineNo].GenkinSeisanKingaku += kessaiKingaku;
-                                paymentStats[vendingmachineNo].GenkinSeisanMaisuu += hanbaiMaisuu;
+                                paymentStats[`${m}CashAmount`] += kessaiKingaku;
+                                paymentStats[`${m}CashCount`] += hanbaiMaisuu;
+                            }
+                            else {
+                                paymentStats[`${m}SettleAmount`] += kessaiKingaku;
+                                paymentStats[`${m}SettleCount`] += hanbaiMaisuu;
                             }
                             break;
                         case 5: // QRコード
                             if (factor === 1) {
-                                paymentStats[vendingmachineNo].QrcodeGrossKingaku += kessaiKingaku;
-                                paymentStats[vendingmachineNo].QrcodeGrossMaisuu += hanbaiMaisuu;
-                            } else {
-                                paymentStats[vendingmachineNo].QrcodeSeisanKingaku += kessaiKingaku;
-                                paymentStats[vendingmachineNo].QrcodeSeisanMaisuu += hanbaiMaisuu;
+                                paymentStats[`${m}QrAmount`] += kessaiKingaku;
+                                paymentStats[`${m}QrCount`] += hanbaiMaisuu;
+                            }
+                            else {
+                                paymentStats[`${m}QrSettleAmount`] += kessaiKingaku;
+                                paymentStats[`${m}QrSettleCount`] += hanbaiMaisuu;
                             }
                             break;
-                        case 6: // QRコード
+                        case 6: // クレジットカード
                             if (factor === 1) {
-                                paymentStats[vendingmachineNo].CreditcardGrossKingaku += kessaiKingaku;
-                                paymentStats[vendingmachineNo].CreditcardGrossMaisuu += hanbaiMaisuu;
-                            } else {
-                                paymentStats[vendingmachineNo].CreditcardSeisanKingaku += kessaiKingaku;
-                                paymentStats[vendingmachineNo].CreditcardSeisanMaisuu += hanbaiMaisuu;
+                                paymentStats[`${m}CAmount`] += kessaiKingaku;
+                                paymentStats[`${m}CCount`] += hanbaiMaisuu;
+                            }
+                            else {
+                                paymentStats[`${m}CSettleAmount`] += kessaiKingaku;
+                                paymentStats[`${m}CSettleCount`] += hanbaiMaisuu;
                             }
                             break;
                         case 7: // 電子マネー
                             if (factor === 1) {
-                                paymentStats[vendingmachineNo].DenshimaneeGrossKingaku += kessaiKingaku;
-                                paymentStats[vendingmachineNo].DenshimaneeGrossMaisuu += hanbaiMaisuu;
-                            } else {
-                                throw new Error("電子マネーの精算データは存在しないはずです。");
+                                paymentStats[`${m}EAmount`] += kessaiKingaku;
+                                paymentStats[`${m}ECount`] += hanbaiMaisuu;
+                            }
+                            else {
+                                throw new Error('電子マネーの精算データは存在しないはずです。');
                             }
                             break;
                     }
                 }
-
-                // 最終的な集計をまとめる
-                const summary = {};
-                const getHanbaiMaisuu = (key) => dictSoldProducts[key] ? dictSoldProducts[key].hanbaiMaisuu : 0;
-                summary["大人入浴券枚数"] = getHanbaiMaisuu("入浴_051") + getHanbaiMaisuu("入浴_155");
-                summary["大人入浴セット券枚数"] = getHanbaiMaisuu("入浴_054");
-                summary["小人入浴券枚数"] = getHanbaiMaisuu("入浴_052") + getHanbaiMaisuu("入浴_156");
-                summary["乳幼児入浴券枚数"] = getHanbaiMaisuu("入浴_053") + getHanbaiMaisuu("入浴_157");
-                summary["6回数券売数"] = getHanbaiMaisuu("入浴_057");
-                summary["回数券売数"] = getHanbaiMaisuu("入浴_055");
-                
-                resolve({
-                    paymentStats,
-                    soldProducts: dictSoldProducts,
-                    summary
-                });
-                
-            } catch (e) {
+                const getHanbaiMaisuu = (key) => soldProducts[key]?.hanbaiMaisuu ?? 0;
+                const summary = {
+                    AdultTicketCount: getHanbaiMaisuu('入浴_051') + getHanbaiMaisuu('入浴_155'),
+                    AdultSetTicketCount: getHanbaiMaisuu('入浴_054'),
+                    ChildTicketCount: getHanbaiMaisuu('入浴_052') + getHanbaiMaisuu('入浴_156'),
+                    InfantTicketCount: getHanbaiMaisuu('入浴_053') + getHanbaiMaisuu('入浴_157'),
+                    SixTicketCount: getHanbaiMaisuu('入浴_057'),
+                    TicketCount: getHanbaiMaisuu('入浴_055'),
+                };
+                resolve({ paymentStats, soldProducts, summary });
+            }
+            catch (e) {
                 reject(e);
             }
         };
-
-        reader.onerror = function() {
-            reject(new Error("ファイルの読み込み中にエラーが発生しました。"));
-        };
-
-        reader.readAsText(file, 'Shift_JIS'); // TSVファイルがShift-JISの場合を想定
+        reader.onerror = () => reject(new Error('ファイルの読み込み中にエラーが発生しました。'));
+        reader.readAsText(file, 'Shift_JIS');
     });
 }
-
-
+// ============================================================
+// Alpine.js component
+// ============================================================
 document.addEventListener('alpine:init', () => {
+    const Alpine = window.Alpine;
     Alpine.data('dailyReport', () => ({
         formData: {
             date: '',
             files: null,
         },
         data: {
-            Record: {
-                ID: 0,
+            Record: { ID: 0,
                 DateString: '',
                 WeatherCode: 0,
                 StaffCode: 0,
-                Machine1CashCount: 0,
-                Machine1CashAmount: 0,
                 Machine1CashCount: 0,
                 Machine1CashAmount: 0,
                 Machine1SettleCount: 0,
                 Machine1SettleAmount: 0,
                 Machine2CashCount: 0,
                 Machine2CashAmount: 0,
-                Machine2CashCount: 0,
-                Machine2CashAmount: 0,
                 Machine2SettleCount: 0,
                 Machine2SettleAmount: 0,
                 Machine3CashCount: 0,
-                Machine3CashAmount: 0,
-                Machine3CashCount: 0,
-                Machine3CashAmount: 0,
                 Machine3CashAmount: 0,
                 Machine3SettleCount: 0,
                 Machine3SettleAmount: 0,
                 Machine4CashCount: 0,
                 Machine4CashAmount: 0,
-                Machine4CashCount: 0,
-                Machine4CashAmount: 0,
                 Machine4SettleCount: 0,
                 Machine4SettleAmount: 0,
                 Machine5CashCount: 0,
-                Machine5CashAmount: 0,
-                Machine5CashCount: 0,
-                Machine5CashAmount: 0,
                 Machine5CashAmount: 0,
                 Machine5SettleCount: 0,
                 Machine5SettleAmount: 0,
@@ -320,9 +357,8 @@ document.addEventListener('alpine:init', () => {
                 SixTicketCount: 0,
                 MaleTicketCount: 0,
                 FemaleTicketCount: 0,
-                MaleTicketShare: '0',
-                FemaleTicketShare: '0',
-                TicketCount: 0,
+                MaleTicketShare: '',
+                FemaleTicketShare: '',
                 InvitationTicketCount: 0,
                 CourtesyTicketCount: 0,
                 ThanksgivingTicketCount: 0,
@@ -336,10 +372,10 @@ document.addEventListener('alpine:init', () => {
                 PhoneFee: 0,
                 CourtesySalesCount: 0,
                 CourtesySalesAmount: 0,
-                TodayUn投入AmountUncertain: 0,
-                TodayUn投入AmountCertain: 0,
+                HonjitsuMitounyuuAmountUncertain: 0,
+                HonjitsuMitounyuuAmountCertain: 0,
                 Deficiency: 0,
-                YesterdayUn投入Amount: 0,
+                ZenjitsuMitounyuuAmount: 0,
                 ReceiptTotalAmount: 0,
                 Remarks: '',
                 EscortMale: 0,
@@ -350,354 +386,175 @@ document.addEventListener('alpine:init', () => {
                 SixSalesNoEnd: 0,
                 SixMaleTicketCount: 0,
                 SixFemaleTicketCount: 0,
+                SCutMale: 0,
+                SCutFemale: 0,
+                SCutChild: 0,
                 CouponCount: 0,
                 RearRegisterAmount: 0,
                 RearRegisterTicketAmount: 0,
                 RearRegisterRelaxAmount: 0,
-                ReportSpace: '',
-            },
-            Color: 'green',
+                ReportSpace: '' },
+            Color: '',
             Found: false,
-            Mode: '登録'
+            Mode: '',
         },
         toast: {
             show: false,
             message: '',
-            type: 'success'
+            type: 'success',
         },
-        tenkiOptions: [ 
-            "なし",
-            "晴れ",
-            "曇り",
-            "雨",
-            "晴れのち曇り",
-            "曇りのち雨",
-            "雨のち曇り",
-            "雪",
-            "雨台風" 
-        ],                  
-        // Datepicker state
+        tenkiOptions: [
+            'なし', '晴れ', '曇り', '雨',
+            '晴れのち曇り', '曇りのち雨', '雨のち曇り', '雪', '雨台風',
+        ],
         showModal: false,
-        selectedDate: '', // This will hold 'YYYY-MM-DD'
+        selectedDate: '',
         currentMonth: new Date().getMonth(),
         currentYear: new Date().getFullYear(),
-        prevNextDate(offset) {
-            const date      = new Date(this.selectedDate);
-            next_date = new Date(date.setDate(date.getDate() + offset));
-            this.selectedDate = ('' + next_date.getFullYear() + '-' + ('0' + (next_date.getMonth() + 1)).slice(-2) + '-' + ('0' + next_date.getDate()).slice(-2));
-
-            this.$dispatch('update-date', { data: this.selectedDate });
-            this.fetchData(this.selectedDate);
-        },
-
         loading: true,
         error: null,
         tantoushas: {},
-        // フェッチするデータのURL。実際のサーバーエンドポイントに置き換えてください。
-        // This URL should be replaced with your actual server endpoint.
+        userId: null,
         api_url: '/api/sales-data?date=',
         api_tantousha_url: '/api/tantoushas',
+        fileStatus: 'ファイルが選択されていません。',
+        isLoading: false,
+        errorMessage: '',
+        successMessage: '',
+        responseData: null,
+        // ---- computed getters ----
         get tenkiIconUrl() {
-            if (this.data && this.data.Record && this.data.Record.WeatherCode !== undefined) {
-
+            if (this.data?.Record?.WeatherCode !== undefined) {
                 const code = this.data.Record.WeatherCode;
-                if (code >= 1) {
+                if (code >= 1)
                     return `/assets/img/${this.tenkiOptions[code]}.svg`;
-                }
-
-                return `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==`;
-                
+                return 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==';
             }
+            return '';
         },
-
         get currentMonthYear() {
             return `${this.currentYear}年${this.currentMonth + 1}月`;
         },
-
         get calendarDays() {
             const days = [];
             const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
             const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
-            
-            // Month before empty cell
-            for (let i = 0; i < firstDay; i++) {
+            for (let i = 0; i < firstDay; i++)
                 days.push({ date: null, label: '' });
-            }
-            
-            // Month date
             for (let i = 1; i <= daysInMonth; i++) {
-                days.push({ 
-                    date: new Date(this.currentYear, this.currentMonth, i),
-                    label: i 
-                });
+                days.push({ date: new Date(this.currentYear, this.currentMonth, i), label: i });
             }
-            
             return days;
         },
-
         get selectedDateDisplay() {
-            if (!this.selectedDate) return '日付を選択';
+            if (!this.selectedDate)
+                return '日付を選択';
             const [year, month, day] = this.selectedDate.split('-');
             return `${year}年${parseInt(month)}月${parseInt(day)}日`;
         },
-        
-        isSelected(date) {
-            if (!this.selectedDate) return false;
-            const selectedDateObj = new Date(this.selectedDate);
-            return date.getFullYear() === selectedDateObj.getFullYear() &&
-                   date.getMonth() === selectedDateObj.getMonth() &&
-                   date.getDate() === selectedDateObj.getDate();
-        },
-        
-        isToday(date) {
-            const today = new Date();
-            return date.getFullYear() === today.getFullYear() &&
-                   date.getMonth() === today.getMonth() &&
-                   date.getDate() === today.getDate();
-        },
-
-        userId: null,
-
-        async init() {
-            const today = new Date();
+        get curGetsudoRange() {
+            if (!this.formData?.date)
+                return '';
+            const parts = String(this.formData.date).split('-');
+            if (parts.length !== 3)
+                return '';
+            const y = parseInt(parts[0], 10);
+            const m = parseInt(parts[1], 10) - 1;
+            const d = parseInt(parts[2], 10);
+            if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d))
+                return '';
+            const today = new Date(y, m, d);
             const year = today.getFullYear();
-            const month = (today.getMonth() + 1).toString().padStart(2, '0');
-            const day = today.getDate().toString().padStart(2, '0');
-            this.selectedDate = `${year}-${month}-${day}`;
-
-            this.data.Record.DateString = this.selectedDate;
-            this.$dispatch('update-date', { data: this.selectedDate });
-            
-            this.fetchTantoushas();
-            await this.fetchCurrentUser();
-            this.fetchData(this.selectedDate);
-        },
-
-        selectDate(date) {
-            const year = date.getFullYear();
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const day = date.getDate().toString().padStart(2, '0');
-            this.selectedDate = `${year}-${month}-${day}`;
-            this.showModal = false;
-
-            // Wait for the DOM to update (for the modal to close) before fetching
-            this.$nextTick(() => {
-                this.fetchData(this.selectedDate);
-                this.data.Record.DateString = this.selectedDate;
-                this.$dispatch('update-date', { data: this.selectedDate });
-            });
-        },
-        
-        previousMonth() {
-            if (this.currentMonth === 0) {
-                this.currentMonth = 11;
-                this.currentYear--;
-            } else {
-                this.currentMonth--;
+            const month = today.getMonth();
+            const day = today.getDate();
+            let target;
+            if (day >= 21) {
+                target = new Date(year, month, 21);
             }
-        },
-        
-        nextMonth() {
-            if (this.currentMonth === 11) {
-                this.currentMonth = 0;
-                this.currentYear++;
-            } else {
-                this.currentMonth++;
+            else {
+                let prevMonth = month - 1;
+                let yy = year;
+                if (prevMonth < 0) {
+                    prevMonth = 11;
+                    yy = year - 1;
+                }
+                target = new Date(yy, prevMonth, 21);
             }
+            const yyyy = target.getFullYear();
+            const mm = String(target.getMonth() + 1).padStart(2, '0');
+            const dd = String(target.getDate()).padStart(2, '0');
+            const target20Date = new Date(yyyy, target.getMonth() + 1, 20);
+            return {
+                mostRecent21: `${yyyy}-${mm}-${dd}`,
+                closest20th: `${target20Date.getFullYear()}-${String(target20Date.getMonth() + 1).padStart(2, '0')}-${String(target20Date.getDate()).padStart(2, '0')}`,
+            };
         },
-
-        focusNextTabbable(element) {
-            //const tabbableElements = this.$el.querySelectorAll('[tabindex])');
-            document.querySelector('[tabindex="' + (element.tabIndex + 1) + '"]').focus();
-        },
-
-        showToast(message, type = 'success') {
-            this.toast.message = message;
-            this.toast.type = type;
-            this.toast.show = true;
-            setTimeout(() => {
-                this.toast.show = false;
-            }, 2000);
-        },
-
-        async fetchCurrentUser() {
-            console.log('Fetching current user data...');
-            try {
-                console.log('Before fetch current user response:');
-                const response = await fetch('/api/user/me', { credentials: 'include' });
-                console.log('Fetch current user response:', response);
-                if (!response.ok) {
-                    throw new Error('Not authenticated');
-                }
-                const userData = await response.json();
-                console.log('Fetched user data:', userData);
-                if (userData.username) {
-                    // Assuming tantoushas is already loaded or will be loaded
-                    // Find the user ID from the tantoushas list based on the username
-                    const currentUser = Object.values(this.tantoushas).find(t => t.name === userData.username);
-                    if (currentUser && currentUser.id) {
-                        this.userId = currentUser.id;
-                    } else {
-                        console.warn('Current user found, but ID not found in tantoushas list.');
-                        throw new Error('User ID not found in tantoushas list');
-                    }
-                } else {
-                    throw new Error('Username not found in response');
-                }
-            } catch (e) {
-                console.error('Failed to fetch user data, redirecting to login.', e);
-                window.location.href = '/login';
-            }
-        },
-
-        // サーバーからデータを取得する関数
-        async fetchTantoushas() {
-            this.loading = true;
-            this.error = null;
-            try {
-                const response = await fetch(`${this.api_tantousha_url}`, { credentials: 'include' });
-                if (!response.ok) {
-                    throw new Error('ネットワーク応答が正常ではありませんでした');
-                }
-                const tantoushas = await response.json();
-                               
-                this.tantoushas = JSON.parse(tantoushas);
-            } catch (e) {
-                this.error = `データの取得に失敗しました: ${e.message}`;
-                console.error('Error fetching data:', e);
-            } finally {
-                this.loading = false;
-            }
-        },
-
-        async fetchData(date) {
-            this.loading = true;
-            this.error = null;
-            try {
-                const response = await fetch(`${this.api_url}${date}`, { credentials: 'include' });
-                if (!response.ok) {
-                    throw new Error('ネットワーク応答が正常ではありませんでした');
-                }
-                const rawData = await response.json();
-                
-                // Golang の []uint8 を JavaScript の文字列に変換
-                // if (rawData.Date) {
-                //     rawData.Date = new TextDecoder().decode(new Uint8Array(rawData.Date));
-                // }
-                if (rawData.Found && rawData.Record.DateString != date) {
-                    console.error('Fetched record date does not match requested date.');
-                }
-
-                if (!rawData.Found) {
-                    rawData.Record.DateString = date;
-                }
-
-                this.data = rawData;
-
-                if (this.data.Found === false && this.data.Mode === '登録') {
-                    this.data.Record.StaffCode = this.userId;
-                }
-                console.log('Fetched Data:', this.data);
-            } catch (e) {
-                this.error = `データの取得に失敗しました: ${e.message}`;
-                console.error('Error fetching data:', e);
-            } finally {
-                this.loading = false;
-            }
-        },    
-
         get Totals() {
-
-            if (!this.data || !this.data.Record) {
-                return {}; 
-            }
-
-            let totals = {};
-            let cashCountTotal = 0, cashAmountTotal = 0, settleCountTotal = 0, settleAmountTotal = 0,
-                unsettledCountTotal = 0, unsettledAmountTotal = 0,
-                qrCountTotal = 0, qrAmountTotal = 0,
-                qrSettleCountTotal = 0, qrSettleAmountTotal = 0,
-                eCountTotal = 0, eAmountTotal = 0,
-                eSettleCountTotal = 0, eSettleAmountTotal = 0,
-                cCountTotal = 0, cAmountTotal = 0,
-                cSettleCountTotal = 0, cSettleAmountTotal = 0;
-            let curCashCountTotal = 0, curCashAmountTotal = 0, curSettleCountTotal = 0, curSettleAmountTotal = 0,
-                curUnsettledCountTotal = 0, curUnsettledAmountTotal = 0,
-                curQrCountTotal = 0, curQrAmountTotal = 0,
-                curQrSettleCountTotal = 0, curQrSettleAmountTotal = 0,
-                curECountTotal = 0, curEAmountTotal = 0,
-                curESettleCountTotal = 0, curESettleAmountTotal = 0,
-                curCCountTotal = 0, curCAmountTotal = 0,
-                curCSettleCountTotal = 0, curCSettleAmountTotal = 0;
-            let netCashCountTotal = 0,
-                netCashAmountTotal = 0,
-                netCashCountMinusUnsettledTotal = 0,
-                netCashAmountMinusUnsettledTotal = 0,
-                netECountTotal = 0,
-                netEAmountTotal = 0,
-                netCCountTotal = 0,
-                netCAmountTotal = 0,
-                netQrCountTotal = 0,
-                netQrAmountTotal = 0;
+            if (!this.data?.Record)
+                return {};
+            const rec = this.data.Record;
+            let cashCountTotal = 0, cashAmountTotal = 0, settleCountTotal = 0, settleAmountTotal = 0, unsettledCountTotal = 0, unsettledAmountTotal = 0, qrCountTotal = 0, qrAmountTotal = 0, qrSettleCountTotal = 0, qrSettleAmountTotal = 0, eCountTotal = 0, eAmountTotal = 0, eSettleCountTotal = 0, eSettleAmountTotal = 0, cCountTotal = 0, cAmountTotal = 0, cSettleCountTotal = 0, cSettleAmountTotal = 0, netCashCountTotal = 0, netCashAmountTotal = 0, netCashCountMinusUnsettledTotal = 0, netCashAmountMinusUnsettledTotal = 0, netECountTotal = 0, netEAmountTotal = 0, netCCountTotal = 0, netCAmountTotal = 0, netQrCountTotal = 0, netQrAmountTotal = 0;
+            const totals = {};
             for (let i = 1; i <= 5; i++) {
-                curCashCountTotal = Number(this.data.Record[`Machine${i}CashCount`]) || 0;
-                curCashAmountTotal = Number(this.data.Record[`Machine${i}CashAmount`]) || 0;
-                curSettleCountTotal = Number(this.data.Record[`Machine${i}SettleCount`]) || 0;
-                curSettleAmountTotal = Number(this.data.Record[`Machine${i}SettleAmount`]) || 0;
-                curUnsettledCountTotal = Number(this.data.Record[`Machine${i}UnsettledCount`]) || 0;
-                curUnsettledAmountTotal = Number(this.data.Record[`Machine${i}UnsettledAmount`]) || 0;
-                curQrCountTotal = Number(this.data.Record[`Machine${i}QrCount`]) || 0;
-                curQrAmountTotal = Number(this.data.Record[`Machine${i}QrAmount`]) || 0;
-                curQrSettleCountTotal = Number(this.data.Record[`Machine${i}QrSettleCount`]) || 0;
-                curQrSettleAmountTotal = Number(this.data.Record[`Machine${i}QrSettleAmount`]) || 0;
-                curECountTotal = Number(this.data.Record[`Machine${i}ECount`]) || 0;
-                curEAmountTotal = Number(this.data.Record[`Machine${i}EAmount`]) || 0;
-                curESettleCountTotal = Number(this.data.Record[`Machine${i}ESettleCount`]) || 0;
-                curESettleAmountTotal = Number(this.data.Record[`Machine${i}ESettleAmount`]) || 0;
-                curCCountTotal = Number(this.data.Record[`Machine${i}CCount`]) || 0;
-                curCAmountTotal = Number(this.data.Record[`Machine${i}CAmount`]) || 0;
-                curCSettleCountTotal = Number(this.data.Record[`Machine${i}CSettleCount`]) || 0;
-                curCSettleAmountTotal = Number(this.data.Record[`Machine${i}CSettleAmount`]) || 0;
-                cashCountTotal += curCashCountTotal;
-                cashAmountTotal += curCashAmountTotal;
-                settleCountTotal += curSettleCountTotal;
-                settleAmountTotal += curSettleAmountTotal;
-                unsettledCountTotal += curUnsettledCountTotal;
-                unsettledAmountTotal += curUnsettledAmountTotal;
-                qrCountTotal += curQrCountTotal;
-                qrAmountTotal += curQrAmountTotal;
-                qrSettleCountTotal += curQrSettleCountTotal;
-                qrSettleAmountTotal += curQrSettleAmountTotal;
-                eCountTotal += curECountTotal;
-                eAmountTotal += curEAmountTotal;
-                eSettleCountTotal += curESettleCountTotal;
-                eSettleAmountTotal += curESettleAmountTotal;
-                cCountTotal += curCCountTotal;
-                cAmountTotal += curCAmountTotal;
-                cSettleCountTotal += curCSettleCountTotal;
-                cSettleAmountTotal += curCSettleAmountTotal;
-                netCashCountTotal += (curCashCountTotal - curSettleCountTotal);
-                netCashAmountTotal += (curCashAmountTotal - curSettleAmountTotal);
-                netCashCountMinusUnsettledTotal += (curCashCountTotal - curSettleCountTotal - curUnsettledCountTotal);
-                netCashAmountMinusUnsettledTotal += (curCashAmountTotal - curSettleAmountTotal - curUnsettledAmountTotal);
-                netECountTotal += (curECountTotal - curESettleCountTotal);
-                netEAmountTotal += (curEAmountTotal - curESettleAmountTotal);
-                netCCountTotal += (curCCountTotal - curCSettleCountTotal);
-                netCAmountTotal += (curCAmountTotal - curCSettleAmountTotal);
-                netQrCountTotal += (curQrCountTotal - curQrSettleCountTotal);
-                netQrAmountTotal += (curQrAmountTotal - curQrSettleAmountTotal);
-                totals[`Machine${i}NetCashCount`] = (curCashCountTotal - curSettleCountTotal).toLocaleString('ja-JP'); 
-                totals[`Machine${i}NetCashAmount`] = (curCashAmountTotal - curSettleAmountTotal).toLocaleString('ja-JP'); 
-                totals[`Machine${i}NetCashCountMinusUnsettled`] = (curCashCountTotal - curSettleCountTotal - curUnsettledCountTotal).toLocaleString('ja-JP'); 
-                totals[`Machine${i}NetCashAmountMinusUnsettled`] = (curCashAmountTotal - curSettleAmountTotal - curUnsettledAmountTotal).toLocaleString('ja-JP'); 
-                totals[`Machine${i}NetECount`] = (curECountTotal - curESettleCountTotal).toLocaleString('ja-JP'); 
-                totals[`Machine${i}NetEAmount`] = (curEAmountTotal - curESettleAmountTotal).toLocaleString('ja-JP'); 
-                totals[`Machine${i}NetCCount`] = (curCCountTotal - curCSettleCountTotal).toLocaleString('ja-JP'); 
-                totals[`Machine${i}NetCAmount`] = (curCAmountTotal - curCSettleAmountTotal).toLocaleString('ja-JP'); 
-                totals[`Machine${i}NetQrCount`] = (curQrCountTotal - curQrSettleCountTotal).toLocaleString('ja-JP'); 
-                totals[`Machine${i}NetQrAmount`] = (curQrAmountTotal - curQrSettleAmountTotal).toLocaleString('ja-JP');
-                totals[`Machine${i}CashlessTotal`] = (curQrAmountTotal - curQrSettleAmountTotal + curEAmountTotal - curESettleAmountTotal).toLocaleString('ja-JP');
-          }
+                const n = (key) => Number(rec[key]) || 0;
+                const cc = n(`Machine${i}CashCount`);
+                const ca = n(`Machine${i}CashAmount`);
+                const sc = n(`Machine${i}SettleCount`);
+                const sa = n(`Machine${i}SettleAmount`);
+                const uc = n(`Machine${i}UnsettledCount`);
+                const ua = n(`Machine${i}UnsettledAmount`);
+                const qrc = n(`Machine${i}QrCount`);
+                const qra = n(`Machine${i}QrAmount`);
+                const qrsc = n(`Machine${i}QrSettleCount`);
+                const qrsa = n(`Machine${i}QrSettleAmount`);
+                const ec = n(`Machine${i}ECount`);
+                const ea = n(`Machine${i}EAmount`);
+                const esc = n(`Machine${i}ESettleCount`);
+                const esa = n(`Machine${i}ESettleAmount`);
+                const ccc = n(`Machine${i}CCount`);
+                const cca = n(`Machine${i}CAmount`);
+                const csc = n(`Machine${i}CSettleCount`);
+                const csa = n(`Machine${i}CSettleAmount`);
+                cashCountTotal += cc;
+                cashAmountTotal += ca;
+                settleCountTotal += sc;
+                settleAmountTotal += sa;
+                unsettledCountTotal += uc;
+                unsettledAmountTotal += ua;
+                qrCountTotal += qrc;
+                qrAmountTotal += qra;
+                qrSettleCountTotal += qrsc;
+                qrSettleAmountTotal += qrsa;
+                eCountTotal += ec;
+                eAmountTotal += ea;
+                eSettleCountTotal += esc;
+                eSettleAmountTotal += esa;
+                cCountTotal += ccc;
+                cAmountTotal += cca;
+                cSettleCountTotal += csc;
+                cSettleAmountTotal += csa;
+                netCashCountTotal += cc - sc;
+                netCashAmountTotal += ca - sa;
+                netCashCountMinusUnsettledTotal += cc - sc - uc;
+                netCashAmountMinusUnsettledTotal += ca - sa - ua;
+                netECountTotal += ec - esc;
+                netEAmountTotal += ea - esa;
+                netCCountTotal += ccc - csc;
+                netCAmountTotal += cca - csa;
+                netQrCountTotal += qrc - qrsc;
+                netQrAmountTotal += qra - qrsa;
+                totals[`Machine${i}NetCashCount`] = (cc - sc).toLocaleString('ja-JP');
+                totals[`Machine${i}NetCashAmount`] = (ca - sa).toLocaleString('ja-JP');
+                totals[`Machine${i}NetCashCountMinusUnsettled`] = (cc - sc - uc).toLocaleString('ja-JP');
+                totals[`Machine${i}NetCashAmountMinusUnsettled`] = (ca - sa - ua).toLocaleString('ja-JP');
+                totals[`Machine${i}NetECount`] = (ec - esc).toLocaleString('ja-JP');
+                totals[`Machine${i}NetEAmount`] = (ea - esa).toLocaleString('ja-JP');
+                totals[`Machine${i}NetCCount`] = (ccc - csc).toLocaleString('ja-JP');
+                totals[`Machine${i}NetCAmount`] = (cca - csa).toLocaleString('ja-JP');
+                totals[`Machine${i}NetQrCount`] = (qrc - qrsc).toLocaleString('ja-JP');
+                totals[`Machine${i}NetQrAmount`] = (qra - qrsa).toLocaleString('ja-JP');
+                totals[`Machine${i}CashlessTotal`] = (qra - qrsa + ea - esa).toLocaleString('ja-JP');
+            }
             totals.CashCountTotal = cashCountTotal.toLocaleString('ja-JP');
             totals.CashAmountTotal = cashAmountTotal.toLocaleString('ja-JP');
             totals.SettleCountTotal = settleCountTotal.toLocaleString('ja-JP');
@@ -724,162 +581,205 @@ document.addEventListener('alpine:init', () => {
             totals.NetEAmountTotal = netEAmountTotal.toLocaleString('ja-JP');
             totals.NetQrCountTotal = netQrCountTotal.toLocaleString('ja-JP');
             totals.NetQrAmountTotal = netQrAmountTotal.toLocaleString('ja-JP');
-            totals.TounyuuGoukei = this.data ? (netCashAmountTotal + 
-                Number(this.data.Record.Change) -
-                (Number(this.data.Record.Machine1UnsettledAmount) +
-                 Number(this.data.Record.Machine2UnsettledAmount) +
-                 Number(this.data.Record.Machine3UnsettledAmount) +
-                 Number(this.data.Record.Machine4UnsettledAmount) +
-                 Number(this.data.Record.Machine5UnsettledAmount)) +
-                Number(this.data.Record.PhoneFee) - 
-                Number(this.data.Record.HonjitsuMitounyuuAmountUncertain) -
-                Number(this.data.Record.HonjitsuMitounyuuAmountCertain) +
-                Number(this.data.Record.Deficiency) +
-                Number(this.data.Record.ZenjitsuMitounyuuAmount)
-            ).toLocaleString('ja-JP') : 0;
-
+            if (this.data) {
+                totals.TounyuuGoukei = (netCashAmountTotal +
+                    Number(rec.Change) -
+                    (Number(rec.Machine1UnsettledAmount) +
+                        Number(rec.Machine2UnsettledAmount) +
+                        Number(rec.Machine3UnsettledAmount) +
+                        Number(rec.Machine4UnsettledAmount) +
+                        Number(rec.Machine5UnsettledAmount)) +
+                    Number(rec.PhoneFee) -
+                    Number(rec.HonjitsuMitounyuuAmountUncertain) -
+                    Number(rec.HonjitsuMitounyuuAmountCertain) +
+                    Number(rec.Deficiency) +
+                    Number(rec.ZenjitsuMitounyuuAmount)).toLocaleString('ja-JP');
+            }
             return totals;
         },
-
-get TicketTotals() {
-
-    if (!this.data || !this.data.Record) {
-        return {}; 
-    }
-    const totals = {
- 
-        MaleTicketCountTotalNumber: Number(this.data.Record.MaleTicketCount) +
-                                    Number(this.data.Record.SixMaleTicketCount),
-
-        FemaleTicketCountTotalNumber: Number(this.data.Record.FemaleTicketCount) +
-                                      Number(this.data.Record.SixFemaleTicketCount)
-    };
- 
-    return {
-        TicketCountTotal: (Number(this.data.Record.MaleTicketCount) +
-                           Number(this.data.Record.FemaleTicketCount)).toLocaleString('ja-JP'),
-        
-        SixTicketCountTotal: (Number(this.data.Record.SixMaleTicketCount) +
-                              Number(this.data.Record.SixFemaleTicketCount)).toLocaleString('ja-JP'),
-        
-        MaleTicketCountTotal: totals.MaleTicketCountTotalNumber.toLocaleString('ja-JP'),
-        
-        FemaleTicketCountTotal: totals.FemaleTicketCountTotalNumber.toLocaleString('ja-JP'),
-
-        TicketCountGrandTotal: (totals.MaleTicketCountTotalNumber + totals.FemaleTicketCountTotalNumber).toLocaleString('ja-JP'),
-
-       MaleTicketShare: (Math.round(totals.MaleTicketCountTotalNumber/(totals.MaleTicketCountTotalNumber + totals.FemaleTicketCountTotalNumber)*100)) ,
-       FemaleTicketShare: (Math.round(totals.FemaleTicketCountTotalNumber/(totals.MaleTicketCountTotalNumber + totals.FemaleTicketCountTotalNumber)*100)),
-
-       SCutTotal: (Number(this.data.Record.SCutMale) +
-                   Number(this.data.Record.SCutFemale) +
-                   Number(this.data.Record.SCutChild)).toLocaleString('ja-JP')
-    }
-},
-
-        // New method to save record
+        get TicketTotals() {
+            if (!this.data?.Record)
+                return {};
+            const rec = this.data.Record;
+            const maleTotal = Number(rec.MaleTicketCount) + Number(rec.SixMaleTicketCount);
+            const femaleTotal = Number(rec.FemaleTicketCount) + Number(rec.SixFemaleTicketCount);
+            const grandTotal = maleTotal + femaleTotal;
+            return {
+                TicketCountTotal: (Number(rec.MaleTicketCount) + Number(rec.FemaleTicketCount)).toLocaleString('ja-JP'),
+                SixTicketCountTotal: (Number(rec.SixMaleTicketCount) + Number(rec.SixFemaleTicketCount)).toLocaleString('ja-JP'),
+                MaleTicketCountTotal: maleTotal.toLocaleString('ja-JP'),
+                FemaleTicketCountTotal: femaleTotal.toLocaleString('ja-JP'),
+                TicketCountGrandTotal: grandTotal.toLocaleString('ja-JP'),
+                MaleTicketShare: Math.round(maleTotal / grandTotal * 100),
+                FemaleTicketShare: Math.round(femaleTotal / grandTotal * 100),
+                SCutTotal: (Number(rec.SCutMale) + Number(rec.SCutFemale) + Number(rec.SCutChild)).toLocaleString('ja-JP'),
+            };
+        },
+        // ---- methods ----
+        prevNextDate(offset) {
+            const date = new Date(this.selectedDate);
+            const next_date = new Date(date.setDate(date.getDate() + offset));
+            this.selectedDate = `${next_date.getFullYear()}-${String(next_date.getMonth() + 1).padStart(2, '0')}-${String(next_date.getDate()).padStart(2, '0')}`;
+            this.$dispatch('update-date', { data: this.selectedDate });
+            this.fetchData(this.selectedDate);
+        },
+        focusNextTabbable(element) {
+            document.querySelector(`[tabindex="${element.tabIndex + 1}"]`)?.focus();
+        },
+        showToast(message, type = 'success') {
+            this.toast.message = message;
+            this.toast.type = type;
+            this.toast.show = true;
+            setTimeout(() => { this.toast.show = false; }, 2000);
+        },
+        isSelected(date) {
+            if (!this.selectedDate)
+                return false;
+            const sel = new Date(this.selectedDate);
+            return date.getFullYear() === sel.getFullYear() &&
+                date.getMonth() === sel.getMonth() &&
+                date.getDate() === sel.getDate();
+        },
+        isToday(date) {
+            const today = new Date();
+            return date.getFullYear() === today.getFullYear() &&
+                date.getMonth() === today.getMonth() &&
+                date.getDate() === today.getDate();
+        },
+        selectDate(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            this.selectedDate = `${year}-${month}-${day}`;
+            this.showModal = false;
+            this.$nextTick(() => {
+                this.fetchData(this.selectedDate);
+                if (this.data)
+                    this.data.Record.DateString = this.selectedDate;
+                this.$dispatch('update-date', { data: this.selectedDate });
+            });
+        },
+        previousMonth() {
+            if (this.currentMonth === 0) {
+                this.currentMonth = 11;
+                this.currentYear--;
+            }
+            else
+                this.currentMonth--;
+        },
+        nextMonth() {
+            if (this.currentMonth === 11) {
+                this.currentMonth = 0;
+                this.currentYear++;
+            }
+            else
+                this.currentMonth++;
+        },
+        async init() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            this.selectedDate = `${year}-${month}-${day}`;
+            if (this.data)
+                this.data.Record.DateString = this.selectedDate;
+            this.$dispatch('update-date', { data: this.selectedDate });
+            this.fetchTantoushas();
+            await this.fetchCurrentUser();
+            this.fetchData(this.selectedDate);
+        },
+        async fetchCurrentUser() {
+            try {
+                const response = await fetch('/api/user/me', { credentials: 'include' });
+                if (!response.ok)
+                    throw new Error('Not authenticated');
+                const userData = await response.json();
+                if (userData.username) {
+                    const currentUser = Object.values(this.tantoushas).find((t) => t.name === userData.username);
+                    if (currentUser?.id) {
+                        this.userId = currentUser.id;
+                    }
+                    else {
+                        throw new Error('User ID not found in tantoushas list');
+                    }
+                }
+                else {
+                    throw new Error('Username not found in response');
+                }
+            }
+            catch (e) {
+                console.error('Failed to fetch user data, redirecting to login.', e);
+                window.location.href = '/login';
+            }
+        },
+        async fetchTantoushas() {
+            this.loading = true;
+            this.error = null;
+            try {
+                const response = await fetch(this.api_tantousha_url, { credentials: 'include' });
+                if (!response.ok)
+                    throw new Error('ネットワーク応答が正常ではありませんでした');
+                const raw = await response.json();
+                this.tantoushas = JSON.parse(raw);
+            }
+            catch (e) {
+                const err = e;
+                this.error = `データの取得に失敗しました: ${err.message}`;
+                console.error('Error fetching data:', e);
+            }
+            finally {
+                this.loading = false;
+            }
+        },
+        async fetchData(date) {
+            this.loading = true;
+            this.error = null;
+            try {
+                const response = await fetch(`${this.api_url}${date}`, { credentials: 'include' });
+                if (!response.ok)
+                    throw new Error('ネットワーク応答が正常ではありませんでした');
+                const rawData = await response.json();
+                if (rawData.Found && rawData.Record.DateString !== date) {
+                    console.error('Fetched record date does not match requested date.');
+                }
+                if (!rawData.Found)
+                    rawData.Record.DateString = date;
+                this.data = rawData;
+                if (!this.data.Found && this.data.Mode === '登録' && this.userId !== null) {
+                    this.data.Record.StaffCode = this.userId;
+                }
+            }
+            catch (e) {
+                const err = e;
+                this.error = `データの取得に失敗しました: ${err.message}`;
+                console.error('Error fetching data:', e);
+            }
+            finally {
+                this.loading = false;
+            }
+        },
         async saveRecord() {
             try {
-                // Remove formatting from numbers before sending to backend
-                const recordToSend = JSON.parse(JSON.stringify(this.data.Record)); // Deep copy
-
-                // If Date is a string, convert it to a format the backend expects
-                // if (typeof recordToSend.DateString === 'string') {
-                //     recordToSend.DateString = this.selectDate;
-                // }
-
+                const recordToSend = JSON.parse(JSON.stringify(this.data.Record));
                 const response = await fetch('/api/sales-data', {
                     method: 'POST',
                     credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        Record: recordToSend,
-                        Found: this.data.Found,
-                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ Record: recordToSend, Found: this.data.Found }),
                 });
-
                 if (!response.ok) {
                     throw new Error(`サーバーエラー: ${response.status} ${response.statusText}`);
                 }
-
                 const responseData = await response.json();
-                this.data = responseData; // Update frontend data with the new record (including ID if newly created)
-                console.log('Record saved successfully:', responseData);
+                this.data = responseData;
                 this.showToast('レコードが正常に保存されました！', 'success');
-            } catch (error) {
-                console.error('レコードの保存中にエラーが発生しました:', error);
-                this.showToast(`レコードの保存に失敗しました: ${error.message}`, 'error');
+            }
+            catch (error) {
+                const err = error;
+                console.error('レコードの保存中にエラーが発生しました:', err);
+                this.showToast(`レコードの保存に失敗しました: ${err.message}`, 'error');
             }
         },
-
-        updateKenbaikiData(combinedData) {
-            
-            for(const key in combinedData.paymentStats) {
-                if (combinedData.paymentStats.hasOwnProperty(key)) {
-         
-                    this.data.Record['Machine' + key + 'CashCount'] = combinedData.paymentStats[key].GenkinGrossMaisuu;
-                    this.data.Record['Machine' + key + 'CashAmount'] = combinedData.paymentStats[key].GenkinGrossKingaku;
-                    this.data.Record['Machine' + key + 'QrCount'] = combinedData.paymentStats[key].QrcodeGrossMaisuu;
-                    this.data.Record['Machine' + key + 'QrAmount'] = combinedData.paymentStats[key].QrcodeGrossKingaku;
-                    this.data.Record['Machine' + key + 'ECount'] = combinedData.paymentStats[key].DenshimaneeGrossMaisuu;
-                    this.data.Record['Machine' + key + 'EAmount'] = combinedData.paymentStats[key].DenshimaneeGrossKingaku;
-                    this.data.Record['Machine' + key + 'CCount'] = combinedData.paymentStats[key].CreditcardGrossMaisuu;
-                    this.data.Record['Machine' + key + 'CAmount'] = combinedData.paymentStats[key].CreditcardGrossKingaku;
-                                        
-                    this.data.Record['Machine' + key + 'CashSettleCount'] = combinedData.paymentStats[key].GenkinSeisanMaisuu;
-                    this.data.Record['Machine' + key + 'CashSettleAmount'] = combinedData.paymentStats[key].GenkinSeisanKingaku;
-                    this.data.Record['Machine' + key + 'QrSettleCount'] = combinedData.paymentStats[key].QrcodeSeisanMaisuu;
-                    this.data.Record['Machine' + key + 'QrSettleAmount'] = combinedData.paymentStats[key].QrcodeSeisanKingaku;
-                    this.data.Record['Machine' + key + 'CSettleCount'] = combinedData.paymentStats[key].CreditcardSeisanMaisuu;
-                    this.data.Record['Machine' + key + 'CSettleAmount'] = combinedData.paymentStats[key].CreditcardSeisanKingaku;
-                }
-            }
-
-            if (combinedData.summary) {
-                this.data.Record.AdultTicketCount = combinedData.summary["大人入浴券枚数"] || 0;
-                this.data.Record.AdultSetTicketCount = combinedData.summary["大人入浴セット券枚数"] || 0;
-                this.data.Record.ChildTicketCount = combinedData.summary["小人入浴券枚数"] || 0;
-                this.data.Record.InfantTicketCount = combinedData.summary["乳幼児入浴券枚数"] || 0;
-                this.data.Record.SixTicketCount = combinedData.summary["6回数券売数"] || 0;
-                this.data.Record.TicketCount = combinedData.summary["回数券売数"] || 0;
-            }  
-        },
-                get curGetsudoRange() {
-            if (!this.formData || !this.formData.date) return '';
-            const parts = String(this.formData.date).split('-');
-            if (parts.length !== 3) return '';
-            const y = parseInt(parts[0], 10);
-            const m = parseInt(parts[1], 10) - 1; // 0-based month
-            const d = parseInt(parts[2], 10);
-            if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d)) return '';
-
-            const today = new Date(y, m, d);
-            const year = today.getFullYear();
-            const month = today.getMonth(); // 0-based
-            const day = today.getDate();
-            let target;
-            if (day >= 21) {
-                target = new Date(year, month, 21);
-            } else {
-                let prevMonth = month - 1;
-                let yy = year;
-                if (prevMonth < 0) { prevMonth = 11; yy = year - 1; }
-                target = new Date(yy, prevMonth, 21);
-            }
-            const yyyy = target.getFullYear();
-            const mm = String(target.getMonth() + 1).padStart(2, '0');
-            const dd = String(target.getDate()).padStart(2, '0');
-            const target20Date = new Date(yyyy, target.getMonth() + 1, 20);
-            return {mostRecent21:`${yyyy}-${mm}-${dd}`, closest20th: target20Date.getFullYear() + '-' + String(target20Date.getMonth() + 1).padStart(2, '0') + '-' + String(target20Date.getDate()).padStart(2, '0')    };
-        },
-        fileStatus: 'ファイルが選択されていません。',
-        isLoading: false,
-        errorMessage: '',
-        successMessage: '',
-        responseData: null,
-
         handleFileChange(event) {
             this.formData.files = event.target.files;
             this.updateFileStatus();
@@ -891,160 +791,90 @@ get TicketTotals() {
             this.submitForm();
         },
         updateFileStatus() {
-            if (this.formData.files && this.formData.files.length > 0) {
-                this.fileStatus = `${this.formData.files.length} ファイルが選択されました。`;
-            } else {
-                this.fileStatus = 'ファイルが選択されていません。';
-            }
+            this.fileStatus = this.formData.files && this.formData.files.length > 0
+                ? `${this.formData.files.length} ファイルが選択されました。`
+                : 'ファイルが選択されていません。';
         },
-        
         async submitForm() {
             this.isLoading = true;
             this.errorMessage = '';
             this.successMessage = '';
             this.responseData = null;
-
             if (!this.selectedDate) {
                 this.errorMessage = '日付を選択してください。';
                 this.isLoading = false;
                 return;
             }
-
             if (!this.formData.files || this.formData.files.length === 0) {
                 this.errorMessage = 'ファイルをアップロードしてください。';
                 this.isLoading = false;
                 return;
             }
-            
             try {
-                let combinedData = {
-                    paymentStats: {},
-                    soldProducts: {},
-                    summary: {
-                            "大人入浴券枚数": 0,
-                            "大人入浴セット券枚数": 0,
-                            "小人入浴券枚数": 0,
-                            "乳幼児入浴券枚数": 0,
-                            "6回数券売数": 0,
-                            "回数券売数": 0,
-                        }
-                };
-
-                for (const file of this.formData.files) {
-                    const result = await processFileOnFrontend(file, this.selectedDate);
-                    
-                    // 各ファイルの集計結果を統合
-                    for (const key in result.paymentStats) {
-                        if (!combinedData.paymentStats[key]) {
-                            combinedData.paymentStats[key] = result.paymentStats[key];
-                        } else {
-                            // 既存のpaymentStatsに新しい値を加算
-                            const existing = combinedData.paymentStats[key];
-                            const newStats = result.paymentStats[key];
-                            existing.GenkinGrossMaisuu += newStats.GenkinGrossMaisuu;
-                            existing.GenkinGrossKingaku += newStats.GenkinGrossKingaku;
-                            existing.GenkinSeisanMaisuu += newStats.GenkinSeisanMaisuu;
-                            existing.GenkinSeisanKingaku += newStats.GenkinSeisanKingaku;
-                            existing.QrcodeGrossMaisuu += newStats.QrcodeGrossMaisuu;
-                            existing.QrcodeGrossKingaku += newStats.QrcodeGrossKingaku;
-                            existing.QrcodeSeisanMaisuu += newStats.QrcodeSeisanMaisuu;
-                            existing.QrcodeSeisanKingaku += newStats.QrcodeSeisanKingaku;
-                            existing.CreditcardGrossMaisuu += newStats.CreditcardGrossMaisuu;
-                            existing.CreditcardGrossKingaku += newStats.CreditcardGrossKingaku;
-                            existing.CreditcardSeisanMaisuu += newStats.CreditcardSeisanMaisuu;
-                            existing.CreditcardSeisanKingaku += newStats.CreditcardSeisanKingaku;
-                            existing.DenshimaneeGrossMaisuu += newStats.DenshimaneeGrossMaisuu;
-                            existing.DenshimaneeGrossKingaku += newStats.DenshimaneeGrossKingaku;
-                        }
-                    }
-                    
-                    for (const key in result.soldProducts) {
-                        if (!combinedData.soldProducts[key]) {
-                            combinedData.soldProducts[key] = result.soldProducts[key];
-                        } else {
-                            const existing = combinedData.soldProducts[key];
-                            const newProduct = result.soldProducts[key];
-                            existing.uriageKingaku += newProduct.uriageKingaku;
-                            existing.hanbaiMaisuu += newProduct.hanbaiMaisuu;
-                        }
-                        if (key == '入浴_301') {
-                            combinedData.summary["大人入浴券枚数"] += result.soldProducts[key].hanbaiMaisuu;
-                        }
-                        if (key == '入浴_302') {
-                            combinedData.summary["小人入浴券枚数"] += result.soldProducts[key].hanbaiMaisuu;
-                        }
-                        if (key == '入浴_303') {
-                            combinedData.summary["乳幼児入浴券枚数"] += result.soldProducts[key].hanbaiMaisuu;
-                        }
-                    }
-
-                    
-                    for (const key in result.summary) {
-                        combinedData.summary[key] += result.summary[key];
-                    }
+                // Fetch ranges once for all files
+                let colCategoryRngs = [];
+                try {
+                    const rangesResponse = await fetch('/api/ranges');
+                    if (!rangesResponse.ok)
+                        throw new Error(`HTTP error! status: ${rangesResponse.status}`);
+                    colCategoryRngs = await rangesResponse.json();
                 }
-
-                if(
-                    combinedData.paymentStats['1'] == undefined || 
-                    combinedData.paymentStats['2'] == undefined) {
-                    combinedData.summary = {};        
+                catch (error) {
+                    console.error('Failed to fetch category ranges:', error);
+                    throw error;
                 }
-
-
-                this.$dispatch('data-updated', { data: combinedData });
-
-                const paymentStatKeys = Object.keys(combinedData.paymentStats).map(Number);
-                const areKeysValid = paymentStatKeys.length > 0
-                && paymentStatKeys.some(key => key == 1)
-                && paymentStatKeys.some(key => key == 2)
-                && paymentStatKeys.some(key => key == 3)
-                && paymentStatKeys.some(key => key == 4)
-                && paymentStatKeys.some(key => key == 5);
-
-                if (areKeysValid && this.formData.files.length === 5) {
+                const results = await Promise.all(Array.from(this.formData.files).map((file) => processFileOnFrontend(file, this.selectedDate, colCategoryRngs) // ← passed in
+                ));
+                const combined = mergeResults(results);
+                // Write paymentStats fields directly onto the Record
+                Object.assign(this.data.Record, combined.paymentStats);
+                // Write summary fields directly onto the Record
+                Object.assign(this.data.Record, combined.summary);
+                const machinesPresent = new Set(results.map((_, idx) => idx + 1));
+                const allFiveMachinesPresent = this.formData.files.length === 5 &&
+                    [1, 2, 3, 4, 5].every((k) => machinesPresent.has(k));
+                if (allFiveMachinesPresent) {
                     try {
                         const payload = {
                             date: this.selectedDate,
-                            soldProducts: Object.values(combinedData.soldProducts)
+                            soldProducts: Object.values(combined.soldProducts),
                         };
-
                         const response = await fetch('/api/menubetsu-uriage', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(payload)
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload),
                         });
-
                         if (!response.ok) {
                             const errorData = await response.json();
-                            throw new Error(errorData.error || 'メニュー別売上データの更新に失敗しました。');
+                            throw new Error(errorData.error ?? 'メニュー別売上データの更新に失敗しました。');
                         }
                         this.successMessage = 'データが正常に処理され、メニュー別売上データが更新されました！';
-                    } catch (error) {
-                        console.error('Error sending sold products:', error);
-                        this.errorMessage = (this.errorMessage ? this.errorMessage + '\n' : '') + error.message;
                     }
-                }  else if (this.formData.files.length !== 5) {
-                    this.errorMessage = `５機分のデータファイルが揃っておらず、\n
-                    メニュー別売上データの保存はスキップされました。\n\n
-                    ５機分のデータファイルが揃ったらアップロードを再度実行してください。`;
+                    catch (error) {
+                        const err = error;
+                        console.error('Error sending sold products:', err);
+                        this.errorMessage = (this.errorMessage ? this.errorMessage + '\n' : '') + err.message;
+                    }
+                }
+                else if (this.formData.files.length !== 5) {
+                    this.errorMessage = `５機分のデータファイルが揃っておらず、\nメニュー別売上データの保存はスキップされました。\n\n５機分のデータファイルが揃ったらアップロードを再度実行してください。`;
                 }
                 else {
                     this.errorMessage = '同一券売機のデータが複数含まれている様です。';
                 }
-                
-                if (this.errorMessage === '') {
+                if (this.errorMessage === '')
                     this.$dispatch('close-menu');
-                }
-
-            } catch (error) {
-                console.error('Processing error:', error);
-                this.errorMessage = error.message || 'ファイルの処理中に予期せぬエラーが発生しました。';
-            } finally {
+            }
+            catch (error) {
+                const err = error;
+                console.error('Processing error:', err);
+                this.errorMessage = err.message ?? 'ファイルの処理中に予期せぬエラーが発生しました。';
+            }
+            finally {
                 this.isLoading = false;
             }
-        }
-
-        }));
+        },
+    }));
 });
+export {};
+//# sourceMappingURL=dailyReport.js.map
