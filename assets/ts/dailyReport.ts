@@ -205,19 +205,9 @@ interface Toast {
     type: 'success' | 'error';
 }
 
-interface CalendarDay {
-    date: Date | null;
-    label: number | '';
-}
-
 interface Tantousha {
     id: number;
     name: string;
-}
-
-interface CurGetsudoRange {
-    mostRecent21: string;
-    closest20th: string;
 }
 
 // ============================================================
@@ -663,8 +653,8 @@ document.addEventListener('alpine:init', () => {
 
         showModal:    false,
         selectedDate: '' as string,
-        currentMonth: new Date().getMonth(),
-        currentYear:  new Date().getFullYear(),
+        // currentMonth: new Date().getMonth(),
+        // currentYear:  new Date().getFullYear(),
 
         loading:      true,
         error:        null as string | null,
@@ -691,59 +681,59 @@ document.addEventListener('alpine:init', () => {
             return '';
         },
 
-        get currentMonthYear(): string {
-            return `${this.currentYear}年${this.currentMonth + 1}月`;
-        },
+        // get currentMonthYear(): string {
+        //     return `${this.currentYear}年${this.currentMonth + 1}月`;
+        // },
 
-        get calendarDays(): CalendarDay[] {
-            const days: CalendarDay[] = [];
-            const firstDay    = new Date(this.currentYear, this.currentMonth, 1).getDay();
-            const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
-            for (let i = 0; i < firstDay; i++) days.push({ date: null, label: '' });
-            for (let i = 1; i <= daysInMonth; i++) {
-                days.push({ date: new Date(this.currentYear, this.currentMonth, i), label: i });
-            }
-            return days;
-        },
+        // get calendarDays(): CalendarDay[] {
+        //     const days: CalendarDay[] = [];
+        //     const firstDay    = new Date(this.currentYear, this.currentMonth, 1).getDay();
+        //     const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+        //     for (let i = 0; i < firstDay; i++) days.push({ date: null, label: '' });
+        //     for (let i = 1; i <= daysInMonth; i++) {
+        //         days.push({ date: new Date(this.currentYear, this.currentMonth, i), label: i });
+        //     }
+        //     return days;
+        // },
 
-        get selectedDateDisplay(): string {
-            if (!this.selectedDate) return '日付を選択';
-            const [year, month, day] = this.selectedDate.split('-');
-            return `${year}年${parseInt(month)}月${parseInt(day)}日`;
-        },
+        // get selectedDateDisplay(): string {
+        //     if (!this.selectedDate) return '日付を選択';
+        //     const [year, month, day] = this.selectedDate.split('-');
+        //     return `${year}年${parseInt(month)}月${parseInt(day)}日`;
+        // },
 
-        get curGetsudoRange(): CurGetsudoRange | '' {
-            if (!this.formData?.date) return '';
-            const parts = String(this.formData.date).split('-');
-            if (parts.length !== 3) return '';
-            const y = parseInt(parts[0], 10);
-            const m = parseInt(parts[1], 10) - 1;
-            const d = parseInt(parts[2], 10);
-            if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d)) return '';
+        // get curGetsudoRange(): CurGetsudoRange | '' {
+        //     if (!this.formData?.date) return '';
+        //     const parts = String(this.formData.date).split('-');
+        //     if (parts.length !== 3) return '';
+        //     const y = parseInt(parts[0], 10);
+        //     const m = parseInt(parts[1], 10) - 1;
+        //     const d = parseInt(parts[2], 10);
+        //     if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d)) return '';
 
-            const today = new Date(y, m, d);
-            const year  = today.getFullYear();
-            const month = today.getMonth();
-            const day   = today.getDate();
+        //     const today = new Date(y, m, d);
+        //     const year  = today.getFullYear();
+        //     const month = today.getMonth();
+        //     const day   = today.getDate();
 
-            let target: Date;
-            if (day >= 21) {
-                target = new Date(year, month, 21);
-            } else {
-                let prevMonth = month - 1;
-                let yy = year;
-                if (prevMonth < 0) { prevMonth = 11; yy = year - 1; }
-                target = new Date(yy, prevMonth, 21);
-            }
-            const yyyy = target.getFullYear();
-            const mm   = String(target.getMonth() + 1).padStart(2, '0');
-            const dd   = String(target.getDate()).padStart(2, '0');
-            const target20Date = new Date(yyyy, target.getMonth() + 1, 20);
-            return {
-                mostRecent21: `${yyyy}-${mm}-${dd}`,
-                closest20th:  `${target20Date.getFullYear()}-${String(target20Date.getMonth() + 1).padStart(2, '0')}-${String(target20Date.getDate()).padStart(2, '0')}`,
-            };
-        },
+        //     let target: Date;
+        //     if (day >= 21) {
+        //         target = new Date(year, month, 21);
+        //     } else {
+        //         let prevMonth = month - 1;
+        //         let yy = year;
+        //         if (prevMonth < 0) { prevMonth = 11; yy = year - 1; }
+        //         target = new Date(yy, prevMonth, 21);
+        //     }
+        //     const yyyy = target.getFullYear();
+        //     const mm   = String(target.getMonth() + 1).padStart(2, '0');
+        //     const dd   = String(target.getDate()).padStart(2, '0');
+        //     const target20Date = new Date(yyyy, target.getMonth() + 1, 20);
+        //     return {
+        //         mostRecent21: `${yyyy}-${mm}-${dd}`,
+        //         closest20th:  `${target20Date.getFullYear()}-${String(target20Date.getMonth() + 1).padStart(2, '0')}-${String(target20Date.getDate()).padStart(2, '0')}`,
+        //     };
+        // },
 
         get Totals(): Record<string, string | number> {
             if (!this.data?.Record) return {};
@@ -890,13 +880,13 @@ document.addEventListener('alpine:init', () => {
 
         // ---- methods ----
 
-        prevNextDate(offset: number): void {
-            const date      = new Date(this.selectedDate);
-            const next_date = new Date(date.setDate(date.getDate() + offset));
-            this.selectedDate = `${next_date.getFullYear()}-${String(next_date.getMonth() + 1).padStart(2, '0')}-${String(next_date.getDate()).padStart(2, '0')}`;
-            this.$dispatch('update-date', { data: this.selectedDate });
-            this.fetchData(this.selectedDate);
-        },
+        // prevNextDate(offset: number): void {
+        //     const date      = new Date(this.selectedDate);
+        //     const next_date = new Date(date.setDate(date.getDate() + offset));
+        //     this.selectedDate = `${next_date.getFullYear()}-${String(next_date.getMonth() + 1).padStart(2, '0')}-${String(next_date.getDate()).padStart(2, '0')}`;
+        //     this.$dispatch('update-date', { data: this.selectedDate });
+        //     this.fetchData(this.selectedDate);
+        // },
 
         focusNextTabbable(element: HTMLElement): void {
             (document.querySelector(`[tabindex="${element.tabIndex + 1}"]`) as HTMLElement | null)?.focus();
@@ -909,43 +899,43 @@ document.addEventListener('alpine:init', () => {
             setTimeout(() => { this.toast.show = false; }, 2000);
         },
 
-        isSelected(date: Date): boolean {
-            if (!this.selectedDate) return false;
-            const sel = new Date(this.selectedDate);
-            return date.getFullYear() === sel.getFullYear() &&
-                   date.getMonth()    === sel.getMonth()    &&
-                   date.getDate()     === sel.getDate();
-        },
+        // isSelected(date: Date): boolean {
+        //     if (!this.selectedDate) return false;
+        //     const sel = new Date(this.selectedDate);
+        //     return date.getFullYear() === sel.getFullYear() &&
+        //            date.getMonth()    === sel.getMonth()    &&
+        //            date.getDate()     === sel.getDate();
+        // },
 
-        isToday(date: Date): boolean {
-            const today = new Date();
-            return date.getFullYear() === today.getFullYear() &&
-                   date.getMonth()    === today.getMonth()    &&
-                   date.getDate()     === today.getDate();
-        },
+        // isToday(date: Date): boolean {
+        //     const today = new Date();
+        //     return date.getFullYear() === today.getFullYear() &&
+        //            date.getMonth()    === today.getMonth()    &&
+        //            date.getDate()     === today.getDate();
+        // },
 
-        selectDate(date: Date): void {
-            const year  = date.getFullYear();
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const day   = date.getDate().toString().padStart(2, '0');
-            this.selectedDate = `${year}-${month}-${day}`;
-            this.showModal    = false;
-            this.$nextTick(() => {
-                this.fetchData(this.selectedDate);
-                if (this.data) this.data.Record.DateString = this.selectedDate;
-                this.$dispatch('update-date', { data: this.selectedDate });
-            });
-        },
+        // selectDate(date: Date): void {
+        //     const year  = date.getFullYear();
+        //     const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        //     const day   = date.getDate().toString().padStart(2, '0');
+        //     this.selectedDate = `${year}-${month}-${day}`;
+        //     this.showModal    = false;
+        //     this.$nextTick(() => {
+        //         this.fetchData(this.selectedDate);
+        //         if (this.data) this.data.Record.DateString = this.selectedDate;
+        //         this.$dispatch('update-date', { data: this.selectedDate });
+        //     });
+        // },
 
-        previousMonth(): void {
-            if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; }
-            else this.currentMonth--;
-        },
+        // previousMonth(): void {
+        //     if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; }
+        //     else this.currentMonth--;
+        // },
 
-        nextMonth(): void {
-            if (this.currentMonth === 11) { this.currentMonth = 0; this.currentYear++; }
-            else this.currentMonth++;
-        },
+        // nextMonth(): void {
+        //     if (this.currentMonth === 11) { this.currentMonth = 0; this.currentYear++; }
+        //     else this.currentMonth++;
+        // },
 
         async init(): Promise<void> {
             const today = new Date();

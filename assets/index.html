@@ -10,6 +10,7 @@
 
     <script type="module" defer src="/assets/js/uploader.js"></script>
     <script type="module" defer src="/assets/js/dailyReport.js"></script>
+    <script type="module" defer src="/assets/js/datepicker.js"></script>
     <!-- Alpine Core -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -151,7 +152,7 @@
                         <input type="text" id="id" x-model="data.Record.ID" readonly
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50 border p-1">
                     </div>
-                    <div class="col-span-2 relative">
+                    <div class="col-span-2 relative" x-data="datepicker()" x-modelable="innerSelectedDate" x-model="selectedDate">
                         <label for="dateField" class="block text-sm font-medium text-gray-700">日付:</label>
                         <input type="text" id="dateField"
                             class="w-full p-2 border-2 border-gray-300 rounded bg-gray-50 cursor-pointer transition-colors hover:border-green-500"
