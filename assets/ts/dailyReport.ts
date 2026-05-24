@@ -4,6 +4,10 @@
 
 import type { Alpine } from 'alpinejs';
 
+import type { PaymentStat, DailyRecord, Summary, SoldProduct, ApiData } from './types/salesData';
+
+import type { AppStore } from './types/stores';
+
 declare global {
   interface Window {
     Alpine: Alpine;
@@ -17,186 +21,10 @@ interface CategoryRange {
     category_name: string;
 }
 
-interface SoldProduct {
-    bumon: number;
-    bumonName: string;
-    uriageKingaku: number;
-    hanbaiMaisuu: number;
-    productID: number;
-    menuName: string;
-    tekiyouKakaku: number;
-    makanaiKubun: string;
-    date: string;
-    category: string;
-}
-
-interface PaymentStat {
-    vendingMachineNo: number;
-    Machine1CashCount: number;
-    Machine1CashAmount: number;
-    Machine1SettleCount: number;
-    Machine1SettleAmount: number;
-    Machine1QrCount: number;
-    Machine1QrAmount: number;
-    Machine1QrSettleCount: number;
-    Machine1QrSettleAmount: number;
-    Machine1ECount: number;
-    Machine1EAmount: number;
-    Machine1ESettleCount: number;
-    Machine1ESettleAmount: number;
-    Machine1CCount: number;
-    Machine1CAmount: number;
-    Machine1CSettleCount: number;
-    Machine1CSettleAmount: number;
-    Machine2CashCount: number;
-    Machine2CashAmount: number;
-    Machine2SettleCount: number;
-    Machine2SettleAmount: number;
-    Machine2QrCount: number;
-    Machine2QrAmount: number;
-    Machine2QrSettleCount: number;
-    Machine2QrSettleAmount: number;
-    Machine2ECount: number;
-    Machine2EAmount: number;
-    Machine2ESettleCount: number;
-    Machine2ESettleAmount: number;
-    Machine2CCount: number;
-    Machine2CAmount: number;
-    Machine2CSettleCount: number;
-    Machine2CSettleAmount: number;
-    Machine3CashCount: number;
-    Machine3CashAmount: number;
-    Machine3SettleCount: number;
-    Machine3SettleAmount: number;
-    Machine3QrCount: number;
-    Machine3QrAmount: number;
-    Machine3QrSettleCount: number;
-    Machine3QrSettleAmount: number;
-    Machine3ECount: number;
-    Machine3EAmount: number;
-    Machine3ESettleCount: number;
-    Machine3ESettleAmount: number;
-    Machine3CCount: number;
-    Machine3CAmount: number;
-    Machine3CSettleCount: number;
-    Machine3CSettleAmount: number;
-    Machine4CashCount: number;
-    Machine4CashAmount: number;
-    Machine4SettleCount: number;
-    Machine4SettleAmount: number;
-    Machine4QrCount: number;
-    Machine4QrAmount: number;
-    Machine4QrSettleCount: number;
-    Machine4QrSettleAmount: number;
-    Machine4ECount: number;
-    Machine4EAmount: number;
-    Machine4ESettleCount: number;
-    Machine4ESettleAmount: number;
-    Machine4CCount: number;
-    Machine4CAmount: number;
-    Machine4CSettleCount: number;
-    Machine4CSettleAmount: number;
-    Machine5CashCount: number;
-    Machine5CashAmount: number;
-    Machine5SettleCount: number;
-    Machine5SettleAmount: number;
-    Machine5QrCount: number;
-    Machine5QrAmount: number;
-    Machine5QrSettleCount: number;
-    Machine5QrSettleAmount: number;
-    Machine5ECount: number;
-    Machine5EAmount: number;
-    Machine5ESettleCount: number;
-    Machine5ESettleAmount: number;
-    Machine5CCount: number;
-    Machine5CAmount: number;
-    Machine5CSettleCount: number;
-    Machine5CSettleAmount: number;
-}
-
-interface Summary {
-    AdultTicketCount: number;
-    AdultSetTicketCount: number;
-    ChildTicketCount: number;
-    InfantTicketCount: number;
-    SixTicketCount: number;
-    TicketCount: number;
-}
-
 interface ProcessFileResult {
     paymentStats: PaymentStat;
     soldProducts: Record<string, SoldProduct>;
     summary: Summary;
-}
-
-interface DailyRecord extends Omit<PaymentStat, 'vendingMachineNo'> {
-    ID: number;
-    DateString: string;
-    WeatherCode: number;
-    StaffCode: number;
-    Machine1UnsettledCount: number;
-    Machine1UnsettledAmount: number;
-    Machine2UnsettledCount: number;
-    Machine2UnsettledAmount: number;
-    Machine3UnsettledCount: number;
-    Machine3UnsettledAmount: number;
-    Machine4UnsettledCount: number;
-    Machine4UnsettledAmount: number;
-    Machine5UnsettledCount: number;
-    Machine5UnsettledAmount: number;
-    AdultTicketCount: number;
-    AdultSetTicketCount: number;
-    ChildTicketCount: number;
-    InfantTicketCount: number;
-    TicketCount: number;
-    SixTicketCount: number;
-    MaleTicketCount: number;
-    FemaleTicketCount: number;
-    MaleTicketShare: string;
-    FemaleTicketShare: string;
-    InvitationTicketCount: number;
-    CourtesyTicketCount: number;
-    ThanksgivingTicketCount: number;
-    PointCardAdultCount: number;
-    PointCardChildCount: number;
-    TicketSalesCount: number;
-    OldTicketCount: number;
-    SalesNoStart: number;
-    SalesNoEnd: number;
-    Change: number;
-    PhoneFee: number;
-    CourtesySalesCount: number;
-    CourtesySalesAmount: number;
-    HonjitsuMitounyuuAmountUncertain: number;
-    HonjitsuMitounyuuAmountCertain: number;
-    Deficiency: number;
-    ZenjitsuMitounyuuAmount: number;
-    ReceiptTotalAmount: number;
-    Remarks: string;
-    EscortMale: number;
-    EscortFemale: number;
-    EscortChild: number;
-    SixTicketSalesCount: number;
-    SixSalesNoStart: number;
-    SixSalesNoEnd: number;
-    SixMaleTicketCount: number;
-    SixFemaleTicketCount: number;
-    SCutMale: number;
-    SCutFemale: number;
-    SCutChild: number;
-    CouponCount: number;
-    RearRegisterAmount: number;
-    RearRegisterTicketAmount: number;
-    RearRegisterRelaxAmount: number;
-    ReportSpace: string;
-    [key: string]: number | string;
-}
-
-interface ApiData {
-    Record: DailyRecord;
-    Color: string;
-    Found: boolean;
-    Mode: string;
 }
 
 interface Toast {
@@ -221,7 +49,6 @@ const isSameDay = (d1: Date, d2: Date): boolean => {
 };
 
 const emptyPaymentStat = (): PaymentStat => ({
-    vendingMachineNo:    0,
     Machine1CashCount:   0, Machine1CashAmount:    0,
     Machine1SettleCount: 0, Machine1SettleAmount:  0,
     Machine1QrCount:     0, Machine1QrAmount:      0,
@@ -283,7 +110,6 @@ const mergeResults = (results: ProcessFileResult[]): ProcessFileResult => {
     for (const result of results) {
         // Merge paymentStats — all properties are numeric so we can iterate
         for (const key of Object.keys(result.paymentStats) as (keyof PaymentStat)[]) {
-            if (key === 'vendingMachineNo') continue;
             (merged.paymentStats[key] as number) += result.paymentStats[key] as number;
         }
 
@@ -492,11 +318,17 @@ document.addEventListener('alpine:init', () => {
 
         formData: {
             date:  '' as string,
-            files: null as FileList | null,
+            files: null as FileList | null
         },
 
-        data: {
-            Record: {ID: 0,
+    get dirty():boolean {
+
+        return false;
+
+    },
+
+    data: {
+    Record: {ID: 0,
     DateString: '',
     WeatherCode: 0,
     StaffCode: 0,
@@ -653,8 +485,6 @@ document.addEventListener('alpine:init', () => {
 
         showModal:    false,
         selectedDate: '' as string,
-        // currentMonth: new Date().getMonth(),
-        // currentYear:  new Date().getFullYear(),
 
         loading:      true,
         error:        null as string | null,
@@ -680,60 +510,6 @@ document.addEventListener('alpine:init', () => {
             }
             return '';
         },
-
-        // get currentMonthYear(): string {
-        //     return `${this.currentYear}年${this.currentMonth + 1}月`;
-        // },
-
-        // get calendarDays(): CalendarDay[] {
-        //     const days: CalendarDay[] = [];
-        //     const firstDay    = new Date(this.currentYear, this.currentMonth, 1).getDay();
-        //     const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
-        //     for (let i = 0; i < firstDay; i++) days.push({ date: null, label: '' });
-        //     for (let i = 1; i <= daysInMonth; i++) {
-        //         days.push({ date: new Date(this.currentYear, this.currentMonth, i), label: i });
-        //     }
-        //     return days;
-        // },
-
-        // get selectedDateDisplay(): string {
-        //     if (!this.selectedDate) return '日付を選択';
-        //     const [year, month, day] = this.selectedDate.split('-');
-        //     return `${year}年${parseInt(month)}月${parseInt(day)}日`;
-        // },
-
-        // get curGetsudoRange(): CurGetsudoRange | '' {
-        //     if (!this.formData?.date) return '';
-        //     const parts = String(this.formData.date).split('-');
-        //     if (parts.length !== 3) return '';
-        //     const y = parseInt(parts[0], 10);
-        //     const m = parseInt(parts[1], 10) - 1;
-        //     const d = parseInt(parts[2], 10);
-        //     if (Number.isNaN(y) || Number.isNaN(m) || Number.isNaN(d)) return '';
-
-        //     const today = new Date(y, m, d);
-        //     const year  = today.getFullYear();
-        //     const month = today.getMonth();
-        //     const day   = today.getDate();
-
-        //     let target: Date;
-        //     if (day >= 21) {
-        //         target = new Date(year, month, 21);
-        //     } else {
-        //         let prevMonth = month - 1;
-        //         let yy = year;
-        //         if (prevMonth < 0) { prevMonth = 11; yy = year - 1; }
-        //         target = new Date(yy, prevMonth, 21);
-        //     }
-        //     const yyyy = target.getFullYear();
-        //     const mm   = String(target.getMonth() + 1).padStart(2, '0');
-        //     const dd   = String(target.getDate()).padStart(2, '0');
-        //     const target20Date = new Date(yyyy, target.getMonth() + 1, 20);
-        //     return {
-        //         mostRecent21: `${yyyy}-${mm}-${dd}`,
-        //         closest20th:  `${target20Date.getFullYear()}-${String(target20Date.getMonth() + 1).padStart(2, '0')}-${String(target20Date.getDate()).padStart(2, '0')}`,
-        //     };
-        // },
 
         get Totals(): Record<string, string | number> {
             if (!this.data?.Record) return {};
@@ -880,14 +656,6 @@ document.addEventListener('alpine:init', () => {
 
         // ---- methods ----
 
-        // prevNextDate(offset: number): void {
-        //     const date      = new Date(this.selectedDate);
-        //     const next_date = new Date(date.setDate(date.getDate() + offset));
-        //     this.selectedDate = `${next_date.getFullYear()}-${String(next_date.getMonth() + 1).padStart(2, '0')}-${String(next_date.getDate()).padStart(2, '0')}`;
-        //     this.$dispatch('update-date', { data: this.selectedDate });
-        //     this.fetchData(this.selectedDate);
-        // },
-
         focusNextTabbable(element: HTMLElement): void {
             (document.querySelector(`[tabindex="${element.tabIndex + 1}"]`) as HTMLElement | null)?.focus();
         },
@@ -899,44 +667,6 @@ document.addEventListener('alpine:init', () => {
             setTimeout(() => { this.toast.show = false; }, 2000);
         },
 
-        // isSelected(date: Date): boolean {
-        //     if (!this.selectedDate) return false;
-        //     const sel = new Date(this.selectedDate);
-        //     return date.getFullYear() === sel.getFullYear() &&
-        //            date.getMonth()    === sel.getMonth()    &&
-        //            date.getDate()     === sel.getDate();
-        // },
-
-        // isToday(date: Date): boolean {
-        //     const today = new Date();
-        //     return date.getFullYear() === today.getFullYear() &&
-        //            date.getMonth()    === today.getMonth()    &&
-        //            date.getDate()     === today.getDate();
-        // },
-
-        // selectDate(date: Date): void {
-        //     const year  = date.getFullYear();
-        //     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        //     const day   = date.getDate().toString().padStart(2, '0');
-        //     this.selectedDate = `${year}-${month}-${day}`;
-        //     this.showModal    = false;
-        //     this.$nextTick(() => {
-        //         this.fetchData(this.selectedDate);
-        //         if (this.data) this.data.Record.DateString = this.selectedDate;
-        //         this.$dispatch('update-date', { data: this.selectedDate });
-        //     });
-        // },
-
-        // previousMonth(): void {
-        //     if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; }
-        //     else this.currentMonth--;
-        // },
-
-        // nextMonth(): void {
-        //     if (this.currentMonth === 11) { this.currentMonth = 0; this.currentYear++; }
-        //     else this.currentMonth++;
-        // },
-
         async init(): Promise<void> {
             const today = new Date();
             const year  = today.getFullYear();
@@ -944,10 +674,27 @@ document.addEventListener('alpine:init', () => {
             const day   = today.getDate().toString().padStart(2, '0');
             this.selectedDate = `${year}-${month}-${day}`;
             if (this.data) this.data.Record.DateString = this.selectedDate;
-            this.$dispatch('update-date', { data: this.selectedDate });
+            //this.$dispatch('update-date', { data: this.selectedDate });
             this.fetchTantoushas();
             await this.fetchCurrentUser();
-            this.fetchData(this.selectedDate);
+//            this.fetchData(this.selectedDate);
+
+            const fetchDataResult = await (this.$store.app as AppStore).fetchData(this.api_url, this.selectedDate);
+
+            if(fetchDataResult) {
+                this.data = fetchDataResult;
+            }
+            
+            this.$watch('selectedDate', async (newDate: string) => {
+                if (this.data) this.data.Record.DateString = newDate;
+                console.log("in watch", newDate);
+//                await this.fetchData(newDate);
+                const fetchDataResult = await (this.$store.app as AppStore).fetchData(this.api_url, this.selectedDate);
+    
+                if(fetchDataResult) {
+                    this.data = fetchDataResult;
+                }
+            });
         },
 
         async fetchCurrentUser(): Promise<void> {

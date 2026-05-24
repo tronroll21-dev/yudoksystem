@@ -20,23 +20,23 @@ document.addEventListener('alpine:init', () => {
 
     const Alpine = window.Alpine;
     
-        Alpine.data('datepicker', () => ({
-            formData: {
-                date:  '' as string,
-                files: null as FileList | null,
-            },
+    Alpine.data('datepicker', () => ({
+        formData: {
+            date:  '' as string,
+            files: null as FileList | null,
+        },
 
-            innerSelectedDate: '' as string,
-            currentMonth: new Date().getMonth(),
-            currentYear:  new Date().getFullYear(),
+        innerSelectedDate: '' as string,
+        currentMonth: new Date().getMonth(),
+        currentYear:  new Date().getFullYear(),
 
-            init() {
-                const today = new Date();
-                const year = today.getFullYear();
-                const month = (today.getMonth() + 1).toString().padStart(2, '0');
-                const day = today.getDate().toString().padStart(2, '0');
-                this.innerSelectedDate = `${year}-${month}-${day}`;
-                this.$dispatch('update-date', { data: this.innerSelectedDate });
+        init() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            this.innerSelectedDate = `${year}-${month}-${day}`;
+            //this.$dispatch('update-date', { data: this.innerSelectedDate });
             },
 
             showModal: false,
@@ -72,6 +72,12 @@ document.addEventListener('alpine:init', () => {
                    date.getDate()     === sel.getDate();
         },
 
+        get selectedDateDisplay(): string {
+            if (!this.innerSelectedDate) return '日付を選択';
+            const [year, month, day] = this.innerSelectedDate.split('-');
+            return `${year}年${parseInt(month)}月${parseInt(day)}日`;
+        },
+
         isToday(date: Date): boolean {
             const today = new Date();
             return date.getFullYear() === today.getFullYear() &&
@@ -85,11 +91,6 @@ document.addEventListener('alpine:init', () => {
             const day   = date.getDate().toString().padStart(2, '0');
             this.innerSelectedDate = `${year}-${month}-${day}`;
             this.showModal    = false;
-            // this.$nextTick(() => {
-            //     this.fetchData(this.innerSelectedDate);
-            //     if (this.data) this.data.Record.DateString = this.innerSelectedDate;
-            //     this.$dispatch('update-date', { data: this.innerSelectedDate });
-            // });
         },
 
         previousMonth(): void {
