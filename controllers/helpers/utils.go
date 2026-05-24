@@ -1,9 +1,11 @@
 package helpers
 
 import (
+	"bytes"
 	"fmt"
 	html_template "html/template"
 	"io"
+	"os"
 	"os/exec"
 	text_template "text/template"
 
@@ -94,34 +96,46 @@ func GeneratePDFfromHTML(html []byte) ([]byte, error) {
 }
 
 func GeneratePDFfromSVG(svg []byte) ([]byte, error) {
-	cmd := exec.Command("rsvg-convert", "-f", "pdf", "-")
-
-	stdin, err := cmd.StdinPipe()
+	// Write SVG to a temp file
+	svgFile, err := os.CreateTemp("", "input-*.svg")
 	if err != nil {
 		return nil, err
 	}
+	defer os.Remove(svgFile.Name())
 
-	stdout, err := cmd.StdoutPipe()
+	if _, err := svgFile.Write(svg); err != nil {
+		svgFile.Close()
+		return nil, err
+	}
+	svgFile.Close()
+
+	// Prepare a temp path for the output PDF
+	pdfFile, err := os.CreateTemp("", "output-*.pdf")
 	if err != nil {
 		return nil, err
 	}
+	pdfPath := pdfFile.Name()
+	pdfFile.Close()
+	defer os.Remove(pdfPath)
 
-	if err := cmd.Start(); err != nil {
-		return nil, err
+	// Inkscape 1.2+ exports all pages by default with --export-type=pdf
+	cmd := exec.Command("inkscape",
+		"--export-type=pdf",
+		"--export-filename="+pdfPath,
+		"--export-area-page",
+		svgFile.Name(),
+	)
+
+	// Capture stderr for useful error messages
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	if err := cmd.Run(); err != nil {
+		return nil, fmt.Errorf("inkscape failed: %w: %s", err, stderr.String())
 	}
 
-	_, err = stdin.Write(svg)
-	stdin.Close() // must close before Wait()
+	pdfBytes, err := os.ReadFile(pdfPath)
 	if err != nil {
-		return nil, err
-	}
-
-	pdfBytes, err := io.ReadAll(stdout)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := cmd.Wait(); err != nil {
 		return nil, err
 	}
 

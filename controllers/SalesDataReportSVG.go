@@ -31,7 +31,7 @@ func SalesDataReportSVGHandler(c *gin.Context) {
 	}
 
 	// Parse the SVG template
-	tmpl, err := controllerHelpers.ParseSVGTemplateWithFunc("templates/uriagenichijihoukokusho_p2.svg")
+	tmpl, err := controllerHelpers.ParseSVGTemplateWithFunc("templates/uriagenichijihoukokusho.svg")
 	if err != nil {
 		log.Printf("Error parsing template: %v", err)
 		c.String(http.StatusInternalServerError, "Failed to parse template")
@@ -40,7 +40,7 @@ func SalesDataReportSVGHandler(c *gin.Context) {
 
 	// Execute the template into a buffer
 	var buf bytes.Buffer
-	err = tmpl.ExecuteTemplate(&buf, "uriagenichijihoukokusho_p2.svg", gin.H{
+	err = tmpl.ExecuteTemplate(&buf, "uriagenichijihoukokusho.svg", gin.H{
 		"ReportData": ReportData,
 	})
 	if err != nil {
@@ -49,25 +49,24 @@ func SalesDataReportSVGHandler(c *gin.Context) {
 		return
 	}
 
-	// reportSVG := buf.Bytes()
+	reportSVG := buf.Bytes()
 
-	// pdfBytes, err := controllerHelpers.GeneratePDFfromSVG(reportSVG)
-	// if err != nil {
-	// 	// handle error with c.String(...)
-	// 	log.Printf("Error generating PDF: %v", err)
-	// 	c.String(http.StatusInternalServerError, "Failed to generate PDF")
-	// 	return
+	pdfBytes, err := controllerHelpers.GeneratePDFfromSVG(reportSVG)
+	if err != nil {
+		// handle error with c.String(...)
+		log.Printf("Error generating PDF: %v", err)
+		c.String(http.StatusInternalServerError, "Failed to generate PDF")
+		return
+	}
 
-	// }
-
-	// c.Header("Content-Type", "application/pdf")
-	// c.Data(http.StatusOK, "application/pdf", pdfBytes)
+	c.Header("Content-Type", "application/pdf")
+	c.Data(http.StatusOK, "application/pdf", pdfBytes)
 
 	// Set the content type and return the SVG data
 	//c.Header("Content-Type", "image/svg+xml")
-	c.Header("Content-Type", "application/json")
+	//c.Header("Content-Type", "application/json")
 	//c.Data(http.StatusOK, "image/svg+xml", buf.Bytes())
-	c.JSON(http.StatusOK, gin.H{
-		"data": ReportData,
-	})
+	// c.JSON(http.StatusOK, gin.H{
+	// 	"data": ReportData,
+	// })
 }
