@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .Title }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; width: 210mm;}
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 0px 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .product-row { background-color: white; }
+        .subcat-row { background-color: lightgray ; }
+        .sub-cat-total { background-color: #e0f7fa; font-weight: bold; }
+        .cat-total { background-color: #b3e5fc; font-weight: bold; font-size: 1.1em; }
+        .grand-total { background-color: #81d4fa; font-weight: bold; font-size: 1.2em; }
+        .revenue-col { text-align: right; }
+    </style>
+</head>
+<body>
+    <h1>{{ .Title }}</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ランク</th>
+                <th>商品区分コード</th>
+                <th>商品区分名</th>
+                <th>金額</th>
+                <th>数量</th>
+                <th>平均単価</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        {{range .GroupedDetails}}
+            {{range .Details}}
+                <tr class="product-row">
+                    <td>{{ .Rank }}</td>
+                    <td>{{ .ShohinCode }}</td>
+                    <td>{{ .ShohinName }}</td>
+                    <td class="revenue-col">{{ format .Kingaku }}</td>
+                    <td class="revenue-col">{{ format .Suryo }}</td>
+                    <td class="revenue-col">{{ format .HeikinTanka }}</td>
+                </tr>
+            {{end}}
+
+            {{/* Subcategory Total Row */}}
+            <tr class="sub-cat-total">
+                <td>{{ .GroupRank }}集計</td>
+                <td class="revenue-col">&nbsp;</td>
+                <td class="revenue-col">&nbsp;</td>
+                <td class="revenue-col">{{ format .GroupTotalKingaku }}</td>
+                <td class="revenue-col">{{ format .GroupTotalSuryo }}</td>
+                <td class="revenue-col">&nbsp;</td>
+            </tr>
+        {{end}}
+        {{/* Grand Total Row */}}
+        <tr class="grand-total">
+            <td>集計</td>
+            <td class="revenue-col">&nbsp;</td>
+            <td class="revenue-col">&nbsp;</td>
+            <td class="revenue-col">{{ format .GrandTotalKingaku }}</td>
+            <td class="revenue-col">{{ format .GrandTotalSuryo }}</td>
+            <td class="revenue-col">&nbsp;</td>
+        </tr>
+
+        </tbody>
+    </table>
+</body>
+</html>

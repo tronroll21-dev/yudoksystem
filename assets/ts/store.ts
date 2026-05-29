@@ -9,12 +9,12 @@ declare global {
 }
 
  const appStore: AppStore = {
-    currentDate: '',
+    selectedDate: '',
     paymentStat: {} as PaymentStat,
     data: {} as DailyRecord,
     async fetchData(api_url: string, date: string): Promise<ApiData | void> {
 
-        this.currentDate = date;
+        this.selectedDate = date;
         try {
             const response = await fetch(`${api_url}${date}`, { credentials: 'include' });
             if (!response.ok) throw new Error('ネットワーク応答が正常ではありませんでした');
@@ -36,6 +36,27 @@ declare global {
             // this.error = `データの取得に失敗しました: ${err.message}`;
             console.error('Error fetching data:', e);
         } 
+    },
+
+    async saveRecord(dailyRecord: DailyRecord): Promise<ApiData | void> {
+        try {
+            const recordToSend = JSON.parse(JSON.stringify(dailyRecord)) as DailyRecord;
+            const response = await fetch('/api/sales-data', {
+                method:      'POST',
+                credentials: 'include',
+                headers:     { 'Content-Type': 'application/json' },
+                body:        JSON.stringify({ Record: recordToSend, Found: this.data!.Found }),
+            });
+            if (!response.ok) {
+                throw new Error(`サーバーエラー: ${response.status} ${response.statusText}`);
+            }
+            const responseData = await response.json() as ApiData;
+            this.data = responseData.Record;
+            return responseData;
+        } catch (error) {
+            const err = error as Error;
+            console.error('レコードの保存中にエラーが発生しました:', err);
+        }
     },
 
     init() {

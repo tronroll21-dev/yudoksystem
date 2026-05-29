@@ -61,6 +61,9 @@ func registerRoutes(router *gin.Engine) {
 		salesAPI.GET("/nyuuyokushasuushuukei", controllers.NyuuyokushasuuShuukeiHandler)
 		salesAPI.GET("/jissekiyosoku", controllers.JissekiyosokuHandler)
 		salesAPI.GET("/tantoushas", controllers.TantoushasHandler)
+		salesAPI.GET("/rearegi-details", controllers.GetRearegiDetailHandler)
+		salesAPI.GET("/rearegi-report", controllers.GetRearegiReportHandler)
+		salesAPI.POST("/rearegi-details", controllers.SaveRearegiDetailHandler)
 	}
 
 	// Ranges

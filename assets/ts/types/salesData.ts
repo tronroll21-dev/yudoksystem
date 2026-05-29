@@ -137,10 +137,14 @@ interface DailyRecord extends Omit<PaymentStat, 'vendingMachineNo'> {
     SCutFemale: number;
     SCutChild: number;
     CouponCount: number;
-    RearRegisterAmount: number;
-    RearRegisterTicketAmount: number;
-    RearRegisterRelaxAmount: number;
+    RearegiAmount: number;
+    RearegiTicketAmount: number;
+    RearegiRelaxAmount: number;
     ReportSpace: string;
+    KaisuukenHeijitsuKenbaiki: number;
+    KaisuukenZenjitsuKenbaiki: number;
+    KaisuukenHeijitsuRearegi: number;
+    KaisuukenZenjitsuRearegi: number;
     [key: string]: number | string;
 }
 

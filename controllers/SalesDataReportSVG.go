@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http" // Use text/template for SVG
 	"time"
@@ -40,8 +41,13 @@ func SalesDataReportSVGHandler(c *gin.Context) {
 
 	// Execute the template into a buffer
 	var buf bytes.Buffer
+	now := time.Now()
+
 	err = tmpl.ExecuteTemplate(&buf, "uriagenichijihoukokusho.svg", gin.H{
 		"ReportData": ReportData,
+		"Timestamp": fmt.Sprintf("%d年%d月%d日　　%d:%02d:%02d\n",
+			now.Year(), now.Month(), now.Day(),
+			now.Hour(), now.Minute(), now.Second()),
 	})
 	if err != nil {
 		log.Printf("Error executing template: %v", err)

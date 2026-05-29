@@ -150,6 +150,10 @@ type DailyReportRaw struct {
 	RearegiTicketAmount              int    `db:"リアレジ金額回数券系"`
 	RearegiRelaxAmount               int    `db:"リアレジ金額リラク系"`
 	ReportSpace                      string `db:"報告ｽﾍﾟｰｽ"`
+	KaisuukenHeijitsuKenbaiki        int    `db:"回数券平日券売数"`
+	KaisuukenZenjitsuKenbaiki        int    `db:"回数券全日券売数"`
+	KaisuukenHeijitsuRearegi         int    `db:"回数券平日リアレジ"`
+	KaisuukenZenjitsuRearegi         int    `db:"回数券全日リアレジ"`
 }
 
 // GetSalesRecordByDate queries the mock database for a record on the specified date
@@ -163,6 +167,7 @@ func GetSalesRecordByDate(targetDate time.Time) (*DailyReportRaw, bool, error) {
 	T1.日付,
 	T1.天気コード,
 	T1.担当コード,
+    tan.担当,
 	T1.1号機現金枚数,
 	T1.1号機現金金額,
 	T1.1号機精算枚数,
@@ -292,10 +297,15 @@ func GetSalesRecordByDate(targetDate time.Time) (*DailyReportRaw, bool, error) {
 	T1.リアレジ金額,
 	T1.リアレジ金額回数券系,
 	T1.リアレジ金額リラク系,
-	T1.報告ｽﾍﾟｰｽ
+	T1.報告ｽﾍﾟｰｽ,
+	T1.回数券平日券売数,
+	T1.回数券全日券売数,
+	T1.回数券平日リアレジ,
+	T1.回数券全日リアレジ
 	FROM
 		日次報告ﾃｰﾌﾞﾙ AS T1
         INNER JOIN 天気ﾏｽﾀ tm ON T1.天気コード = tm.天気コード
+        INNER JOIN 担当ﾏｽﾀ tan ON tan.担当ｺｰﾄﾞ = T1.担当コード
 	WHERE
 		T1.日付 = ?
 	ORDER BY
@@ -308,6 +318,7 @@ func GetSalesRecordByDate(targetDate time.Time) (*DailyReportRaw, bool, error) {
 		&raw.Date,
 		&raw.WeatherCode,
 		&raw.StaffCode,
+		&raw.StaffName,
 		&raw.Machine1CashCount,
 		&raw.Machine1CashAmount,
 		&raw.Machine1SettleCount,
@@ -438,6 +449,10 @@ func GetSalesRecordByDate(targetDate time.Time) (*DailyReportRaw, bool, error) {
 		&raw.RearegiTicketAmount,
 		&raw.RearegiRelaxAmount,
 		&raw.ReportSpace,
+		&raw.KaisuukenHeijitsuKenbaiki,
+		&raw.KaisuukenZenjitsuKenbaiki,
+		&raw.KaisuukenHeijitsuRearegi,
+		&raw.KaisuukenZenjitsuRearegi,
 	)
 
 	dateString = string(raw.Date)
