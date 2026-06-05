@@ -1,4 +1,5 @@
 import type { Alpine } from 'alpinejs';
+import type { AppStore } from './types/stores';
 
 declare global {
   interface Window {
@@ -91,6 +92,7 @@ document.addEventListener('alpine:init', () => {
             const day   = date.getDate().toString().padStart(2, '0');
             this.innerSelectedDate = `${year}-${month}-${day}`;
             this.showModal    = false;
+            (this.$store.appstore as AppStore).selectedDate = this.innerSelectedDate;
         },
 
         previousMonth(): void {

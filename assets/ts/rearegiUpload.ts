@@ -8,6 +8,12 @@ declare global {
   }
 }
 
+interface Toast {
+    show: boolean;
+    message: string;
+    type: 'success' | 'error';
+}
+
 enum RegiCsv {
   ShohinKubunCode = 1,
   ShohinKubunName = 2,
@@ -144,6 +150,14 @@ document.addEventListener('alpine:init', () => {
         },
         async processRearegiData(): Promise<void> {
             
+            const files = this.formData.files;
+            if (!files || files.length === 0) {
+                console.error('No file selected for processing.');
+                this.$dispatch('toast', { show: true, message: 'ファイルが選択されていません', type: 'error' } as Toast);
+                return;
+            }
+
+
             const { lngAmountKaisuuken, lngAmountMassage, rearegiDetails } = await processFileOnFrontend(this.formData.files![0], new Date())  // ← passed in
             this.rearegiLocalData.lngAmountKaisuuken = lngAmountKaisuuken;
             this.rearegiLocalData.lngAmountMassage = lngAmountMassage;

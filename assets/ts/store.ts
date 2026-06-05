@@ -38,25 +38,22 @@ declare global {
         } 
     },
 
-    async saveRecord(dailyRecord: DailyRecord): Promise<ApiData | void> {
-        try {
-            const recordToSend = JSON.parse(JSON.stringify(dailyRecord)) as DailyRecord;
-            const response = await fetch('/api/sales-data', {
-                method:      'POST',
-                credentials: 'include',
-                headers:     { 'Content-Type': 'application/json' },
-                body:        JSON.stringify({ Record: recordToSend, Found: this.data!.Found }),
-            });
-            if (!response.ok) {
-                throw new Error(`サーバーエラー: ${response.status} ${response.statusText}`);
-            }
-            const responseData = await response.json() as ApiData;
-            this.data = responseData.Record;
-            return responseData;
-        } catch (error) {
-            const err = error as Error;
-            console.error('レコードの保存中にエラーが発生しました:', err);
+    async saveRecord(dailyRecord: DailyRecord): Promise<ApiData> {
+        dailyRecord.DateString = this.selectedDate;
+
+        const recordToSend = JSON.parse(JSON.stringify(dailyRecord)) as DailyRecord;
+        const response = await fetch('/api/sales-data', {
+            method:      'POST',
+            credentials: 'include',
+            headers:     { 'Content-Type': 'application/json' },
+            body:        JSON.stringify({ Record: recordToSend, Found: this.data!.Found }),
+        });
+        if (!response.ok) {
+            throw new Error(`サーバーエラー: ${response.status} ${response.statusText}`);
         }
+        const responseData = await response.json() as ApiData;
+        this.data = responseData.Record;
+        return responseData;
     },
 
     init() {

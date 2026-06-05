@@ -96,7 +96,7 @@
 
     </nav>
 
-    <div class="bg-white rounded-xl shadow-lg p-4 w-full z-0" x-data="dailyReport()"
+    <div class="bg-white rounded-xl shadow-lg p-4 w-full z-0" x-data="dailyReport()" @toast="handleToast($event.detail)"
         @data-updated.window="updateKenbaikiData($event.detail.data)">
         <!-- ローディングインジケータ -->
         <div x-show="loading" class="text-center text-xl font-semibold text-gray-700 py-10" x-cloak>
@@ -154,8 +154,10 @@
                         <input type="text" autocomplete="off" id="id" x-model="data.Record.ID" readonly
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-gray-50 border p-1">
                     </div>
-                    <div class="col-span-2 relative lg:flex items-center gap-4 my-4" x-data="datepicker()" x-modelable="innerSelectedDate" x-model="selectedDate">
-                        <label for="dateField" class="block text-sm font-medium text-gray-700 whitespace-nowrap">日付:</label>
+                    <div class="col-span-2 relative lg:flex items-center gap-4 my-4" x-data="datepicker()"
+                        x-modelable="innerSelectedDate" x-model="selectedDate">
+                        <label for="dateField"
+                            class="block text-sm font-medium text-gray-700 whitespace-nowrap">日付:</label>
                         <input type="text" autocomplete="off" id="dateField"
                             class="w-full p-2 border-2 border-gray-300 rounded bg-gray-50 cursor-pointer transition-colors hover:border-green-500"
                             :value="selectedDateDisplay" readonly placeholder="日付をホバーして選択" @click="showModal = true"
@@ -197,7 +199,8 @@
                 <!-- Weather -->
                 <div class="lg:flex items-center gap-4">
                     <div class="col-span-2 lg:flex items-center gap-4">
-                        <label for="weatherCode" class="block text-sm font-medium text-gray-700 whitespace-nowrap">天気コード</label>
+                        <label for="weatherCode"
+                            class="block text-sm font-medium text-gray-700 whitespace-nowrap">天気コード</label>
                         <select id="weatherCode" x-model="data.Record.WeatherCode"
                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-1"
                             @keydown.enter="focusNextTabbable($el)" tabindex="1">
@@ -212,7 +215,8 @@
                 <!-- Staff -->
                 <div class="">
                     <div class="col-span-3 lg:flex items-center gap-4">
-                        <label for="staffName" class="block text-sm font-medium text-gray-700 whitespace-nowrap">担当</label>
+                        <label for="staffName"
+                            class="block text-sm font-medium text-gray-700 whitespace-nowrap">担当</label>
                         <!-- <input type="text" autocomplete="off" id="staffName" x-model="data.StaffName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 border p-1"> -->
 
                         <select id="staffCode" x-model="data.Record.StaffCode"
@@ -236,7 +240,7 @@
                                     class="relative rounded-md font-semibold text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
                                     ファイルをアップロード<br>
                                     またはドラッグ＆ドロップ
-                            </div>
+                                </div>
                                 <input id="files" name="files[]" type="file" multiple class="sr-only" x-ref="fileInput"
                                     @change="handleFileChange($event)">
                             </div>
@@ -245,17 +249,19 @@
                     </div>
                 </form>
 
-                <form x-data="rearegiUpload()" x-model="rearegiData" x-modelable="rearegiLocalData" class="my-8 space-y-6">
+                <form x-data="rearegiUpload()" x-model="rearegiData" x-modelable="rearegiLocalData"
+                    class="my-8 space-y-6">
                     <div>
                         <div class="mt-1 justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed cursor-pointer"
-                            @dragover.prevent @drop.prevent="handleDropRearegi($event)" x-on:click="$refs.fileInput.click()">
+                            @dragover.prevent @drop.prevent="handleDropRearegi($event)"
+                            x-on:click="$refs.fileInput.click()">
                             <div class="flex text-sm text-gray-600">
                                 <img src="/assets/img/file-upload.svg" class="mx-auto h-12 w-12 text-gray-400">
                                 <div
                                     class="relative rounded-md font-semibold text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
                                     ファイルをアップロード<br>
                                     またはドラッグ＆ドロップ
-                            </div>
+                                </div>
                                 <input id="files" name="files[]" type="file" multiple class="sr-only" x-ref="fileInput"
                                     @change="handleFileChange($event)">
                             </div>
@@ -288,21 +294,28 @@
 
             <div class="table-responsive overflow-hidden border border-gray-200 col-span-4 flex-[4] p-4">
 
-                <div role="table" class="w-full grid grid-cols-[max-content_max-content_repeat(6,minmax(0,1fr))] w-full">
+                <div role="table"
+                    class="w-full grid grid-cols-[max-content_max-content_repeat(6,minmax(0,1fr))] w-full">
                     <div role="rowgroup" class="contents bg-gray-200">
                         <div role="row" class="contents group">
                             <div role="columnheader"
-                                class="col-span-2 py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">種類</div>
+                                class="col-span-2 py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">
+                                種類</div>
                             <div role="columnheader"
-                                class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">1号機</div>
+                                class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">1号機
+                            </div>
                             <div role="columnheader"
-                                class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">2号機</div>
+                                class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">2号機
+                            </div>
                             <div role="columnheader"
-                                class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">3号機</div>
+                                class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">3号機
+                            </div>
                             <div role="columnheader"
-                                class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">4号機</div>
+                                class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">4号機
+                            </div>
                             <div role="columnheader"
-                                class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">5号機</div>
+                                class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">5号機
+                            </div>
                             <div role="columnheader"
                                 class="py-3 px-2 md:px-4 text-left font-medium text-gray-600 whitespace-nowrap">合計</div>
                         </div>
@@ -348,8 +361,8 @@
                                     tabindex="63" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="CashCountTotal" :value="Totals.CashCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="CashCountTotal" :value="Totals.CashCountTotal" />
                             </div>
                         </div>
                         <!-- 現金金額 (Cash Amount) -->
@@ -391,8 +404,8 @@
                                     tabindex="64" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="CashAmountTotal" :value="Totals.CashAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="CashAmountTotal" :value="Totals.CashAmountTotal" />
                             </div>
                         </div>
                         <!-- 現金精算件数 (Cash Settle Count) -->
@@ -435,8 +448,8 @@
                                     tabindex="65" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="SettleCountTotal" :value="Totals.SettleCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="SettleCountTotal" :value="Totals.SettleCountTotal" />
                             </div>
                         </div>
                         <!-- 現金精算金額 (Cash Settle Amount) -->
@@ -478,8 +491,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="66" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="SettleAmountTotal" :value="Totals.SettleAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="SettleAmountTotal" :value="Totals.SettleAmountTotal" />
                             </div>
                         </div>
                         <!-- 現金合計件数 (Cash Settle Count) -->
@@ -487,56 +500,56 @@
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">合計</div>
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine1NetCashCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1NetCashCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine2NetCashCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2NetCashCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine3NetCashCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3NetCashCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine4NetCashCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4NetCashCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine5NetCashCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5NetCashCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.NetCashCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.NetCashCountTotal" />
                             </div>
                         </div>
                         <!-- 現金合計金額 (Cash Settle Amount) -->
                         <div role="row" class="contents group">
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine1NetCashAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1NetCashAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine2NetCashAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2NetCashAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine3NetCashAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3NetCashAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine4NetCashAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4NetCashAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine5NetCashAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5NetCashAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.NetCashAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.NetCashAmountTotal" />
                             </div>
                         </div>
                         <!-- 現金未精算件数 (Cash Unsettled Count) -->
@@ -579,8 +592,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="67" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="UnsettledCountTotal" :value="Totals.UnsettledCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="UnsettledCountTotal" :value="Totals.UnsettledCountTotal" />
                             </div>
                         </div>
                         <!-- 現金未精算金額 (Cash Unsettled Amount) -->
@@ -622,8 +635,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="68" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="UnsettledAmountTotal" :value="Totals.UnsettledAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="UnsettledAmountTotal" :value="Totals.UnsettledAmountTotal" />
                             </div>
                         </div>
                         <!-- 現金合計件数 (Cash Settle Count) -->
@@ -631,56 +644,56 @@
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">売上合計</div>
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine1NetCashCountMinusUnsettled" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1NetCashCountMinusUnsettled" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine2NetCashCountMinusUnsettled" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2NetCashCountMinusUnsettled" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine3NetCashCountMinusUnsettled" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3NetCashCountMinusUnsettled" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine4NetCashCountMinusUnsettled" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4NetCashCountMinusUnsettled" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine5NetCashCountMinusUnsettled" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5NetCashCountMinusUnsettled" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.NetCashCountMinusUnsettledTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.NetCashCountMinusUnsettledTotal" />
                             </div>
                         </div>
                         <!-- 現金合計金額 (Cash Settle Amount) -->
                         <div role="row" class="contents group">
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine1NetCashAmountMinusUnsettled" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1NetCashAmountMinusUnsettled" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine2NetCashAmountMinusUnsettled" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2NetCashAmountMinusUnsettled" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine3NetCashAmountMinusUnsettled" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3NetCashAmountMinusUnsettled" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine4NetCashAmountMinusUnsettled" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4NetCashAmountMinusUnsettled" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine5NetCashAmountMinusUnsettled" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5NetCashAmountMinusUnsettled" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.NetCashAmountMinusUnsettledTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.NetCashAmountMinusUnsettledTotal" />
                             </div>
                         </div>
                         <!-- QR件数 (QR Count) -->
@@ -718,8 +731,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="69" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="QrCountTotal" :value="Totals.QrCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="QrCountTotal" :value="Totals.QrCountTotal" />
                             </div>
                         </div>
                         <!-- QR金額 (QR Amount) -->
@@ -761,8 +774,8 @@
                                     tabindex="70" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="QrAmountTotal" :value="Totals.QrAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="QrAmountTotal" :value="Totals.QrAmountTotal" />
                             </div>
                         </div>
                         <!-- QR精算件数 (QR Settle Count) -->
@@ -805,8 +818,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="71" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="QrSettleCountTotal" :value="Totals.QrSettleCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="QrSettleCountTotal" :value="Totals.QrSettleCountTotal" />
                             </div>
                         </div>
                         <!-- QR精算金額 (QR Settle Amount) -->
@@ -848,8 +861,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="72" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="QrSettleAmountTotal" :value="Totals.QrSettleAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="QrSettleAmountTotal" :value="Totals.QrSettleAmountTotal" />
                             </div>
                         </div>
                         <!-- QR合計件数 (QR Settle Count) -->
@@ -857,56 +870,56 @@
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">QR合計</div>
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine1NetQrCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1NetQrCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine2NetQrCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2NetQrCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine3NetQrCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3NetQrCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine4NetQrCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4NetQrCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine5NetQrCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5NetQrCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.NetQrCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.NetQrCountTotal" />
                             </div>
                         </div>
                         <!-- QR合計金額 (QR Settle Amount) -->
                         <div role="row" class="contents group">
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine1NetQrAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1NetQrAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine2NetQrAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2NetQrAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine3NetQrAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3NetQrAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine4NetQrAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4NetQrAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine5NetQrAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5NetQrAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.NetQrAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.NetQrAmountTotal" />
                             </div>
                         </div>
                         <!-- 電子マネ件数 (E-Money Count) -->
@@ -944,8 +957,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="73" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="ECountTotal" :value="Totals.ECountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="ECountTotal" :value="Totals.ECountTotal" />
                             </div>
                         </div>
                         <!-- 電子マネ金額 (E-Money Amount) -->
@@ -982,8 +995,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="74" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="EAmountTotal" :value="Totals.EAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="EAmountTotal" :value="Totals.EAmountTotal" />
                             </div>
                         </div>
                         <!-- 電子マネ精算件数 (E-Money Settle Count) -->
@@ -1026,8 +1039,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="75" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="ESettleCountTotal" :value="Totals.ESettleCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="ESettleCountTotal" :value="Totals.ESettleCountTotal" />
                             </div>
                         </div>
                         <!-- 電子マネ精算金額 (E-Money Settle Amount) -->
@@ -1070,8 +1083,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="76" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="ESettleAmountTotal" :value="Totals.ESettleAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="ESettleAmountTotal" :value="Totals.ESettleAmountTotal" />
                             </div>
                         </div>
                         <!-- 電子マネ合計件数 (電子マネ Settle Count) -->
@@ -1079,28 +1092,28 @@
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700">電子マネ</div>
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine1NetECount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1NetECount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine2NetECount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2NetECount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine3NetECount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3NetECount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine4NetECount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4NetECount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine5NetECount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5NetECount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.NetECountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.NetECountTotal" />
                             </div>
                         </div>
                         <!-- 電子マネ合計金額 (電子マネ Settle Amount) -->
@@ -1108,28 +1121,28 @@
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700">合計</div>
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine1NetEAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1NetEAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine2NetEAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2NetEAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine3NetEAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3NetEAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine4NetEAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4NetEAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine5NetEAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5NetEAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.NetEAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.NetEAmountTotal" />
                             </div>
                         </div>
                         <!-- クレジットカード件数 (E-Money Count) -->
@@ -1167,8 +1180,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="73" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="CCountTotal" :value="Totals.CCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="CCountTotal" :value="Totals.CCountTotal" />
                             </div>
                         </div>
                         <!-- クレジットカード金額 (E-Money Amount) -->
@@ -1205,8 +1218,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="74" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="CAmountTotal" :value="Totals.CAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="CAmountTotal" :value="Totals.CAmountTotal" />
                             </div>
                         </div>
                         <!-- クレジットカード精算件数 (E-Money Settle Count) -->
@@ -1215,42 +1228,42 @@
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">件数</div>
                             <div role="cell" class="border border-gray-400">
                                 <input type="text" autocomplete="off"
-                                class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                name="Machine1CSettleCount" id="Machine1CSettleCount"
-                                x-currency="data.Record.Machine1CSettleCount"
-                                @keydown.enter="focusNextTabbable($el)" tabindex="15" />
+                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
+                                    name="Machine1CSettleCount" id="Machine1CSettleCount"
+                                    x-currency="data.Record.Machine1CSettleCount"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="15" />
                             </div>
                             <div role="cell" class="border border-gray-400">
                                 <input type="text" autocomplete="off"
-                                class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                name="Machine2CSettleCount" id="Machine2CSettleCount"
-                                x-currency="data.Record.Machine2CSettleCount"
-                                @keydown.enter="focusNextTabbable($el)" tabindex="30" />
+                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
+                                    name="Machine2CSettleCount" id="Machine2CSettleCount"
+                                    x-currency="data.Record.Machine2CSettleCount"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="30" />
                             </div>
                             <div role="cell" class="border border-gray-400">
                                 <input type="text" autocomplete="off"
-                                class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                name="Machine3CSettleCount" id="Machine3CSettleCount"
-                                x-currency="data.Record.Machine3CSettleCount"
-                                @keydown.enter="focusNextTabbable($el)" tabindex="45" />
+                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
+                                    name="Machine3CSettleCount" id="Machine3CSettleCount"
+                                    x-currency="data.Record.Machine3CSettleCount"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="45" />
                             </div>
                             <div role="cell" class="border border-gray-400">
                                 <input type="text" autocomplete="off"
-                                class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                name="Machine4CSettleCount" id="Machine4CSettleCount"
-                                x-currency="data.Record.Machine4CSettleCount"
-                                @keydown.enter="focusNextTabbable($el)" tabindex="60" />
+                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
+                                    name="Machine4CSettleCount" id="Machine4CSettleCount"
+                                    x-currency="data.Record.Machine4CSettleCount"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="60" />
                             </div>
                             <div role="cell" class="border border-gray-400">
                                 <input type="text" autocomplete="off"
-                                class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                name="Machine5CSettleCount" id="Machine5CSettleCount"
-                                x-currency="data.Record.Machine5CSettleCount"
-                                @keydown.enter="focusNextTabbable($el)" tabindex="75" />
+                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
+                                    name="Machine5CSettleCount" id="Machine5CSettleCount"
+                                    x-currency="data.Record.Machine5CSettleCount"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="75" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                id="CSettleCountTotal" :value="Totals.CSettleCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="CSettleCountTotal" :value="Totals.CSettleCountTotal" />
                             </div>
                         </div>
                         <!-- クレジットカード精算金額 (E-Money Settle Amount) -->
@@ -1293,8 +1306,8 @@
                                     @keydown.enter="focusNextTabbable($el)" tabindex="76" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    id="CSettleAmountTotal" :value="Totals.CSettleAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled id="CSettleAmountTotal" :value="Totals.CSettleAmountTotal" />
                             </div>
                         </div>
                         <!-- クレジットカード合計件数 (クレジットカード Settle Count) -->
@@ -1302,28 +1315,28 @@
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700">クレジット</div>
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine1NetCCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1NetCCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine2NetCCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2NetCCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine3NetCCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3NetCCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine4NetCCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4NetCCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine5NetCCount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5NetCCount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.NetCCountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.NetCCountTotal" />
                             </div>
                         </div>
                         <!-- クレジットカード合計金額 (クレジットカード Settle Amount) -->
@@ -1331,28 +1344,28 @@
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700">合計</div>
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine1NetCAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1NetCAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine2NetCAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2NetCAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine3NetCAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3NetCAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine4NetCAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4NetCAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.Machine5NetCAmount" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5NetCAmount" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                    :value="Totals.NetCAmountTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.NetCAmountTotal" />
                             </div>
                         </div>
                         <!-- キャッシュレス合計金額 (キャッシュレス Settle Amount) -->
@@ -1360,24 +1373,24 @@
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700">キャッシュレス</div>
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">合計</div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine1CashlessTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine1CashlessTotal" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine2CashlessTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine2CashlessTotal" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine3CashlessTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine3CashlessTotal" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine4CashlessTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine4CashlessTotal" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled
-                                :value="Totals.Machine5CashlessTotal" />
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.Machine5CashlessTotal" />
                             </div>
                             <div role="cell" class="border border-gray-400">
                                 <!-- <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.CashlessTotalTotal"/> -->
@@ -1390,23 +1403,24 @@
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
                             <div role="cell" class="border border-gray-400 text-center">回数券系</div>
                             <div role="cell" class="border border-gray-400">
-                                    <input type="text" autocomplete="off"
+                                <input type="text" autocomplete="off"
                                     class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
                                     name="RearegiTicketAmount" id="RearegiTicketAmount"
-                                    x-currency="data.Record.RearegiTicketAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="61" />
+                                    x-currency="data.Record.RearegiTicketAmount" @keydown.enter="focusNextTabbable($el)"
+                                    tabindex="61" />
                             </div>
                             <div role="cell" class="border border-gray-400">&nbsp;</div>
                             <div role="cell" class="border border-gray-400 text-center">リラク系</div>
                             <div role="cell" class="border border-gray-400">
-                                    <input type="text" autocomplete="off"
+                                <input type="text" autocomplete="off"
                                     class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
                                     name="RearegiRelaxAmount" id="RearegiRelaxAmount"
-                                    x-currency="data.Record.RearegiRelaxAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="61" />
+                                    x-currency="data.Record.RearegiRelaxAmount" @keydown.enter="focusNextTabbable($el)"
+                                    tabindex="61" />
                             </div>
                             <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell" disabled :value="Totals.RearegiAmount"/>
+                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
+                                    disabled :value="Totals.RearegiAmount" />
                             </div>
                         </div>
                     </div>
@@ -1422,8 +1436,8 @@
                     <div role="table" class="grid grid-cols-[max-content_repeat(2,minmax(0,1fr))] w-full">
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">券売機計</div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="Totals.NetCashAmountTotal" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="Totals.NetCashAmountTotal" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
@@ -1466,8 +1480,8 @@
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.Deficiency" @keydown.enter="focusNextTabbable($el)"
                                     tabindex="83" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="Totals.TounyuuGoukei" />
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="Totals.TounyuuGoukei" />
                             </div>
                         </div>
                         <div role="row" class="contents">
@@ -1479,8 +1493,8 @@
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">投入合計</div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="Totals.TounyuuGoukei" />
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="Totals.TounyuuGoukei" />
                             </div>
                             <div role="cell">&nbsp;</div>
                         </div>
@@ -1544,9 +1558,9 @@
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.FemaleTicketCount" @keydown.enter="focusNextTabbable($el)"
                                     tabindex="92" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="TicketTotals.TicketCountTotal" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="93"></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="TicketTotals.TicketCountTotal"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="93"></div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">全日回数券回収（枚）</div>
@@ -1559,16 +1573,16 @@
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.SixFemaleTicketCount"
                                     @keydown.enter="focusNextTabbable($el)" tabindex="96" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="TicketTotals.SixTicketCountTotal" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="97"></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="TicketTotals.SixTicketCountTotal"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="97"></div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">福利厚生</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.OldTicketCount" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    x-currency="Totals.TounyuuGoukei" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled x-currency="Totals.TounyuuGoukei" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                         </div>
@@ -1578,25 +1592,25 @@
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.InvitationTicketCount"
                                     @keydown.enter="focusNextTabbable($el)" tabindex="98" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="TicketTotals.MaleTicketCountTotal" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="99" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="TicketTotals.FemaleTicketCountTotal" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="100" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="TicketTotals.MaleTicketCountTotal"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="99" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="TicketTotals.FemaleTicketCountTotal"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="100" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">優待券回収</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
-                                    x-currency="Totals.YuutaikenTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="101" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="TicketTotals.MaleTicketShare" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="102" /></div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="TicketTotals.FemaleTicketShare" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="103" /></div>
+                                    x-currency="data.Record.YuutaikenTicketCount"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="101" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="TicketTotals.MaleTicketShare"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="102" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="TicketTotals.FemaleTicketShare"
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="103" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
@@ -1619,16 +1633,16 @@
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">入場者合計</div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="data.Record.ReceiptTotalAmount" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="Totals.VisitorCountTotal" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">客単価</div>
-                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off" disabled
-                                    :value="data.Record.ReceiptTotalAmount" /></div>
+                            <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
+                                    disabled :value="Totals.RevenuePerVisitor" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1650,32 +1664,38 @@
                             <div role="cell">&nbsp;</div>
                         </div>
                     </div>
-                    <div role="table" class="grid grid-cols-[max-content_repeat(2,minmax(0,1fr))] w-full">
+                    <div role="table" class="grid grid-cols-[max-content_repeat(2,minmax(0,2fr))_minmax(0,1fr)] w-full">
                         <div role="rowgroup" class="contents font-medium text-gray-600">
                             <div role="row" class="contents">
                                 <div role="columnheader">&nbsp;</div>
                                 <div role="columnheader">販売NO（始まり）</div>
                                 <div role="columnheader">販売NO（終わり）</div>
+                                <div role="columnheader">discrep</div>
                             </div>
                         </div>
                         <div role="rowgroup" class="contents">
                             <div role="row" class="contents">
                                 <div role="cell">平日回数</div>
-                                <div role="cell"><input type="text" autocomplete="off" x-currency="data.Record.SalesNoStart"
-                                        @keydown.enter="focusNextTabbable($el)" tabindex="106" class="numCell border" />
-                                    </td>
-                                    <div role="cell"><input type="text" autocomplete="off" x-currency="data.Record.SalesNoEnd"
-                                            @keydown.enter="focusNextTabbable($el)" tabindex="107"
-                                            class="numCell border" /></div>
+                                <div role="cell"><input type="text" autocomplete="off"
+                                        x-currency="data.Record.SalesNoStart" @keydown.enter="focusNextTabbable($el)"
+                                        tabindex="106" class="numCell border w-full" />
                                 </div>
+                                <div role="cell"><input type="text" autocomplete="off"
+                                        x-currency="data.Record.SalesNoEnd" @keydown.enter="focusNextTabbable($el)"
+                                        tabindex="107" class="numCell border w-full" /></div>
+                                <div role="cell"><input type="text" disabled autocomplete="off" class="numCell border w-full" :value="TicketTotals.SalesNoDiscrepancy" /></div>
+
                                 <div role="row" class="contents">
                                     <div role="cell">全日回数</div>
-                                    <div role="cell"><input type="text" autocomplete="off" x-currency="data.Record.SixSalesNoStart"
+                                    <div role="cell"><input type="text" autocomplete="off"
+                                            x-currency="data.Record.SixSalesNoStart"
                                             @keydown.enter="focusNextTabbable($el)" tabindex="108"
-                                            class="numCell border" /></div>
-                                    <div role="cell"><input type="text" autocomplete="off" x-currency="data.Record.SixSalesNoEnd"
+                                            class="numCell border w-full" /></div>
+                                    <div role="cell"><input type="text" autocomplete="off"
+                                            x-currency="data.Record.SixSalesNoEnd"
                                             @keydown.enter="focusNextTabbable($el)" tabindex="109"
-                                            class="numCell border" /></div>
+                                            class="numCell border w-full" /></div>
+                                    <div role="cell"><input type="text" disabled autocomplete="off" class="numCell border w-full" :value="TicketTotals.SixSalesNoDiscrepancy" /></div>
                                 </div>
                             </div>
                         </div>
@@ -1696,10 +1716,12 @@
                         <div role="rowgroup" class="contents">
                             <div role="row" class="contents">
                                 <div role="cell">優待券販売（金額）・（枚数）</div>
-                                <div role="cell"><input type="text" autocomplete="off" x-currency="data.Record.YuutaikenSalesAmount"
+                                <div role="cell"><input type="text" autocomplete="off"
+                                        x-currency="data.Record.YuutaikenSalesAmount"
                                         @keydown.enter="focusNextTabbable($el)" tabindex="110"
                                         class="w-full border text-right" /></div>
-                                <div role="cell"><input type="text" autocomplete="off" x-currency="data.Record.YuutaikenSalesCount"
+                                <div role="cell"><input type="text" autocomplete="off"
+                                        x-currency="data.Record.YuutaikenSalesCount"
                                         @keydown.enter="focusNextTabbable($el)" tabindex="111"
                                         class="w-full border text-right" /></div>
                             </div>
@@ -1728,15 +1750,15 @@
                                 <div role="cell"><input class="w-full border text-right" type="text" autocomplete="off"
                                         x-currency="data.Record.SCutChild" @keydown.enter="focusNextTabbable($el)"
                                         tabindex="114" /></div>
-                                <div role="cell"><input class="w-full border text-right" type="text" autocomplete="off" disabled
-                                        :value="TicketTotals.SCutTotal" /></div>
+                                <div role="cell"><input class="w-full border text-right" type="text" autocomplete="off"
+                                        disabled :value="TicketTotals.SCutTotal" /></div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="md:[grid-area:item6] p-4">
-                    <h2>6. ｸｰﾎﾟﾝ回収</h2><input class="w-full border" type="text" autocomplete="off" x-currency="data.Record.CouponCount"
-                        @keydown.enter="focusNextTabbable($el)" tabindex="115" />
+                    <h2>6. ｸｰﾎﾟﾝ回収</h2><input class="w-full border" type="text" autocomplete="off"
+                        x-currency="data.Record.CouponCount" @keydown.enter="focusNextTabbable($el)" tabindex="115" />
                 </div>
 
                 <div class="md:[grid-area:item7] p-4">

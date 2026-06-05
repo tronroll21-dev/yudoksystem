@@ -489,6 +489,10 @@ document.addEventListener('alpine:init', () => {
             type:    'success' as 'success' | 'error',
         } satisfies Toast,
 
+        handleToast(detail: Toast): void {
+            this.showToast(detail.message, detail.type);
+        },
+
         tenkiOptions: [
             'なし','晴れ','曇り','雨',
             '晴れのち曇り','曇りのち雨','雨のち曇り','雪','雨台風',
@@ -539,7 +543,9 @@ document.addEventListener('alpine:init', () => {
                 netCashCountMinusUnsettledTotal = 0, netCashAmountMinusUnsettledTotal = 0,
                 netECountTotal = 0, netEAmountTotal = 0,
                 netCCountTotal = 0, netCAmountTotal = 0,
-                netQrCountTotal = 0, netQrAmountTotal = 0;
+                netQrCountTotal = 0, netQrAmountTotal = 0,
+                totalRevenue = 0,
+                visitorCountTotal = 0, revenuePerVisitor = 0;
 
             const totals: Record<string, string | number> = {};
 
@@ -573,7 +579,6 @@ document.addEventListener('alpine:init', () => {
                 eSettleCountTotal   += esc; eSettleAmountTotal   += esa;
                 cCountTotal         += ccc; cAmountTotal         += cca;
                 cSettleCountTotal   += csc; cSettleAmountTotal   += csa;
-
                 netCashCountTotal               += cc  - sc;
                 netCashAmountTotal              += ca  - sa;
                 netCashCountMinusUnsettledTotal += cc  - sc  - uc;
@@ -644,6 +649,13 @@ document.addEventListener('alpine:init', () => {
                 ).toLocaleString('ja-JP');
             }
 
+            visitorCountTotal = Number(rec.AdultTicketCount) + Number(rec.AdultSetTicketCount) + Number(rec.ChildTicketCount) + Number(rec.TicketCount) + Number(rec.InvitationTicketCount) + Number(rec.YuutaikenTicketCount) + Number(rec.SixTicketCount) + Number(rec.InfantTicketCount) + Number(rec.PointCardAdultCount) + Number(rec.PointCardChildCount);
+            totalRevenue = netCashAmountTotal + netEAmountTotal + netCAmountTotal + netQrAmountTotal + rec.RearegiTicketAmount + rec.RearegiRelaxAmount;
+            revenuePerVisitor = visitorCountTotal > 0 ? totalRevenue / visitorCountTotal : 0;
+
+            totals.VisitorCountTotal = visitorCountTotal.toLocaleString('ja-JP');
+            totals.TotalRevenue = totalRevenue.toLocaleString('ja-JP');
+            totals.RevenuePerVisitor = Math.round(revenuePerVisitor).toLocaleString('ja-JP');
             return totals;
         },
 
@@ -664,6 +676,8 @@ document.addEventListener('alpine:init', () => {
                 MaleTicketShare:   Math.round(maleTotal   / grandTotal * 100),
                 FemaleTicketShare: Math.round(femaleTotal / grandTotal * 100),
                 SCutTotal: (Number(rec.SCutMale) + Number(rec.SCutFemale) + Number(rec.SCutChild)).toLocaleString('ja-JP'),
+                SalesNoDiscrepancy: Number(rec.SalesNoStart) !== 0 ? Number(rec.SalesNoEnd) - Number(rec.SalesNoStart) + 1 : 0,
+                SixSalesNoDiscrepancy: Number(rec.SixSalesNoStart) !== 0 ? Number(rec.SixSalesNoEnd) - Number(rec.SixSalesNoStart) + 1 : 0,
             };
         },
 

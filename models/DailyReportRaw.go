@@ -150,8 +150,8 @@ type DailyReportRaw struct {
 	RearegiTicketAmount              int    `db:"リアレジ金額回数券系"`
 	RearegiRelaxAmount               int    `db:"リアレジ金額リラク系"`
 	ReportSpace                      string `db:"報告ｽﾍﾟｰｽ"`
-	KaisuukenHeijitsuKenbaiki        int    `db:"回数券平日券売数"`
-	KaisuukenZenjitsuKenbaiki        int    `db:"回数券全日券売数"`
+	KaisuukenHeijitsuKenbaiki        int    `db:"回数券平日券売機"`
+	KaisuukenZenjitsuKenbaiki        int    `db:"回数券平日券売機"`
 	KaisuukenHeijitsuRearegi         int    `db:"回数券平日リアレジ"`
 	KaisuukenZenjitsuRearegi         int    `db:"回数券全日リアレジ"`
 }
@@ -298,8 +298,8 @@ func GetSalesRecordByDate(targetDate time.Time) (*DailyReportRaw, bool, error) {
 	T1.リアレジ金額回数券系,
 	T1.リアレジ金額リラク系,
 	T1.報告ｽﾍﾟｰｽ,
-	T1.回数券平日券売数,
-	T1.回数券全日券売数,
+	T1.回数券平日券売機,
+	T1.回数券平日券売機,
 	T1.回数券平日リアレジ,
 	T1.回数券全日リアレジ
 	FROM
