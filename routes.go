@@ -60,6 +60,7 @@ func registerRoutes(router *gin.Engine) {
 		salesAPI.POST("/menubetsu-uriage", controllers.SaveMenubetsuUriage)
 		salesAPI.GET("/nyuuyokushasuushuukei", controllers.NyuuyokushasuuShuukeiHandler)
 		salesAPI.GET("/jissekiyosoku", controllers.JissekiyosokuHandler)
+		salesAPI.GET("/analysis-data", controllers.AnalysisDataHandler)
 		salesAPI.GET("/tantoushas", controllers.TantoushasHandler)
 		salesAPI.GET("/rearegi-details", controllers.GetRearegiDetailHandler)
 		salesAPI.GET("/rearegi-report", controllers.GetRearegiReportHandler)

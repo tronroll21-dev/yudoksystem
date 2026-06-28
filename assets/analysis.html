@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>売上・経費分析</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Temporal Polyfill -->
+    <script src="https://cdn.jsdelivr.net/npm/@js-temporal/polyfill@0.4.4/dist/index.umd.js"></script>
+    <!-- Chart.js and Plugins -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1"></script>
+    <!-- Custom JS -->
+    <script defer type="module" src="/assets/js/analysis.js"></script>
+    <!-- Alpine.js CDN -->
+    <script defer src="/assets/js/alpine.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 md:p-8" x-data="analysisPage">
+    <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-6 md:p-10">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center" x-text="'売上・経費分析 (' + startDate.replace(/-/g, '/') + ' - ' + endDate.replace(/-/g, '/') + ')'"></h1>
+
+        <!-- Controls Section -->
+        <div class="flex flex-wrap items-center justify-center gap-4 mb-8 bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium text-gray-600">開始日:</label>
+                <input type="date" x-model="startDate" @change="fetchData()" class="border rounded p-1 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium text-gray-600">終了日:</label>
+                <input type="date" x-model="endDate" @change="fetchData()" class="border rounded p-1 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+            <button @click="resetZoom()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded text-sm transition shadow-sm">
+                ズームリセット
+            </button>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="mb-12 relative">
+            <div x-show="isLoading" class="absolute inset-0 bg-white/50 z-10 flex items-center justify-center rounded-lg" x-cloak>
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+            <canvas id="analysisChart" height="100"></canvas>
+            <p class="text-center text-xs text-gray-400 mt-2">※ グラフ上をドラッグして期間を絞り込めます。左右にドラッグしてスクロールも可能です。</p>
+        </div>
+
+        <!-- Table Section -->
+        <div>
+            <h2 class="text-xl font-bold text-gray-700 mb-4">詳細データテーブル</h2>
+            <div class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">日付</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider border-l">入浴売上</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">飲食売上</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">リラク売上</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider border-l">電気代</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ガス代</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider border-l">来客数</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <template x-for="item in data" :key="item.date">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900" x-text="item.date.replace(/-/g, '/')"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600 border-l font-mono" x-text="item.hotbath_revenue.toLocaleString()"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600 font-mono" x-text="item.restaurant_revenue.toLocaleString()"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600 font-mono" x-text="item.relaxation_revenue.toLocaleString()"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600 border-l font-mono text-amber-600" x-text="item.power_expense.toLocaleString()"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600 font-mono text-amber-600" x-text="item.gas_expense.toLocaleString()"></td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-600 border-l font-mono text-indigo-600" x-text="item.visitor_count.toLocaleString()"></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <div x-show="isLoading && data.length === 0" class="text-center py-10 text-gray-500" x-cloak>
+                    読み込み中...
+                </div>
+                <div x-show="!isLoading && data.length === 0" class="text-center py-10 text-gray-500" x-cloak>
+                    データがありません。
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -22,24 +22,24 @@ type DailyReportRaw struct {
 	StaffName                        string `db:"担当" json:"-"`
 	Machine1CashCount                int    `db:"1号機現金枚数"`
 	Machine1CashAmount               int    `db:"1号機現金金額"`
-	Machine1SettleCount              int    `db:"1号機精算枚数"`
-	Machine1SettleAmount             int    `db:"1号機精算金額"`
+	Machine1CashSettleCount          int    `db:"1号機精算枚数"`
+	Machine1CashSettleAmount         int    `db:"1号機精算金額"`
 	Machine2CashCount                int    `db:"2号機現金枚数"`
 	Machine2CashAmount               int    `db:"2号機現金金額"`
-	Machine2SettleCount              int    `db:"2号機精算枚数"`
-	Machine2SettleAmount             int    `db:"2号機精算金額"`
+	Machine2CashSettleCount          int    `db:"2号機精算枚数"`
+	Machine2CashSettleAmount         int    `db:"2号機精算金額"`
 	Machine3CashCount                int    `db:"3号機現金枚数"`
 	Machine3CashAmount               int    `db:"3号機現金金額"`
-	Machine3SettleCount              int    `db:"3号機精算枚数"`
-	Machine3SettleAmount             int    `db:"3号機精算金額"`
+	Machine3CashSettleCount          int    `db:"3号機精算枚数"`
+	Machine3CashSettleAmount         int    `db:"3号機精算金額"`
 	Machine4CashCount                int    `db:"4号機現金枚数"`
 	Machine4CashAmount               int    `db:"4号機現金金額"`
-	Machine4SettleCount              int    `db:"4号機精算枚数"`
-	Machine4SettleAmount             int    `db:"4号機精算金額"`
+	Machine4CashSettleCount          int    `db:"4号機精算枚数"`
+	Machine4CashSettleAmount         int    `db:"4号機精算金額"`
 	Machine5CashCount                int    `db:"5号機現金枚数"`
 	Machine5CashAmount               int    `db:"5号機現金金額"`
-	Machine5SettleCount              int    `db:"5号機精算枚数"`
-	Machine5SettleAmount             int    `db:"5号機精算金額"`
+	Machine5CashSettleCount          int    `db:"5号機精算枚数"`
+	Machine5CashSettleAmount         int    `db:"5号機精算金額"`
 	Machine1UnsettledCount           int    `db:"1号機未精算枚数"`
 	Machine1UnsettledAmount          int    `db:"1号機未精算金額"`
 	Machine2UnsettledCount           int    `db:"2号機未精算枚数"`
@@ -321,24 +321,24 @@ func GetSalesRecordByDate(targetDate time.Time) (*DailyReportRaw, bool, error) {
 		&raw.StaffName,
 		&raw.Machine1CashCount,
 		&raw.Machine1CashAmount,
-		&raw.Machine1SettleCount,
-		&raw.Machine1SettleAmount,
+		&raw.Machine1CashSettleCount,
+		&raw.Machine1CashSettleAmount,
 		&raw.Machine2CashCount,
 		&raw.Machine2CashAmount,
-		&raw.Machine2SettleCount,
-		&raw.Machine2SettleAmount,
+		&raw.Machine2CashSettleCount,
+		&raw.Machine2CashSettleAmount,
 		&raw.Machine3CashCount,
 		&raw.Machine3CashAmount,
-		&raw.Machine3SettleCount,
-		&raw.Machine3SettleAmount,
+		&raw.Machine3CashSettleCount,
+		&raw.Machine3CashSettleAmount,
 		&raw.Machine4CashCount,
 		&raw.Machine4CashAmount,
-		&raw.Machine4SettleCount,
-		&raw.Machine4SettleAmount,
+		&raw.Machine4CashSettleCount,
+		&raw.Machine4CashSettleAmount,
 		&raw.Machine5CashCount,
 		&raw.Machine5CashAmount,
-		&raw.Machine5SettleCount,
-		&raw.Machine5SettleAmount,
+		&raw.Machine5CashSettleCount,
+		&raw.Machine5CashSettleAmount,
 		&raw.Machine1UnsettledCount,
 		&raw.Machine1UnsettledAmount,
 		&raw.Machine2UnsettledCount,

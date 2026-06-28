@@ -191,16 +191,16 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 	var Machine1CCountGoukei, Machine2CCountGoukei, Machine3CCountGoukei, Machine4CCountGoukei, Machine5CCountGoukei,
 		Machine1CAmountGoukei, Machine2CAmountGoukei, Machine3CAmountGoukei, Machine4CAmountGoukei, Machine5CAmountGoukei int
 
-	Machine1CashCountGoukei = record.Machine1CashCount - record.Machine1SettleCount
-	Machine2CashCountGoukei = record.Machine2CashCount - record.Machine2SettleCount
-	Machine3CashCountGoukei = record.Machine3CashCount - record.Machine3SettleCount
-	Machine4CashCountGoukei = record.Machine4CashCount - record.Machine4SettleCount
-	Machine5CashCountGoukei = record.Machine5CashCount - record.Machine5SettleCount
-	Machine1CashAmountGoukei = record.Machine1CashAmount - record.Machine1SettleAmount
-	Machine2CashAmountGoukei = record.Machine2CashAmount - record.Machine2SettleAmount
-	Machine3CashAmountGoukei = record.Machine3CashAmount - record.Machine3SettleAmount
-	Machine4CashAmountGoukei = record.Machine4CashAmount - record.Machine4SettleAmount
-	Machine5CashAmountGoukei = record.Machine5CashAmount - record.Machine5SettleAmount
+	Machine1CashCountGoukei = record.Machine1CashCount - record.Machine1CashSettleCount
+	Machine2CashCountGoukei = record.Machine2CashCount - record.Machine2CashSettleCount
+	Machine3CashCountGoukei = record.Machine3CashCount - record.Machine3CashSettleCount
+	Machine4CashCountGoukei = record.Machine4CashCount - record.Machine4CashSettleCount
+	Machine5CashCountGoukei = record.Machine5CashCount - record.Machine5CashSettleCount
+	Machine1CashAmountGoukei = record.Machine1CashAmount - record.Machine1CashSettleAmount
+	Machine2CashAmountGoukei = record.Machine2CashAmount - record.Machine2CashSettleAmount
+	Machine3CashAmountGoukei = record.Machine3CashAmount - record.Machine3CashSettleAmount
+	Machine4CashAmountGoukei = record.Machine4CashAmount - record.Machine4CashSettleAmount
+	Machine5CashAmountGoukei = record.Machine5CashAmount - record.Machine5CashSettleAmount
 
 	Machine1CashAmountGoukeiWithUnsettled := Machine1CashAmountGoukei - record.Machine1UnsettledAmount
 	Machine2CashAmountGoukeiWithUnsettled := Machine2CashAmountGoukei - record.Machine2UnsettledAmount
@@ -292,16 +292,16 @@ func GetSalesReportByDate(targetDate time.Time) (ReportData, error) {
 			record.Machine3CashAmount +
 			record.Machine4CashAmount +
 			record.Machine5CashAmount,
-		SettleCountGoukei: record.Machine1SettleCount +
-			record.Machine2SettleCount +
-			record.Machine3SettleCount +
-			record.Machine4SettleCount +
-			record.Machine5SettleCount,
-		SettleAmountGoukei: record.Machine1SettleAmount +
-			record.Machine2SettleAmount +
-			record.Machine3SettleAmount +
-			record.Machine4SettleAmount +
-			record.Machine5SettleAmount,
+		SettleCountGoukei: record.Machine1CashSettleCount +
+			record.Machine2CashSettleCount +
+			record.Machine3CashSettleCount +
+			record.Machine4CashSettleCount +
+			record.Machine5CashSettleCount,
+		SettleAmountGoukei: record.Machine1CashSettleAmount +
+			record.Machine2CashSettleAmount +
+			record.Machine3CashSettleAmount +
+			record.Machine4CashSettleAmount +
+			record.Machine5CashSettleAmount,
 		Machine1CashCountGoukei:               Machine1CashCountGoukei,
 		Machine2CashCountGoukei:               Machine2CashCountGoukei,
 		Machine3CashCountGoukei:               Machine3CashCountGoukei,

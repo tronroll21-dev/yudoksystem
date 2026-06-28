@@ -7,6 +7,7 @@
     <title>日報データビューア</title>
     <link rel="icon" href="/assets/img/favicon.ico" type="image/ico">
     <script defer src="/assets/js/currency.js"></script>
+    <script defer src="/assets/js/currency2.js"></script>
 
     <script type="module" defer src="/assets/js/store.js"></script>
     <script type="module" defer src="/assets/js/uploader.js"></script>
@@ -63,7 +64,7 @@
         <div x-data="uploader()" class="min-h-screen flex inset-0" @update-date.window="updateDate($event.detail.data)">
             <div class="w-full max-w-2xl p-6 sm:p-10 shadow-lg">
                 <div class="mt-8">
-                    <a target="_blank" :href="`/api/sales-data-report?date=${formData.date}`"
+                    <a target="_blank" :href="`/api/sales-data-report-svg?date=${formData.date}`"
                         class="block px-4 py-2 hover:bg-gray-200 rounded-md text-gray-700">売上日次報告</a>
                     <a target="_blank"
                         :href="`/api/uriage-nikkei-report?start_date=${curGetsudoRange.mostRecent21}&end_date=${curGetsudoRange.closest20th}`"
@@ -71,6 +72,8 @@
                     <a target="_blank"
                         :href="`/api/nyuuyokushasuushuukei?start_date=${curGetsudoRange.mostRecent21}&end_date=${curGetsudoRange.closest20th}`"
                         class="block px-4 py-2 hover:bg-gray-200 rounded-md text-gray-700">入浴者集計</a>
+                    <a target="_blank" href="/assets/analysis.html"
+                        class="block px-4 py-2 hover:bg-gray-200 rounded-md text-purple-700 font-bold">売上・経費分析</a>
                     <br>
                     <a target="_blank"
                         :href="`/api/menubetsuuriage?start_date=${formData.date}&end_date=${formData.date}&bumon_id=2`"
@@ -321,1053 +324,56 @@
                         </div>
                     </div>
                     <div role="rowgroup" class="contents divide-y divide-gray-200">
-                        <!-- 現金枚数 (Cash Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">現金</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1CashCount" id="Machine1CashCount"
-                                    x-currency="data.Record.Machine1CashCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="3" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2CashCount" id="Machine2CashCount"
-                                    x-currency="data.Record.Machine2CashCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="18" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3CashCount" id="Machine3CashCount"
-                                    x-currency="data.Record.Machine3CashCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="33" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4CashCount" id="Machine4CashCount"
-                                    x-currency="data.Record.Machine4CashCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="48" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5CashCount" id="Machine5CashCount"
-                                    x-currency="data.Record.Machine5CashCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="63" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="CashCountTotal" :value="Totals.CashCountTotal" />
-                            </div>
-                        </div>
-                        <!-- 現金金額 (Cash Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1CashAmount" id="Machine1CashAmount"
-                                    x-currency="data.Record.Machine1CashAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="4" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2CashAmount" id="Machine2CashAmount"
-                                    x-currency="data.Record.Machine2CashAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="19" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3CashAmount" id="Machine3CashAmount"
-                                    x-currency="data.Record.Machine3CashAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="34" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4CashAmount" id="Machine4CashAmount"
-                                    x-currency="data.Record.Machine4CashAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="49" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5CashAmount" id="Machine5CashAmount"
-                                    x-currency="data.Record.Machine5CashAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="64" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="CashAmountTotal" :value="Totals.CashAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- 現金精算件数 (Cash Settle Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">精算</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">件数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1SettleCount" id="Machine1SettleCount"
-                                    x-currency="data.Record.Machine1SettleCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="5" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2SettleCount" id="Machine2SettleCount"
-                                    x-currency="data.Record.Machine2SettleCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="20" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3SettleCount" id="Machine3SettleCount"
-                                    x-currency="data.Record.Machine3SettleCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="35" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4SettleCount" id="Machine4SettleCount"
-                                    x-currency="data.Record.Machine4SettleCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="50" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5SettleCount" id="Machine5SettleCount"
-                                    x-currency="data.Record.Machine5SettleCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="65" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="SettleCountTotal" :value="Totals.SettleCountTotal" />
-                            </div>
-                        </div>
-                        <!-- 現金精算金額 (Cash Settle Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1SettleAmount" id="Machine1SettleAmount"
-                                    x-currency="data.Record.Machine1SettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="6" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2SettleAmount" id="Machine2SettleAmount"
-                                    x-currency="data.Record.Machine2SettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="21" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3SettleAmount" id="Machine3SettleAmount"
-                                    x-currency="data.Record.Machine3SettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="36" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4SettleAmount" id="Machine4SettleAmount"
-                                    x-currency="data.Record.Machine4SettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="51" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5SettleAmount" id="Machine5SettleAmount"
-                                    x-currency="data.Record.Machine5SettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="66" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="SettleAmountTotal" :value="Totals.SettleAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- 現金合計件数 (Cash Settle Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">合計</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine1NetCashCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine2NetCashCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine3NetCashCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine4NetCashCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine5NetCashCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.NetCashCountTotal" />
-                            </div>
-                        </div>
-                        <!-- 現金合計金額 (Cash Settle Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine1NetCashAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine2NetCashAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine3NetCashAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine4NetCashAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine5NetCashAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.NetCashAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- 現金未精算件数 (Cash Unsettled Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">未精算</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">件数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1UnsettledCount" id="Machine1UnsettledCount"
-                                    x-currency="data.Record.Machine1UnsettledCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="7" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2UnsettledCount" id="Machine2UnsettledCount"
-                                    x-currency="data.Record.Machine2UnsettledCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="22" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3UnsettledCount" id="Machine3UnsettledCount"
-                                    x-currency="data.Record.Machine3UnsettledCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="37" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4UnsettledCount" id="Machine4UnsettledCount"
-                                    x-currency="data.Record.Machine4UnsettledCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="52" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5UnsettledCount" id="Machine5UnsettledCount"
-                                    x-currency="data.Record.Machine5UnsettledCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="67" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="UnsettledCountTotal" :value="Totals.UnsettledCountTotal" />
-                            </div>
-                        </div>
-                        <!-- 現金未精算金額 (Cash Unsettled Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1UnsettledAmount" id="Machine1UnsettledAmount"
-                                    x-currency="data.Record.Machine1UnsettledAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="8" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2UnsettledAmount" id="Machine2UnsettledAmount"
-                                    x-currency="data.Record.Machine2UnsettledAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="23" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3UnsettledAmount" id="Machine3UnsettledAmount"
-                                    x-currency="data.Record.Machine3UnsettledAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="38" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4UnsettledAmount" id="Machine4UnsettledAmount"
-                                    x-currency="data.Record.Machine4UnsettledAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="53" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5UnsettledAmount" id="Machine5UnsettledAmount"
-                                    x-currency="data.Record.Machine5UnsettledAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="68" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="UnsettledAmountTotal" :value="Totals.UnsettledAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- 現金合計件数 (Cash Settle Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">売上合計</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine1NetCashCountMinusUnsettled" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine2NetCashCountMinusUnsettled" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine3NetCashCountMinusUnsettled" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine4NetCashCountMinusUnsettled" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine5NetCashCountMinusUnsettled" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.NetCashCountMinusUnsettledTotal" />
-                            </div>
-                        </div>
-                        <!-- 現金合計金額 (Cash Settle Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine1NetCashAmountMinusUnsettled" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine2NetCashAmountMinusUnsettled" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine3NetCashAmountMinusUnsettled" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine4NetCashAmountMinusUnsettled" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine5NetCashAmountMinusUnsettled" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.NetCashAmountMinusUnsettledTotal" />
-                            </div>
-                        </div>
-                        <!-- QR件数 (QR Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">QR</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">件数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1QrCount" id="Machine1QrCount" x-currency="data.Record.Machine1QrCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="9" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2QrCount" id="Machine2QrCount" x-currency="data.Record.Machine2QrCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="24" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3QrCount" id="Machine3QrCount" x-currency="data.Record.Machine3QrCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="39" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4QrCount" id="Machine4QrCount" x-currency="data.Record.Machine4QrCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="54" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5QrCount" id="Machine5QrCount" x-currency="data.Record.Machine5QrCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="69" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="QrCountTotal" :value="Totals.QrCountTotal" />
-                            </div>
-                        </div>
-                        <!-- QR金額 (QR Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1QrAmount" id="Machine1QrAmount"
-                                    x-currency="data.Record.Machine1QrAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="10" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2QrAmount" id="Machine2QrAmount"
-                                    x-currency="data.Record.Machine2QrAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="25" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3QrAmount" id="Machine3QrAmount"
-                                    x-currency="data.Record.Machine3QrAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="40" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4QrAmount" id="Machine4QrAmount"
-                                    x-currency="data.Record.Machine4QrAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="55" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5QrAmount" id="Machine5QrAmount"
-                                    x-currency="data.Record.Machine5QrAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="70" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="QrAmountTotal" :value="Totals.QrAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- QR精算件数 (QR Settle Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">精算</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">件数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1QrSettleCount" id="Machine1QrSettleCount"
-                                    x-currency="data.Record.Machine1QrSettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="11" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2QrSettleCount" id="Machine2QrSettleCount"
-                                    x-currency="data.Record.Machine2QrSettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="26" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3QrSettleCount" id="Machine3QrSettleCount"
-                                    x-currency="data.Record.Machine3QrSettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="41" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4QrSettleCount" id="Machine4QrSettleCount"
-                                    x-currency="data.Record.Machine4QrSettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="56" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5QrSettleCount" id="Machine5QrSettleCount"
-                                    x-currency="data.Record.Machine5QrSettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="71" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="QrSettleCountTotal" :value="Totals.QrSettleCountTotal" />
-                            </div>
-                        </div>
-                        <!-- QR精算金額 (QR Settle Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1QrSettleAmount" id="Machine1QrSettleAmount"
-                                    x-currency="data.Record.Machine1QrSettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="12" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2QrSettleAmount" id="Machine2QrSettleAmount"
-                                    x-currency="data.Record.Machine2QrSettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="27" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3QrSettleAmount" id="Machine3QrSettleAmount"
-                                    x-currency="data.Record.Machine3QrSettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="42" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4QrSettleAmount" id="Machine4QrSettleAmount"
-                                    x-currency="data.Record.Machine4QrSettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="57" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5QrSettleAmount" id="Machine5QrSettleAmount"
-                                    x-currency="data.Record.Machine5QrSettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="72" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="QrSettleAmountTotal" :value="Totals.QrSettleAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- QR合計件数 (QR Settle Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">QR合計</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine1NetQrCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine2NetQrCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine3NetQrCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine4NetQrCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine5NetQrCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.NetQrCountTotal" />
-                            </div>
-                        </div>
-                        <!-- QR合計金額 (QR Settle Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine1NetQrAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine2NetQrAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine3NetQrAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine4NetQrAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine5NetQrAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.NetQrAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- 電子マネ件数 (E-Money Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">電子マネ</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">件数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1ECount" id="Machine1ECount" x-currency="data.Record.Machine1ECount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="13" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2ECount" id="Machine2ECount" x-currency="data.Record.Machine2ECount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="28" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3ECount" id="Machine3ECount" x-currency="data.Record.Machine3ECount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="43" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4ECount" id="Machine4ECount" x-currency="data.Record.Machine4ECount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="58" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5ECount" id="Machine5ECount" x-currency="data.Record.Machine5ECount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="73" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="ECountTotal" :value="Totals.ECountTotal" />
-                            </div>
-                        </div>
-                        <!-- 電子マネ金額 (E-Money Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1EAmount" id="Machine1EAmount" x-currency="data.Record.Machine1EAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="14" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2EAmount" id="Machine2EAmount" x-currency="data.Record.Machine2EAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="29" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3EAmount" id="Machine3EAmount" x-currency="data.Record.Machine3EAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="44" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4EAmount" id="Machine4EAmount" x-currency="data.Record.Machine4EAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="59" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5EAmount" id="Machine5EAmount" x-currency="data.Record.Machine5EAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="74" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="EAmountTotal" :value="Totals.EAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- 電子マネ精算件数 (E-Money Settle Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700">電子マネ</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">件数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1ESettleCount" id="Machine1ESettleCount"
-                                    x-currency="data.Record.Machine1ESettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="15" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2ESettleCount" id="Machine2ESettleCount"
-                                    x-currency="data.Record.Machine2ESettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="30" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3ESettleCount" id="Machine3ESettleCount"
-                                    x-currency="data.Record.Machine3ESettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="45" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4ESettleCount" id="Machine4ESettleCount"
-                                    x-currency="data.Record.Machine4ESettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="60" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5ESettleCount" id="Machine5ESettleCount"
-                                    x-currency="data.Record.Machine5ESettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="75" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="ESettleCountTotal" :value="Totals.ESettleCountTotal" />
-                            </div>
-                        </div>
-                        <!-- 電子マネ精算金額 (E-Money Settle Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700">精算</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1ESettleAmount" id="Machine1ESettleAmount"
-                                    x-currency="data.Record.Machine1ESettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="16" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2ESettleAmount" id="Machine2ESettleAmount"
-                                    x-currency="data.Record.Machine2ESettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="31" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3ESettleAmount" id="Machine3ESettleAmount"
-                                    x-currency="data.Record.Machine3ESettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="46" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4ESettleAmount" id="Machine4ESettleAmount"
-                                    x-currency="data.Record.Machine4ESettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="61" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5ESettleAmount" id="Machine5ESettleAmount"
-                                    x-currency="data.Record.Machine5ESettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="76" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="ESettleAmountTotal" :value="Totals.ESettleAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- 電子マネ合計件数 (電子マネ Settle Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700">電子マネ</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine1NetECount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine2NetECount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine3NetECount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine4NetECount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine5NetECount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.NetECountTotal" />
-                            </div>
-                        </div>
-                        <!-- 電子マネ合計金額 (電子マネ Settle Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700">合計</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine1NetEAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine2NetEAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine3NetEAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine4NetEAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine5NetEAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.NetEAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- クレジットカード件数 (E-Money Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 row-span-2">クレジット</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">件数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1CCount" id="Machine1CCount" x-currency="data.Record.Machine1CCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="13" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2CCount" id="Machine2CCount" x-currency="data.Record.Machine2CCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="28" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3CCount" id="Machine3CCount" x-currency="data.Record.Machine3CCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="43" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4CCount" id="Machine4CCount" x-currency="data.Record.Machine4CCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="58" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5CCount" id="Machine5CCount" x-currency="data.Record.Machine5CCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="73" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="CCountTotal" :value="Totals.CCountTotal" />
-                            </div>
-                        </div>
-                        <!-- クレジットカード金額 (E-Money Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1CAmount" id="Machine1CAmount" x-currency="data.Record.Machine1CAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="14" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2CAmount" id="Machine2CAmount" x-currency="data.Record.Machine2CAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="29" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3CAmount" id="Machine3CAmount" x-currency="data.Record.Machine3CAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="44" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4CAmount" id="Machine4CAmount" x-currency="data.Record.Machine4CAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="59" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5CAmount" id="Machine5CAmount" x-currency="data.Record.Machine5CAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="74" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="CAmountTotal" :value="Totals.CAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- クレジットカード精算件数 (E-Money Settle Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700">クレジット</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">件数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1CSettleCount" id="Machine1CSettleCount"
-                                    x-currency="data.Record.Machine1CSettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="15" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2CSettleCount" id="Machine2CSettleCount"
-                                    x-currency="data.Record.Machine2CSettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="30" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3CSettleCount" id="Machine3CSettleCount"
-                                    x-currency="data.Record.Machine3CSettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="45" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4CSettleCount" id="Machine4CSettleCount"
-                                    x-currency="data.Record.Machine4CSettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="60" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5CSettleCount" id="Machine5CSettleCount"
-                                    x-currency="data.Record.Machine5CSettleCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="75" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="CSettleCountTotal" :value="Totals.CSettleCountTotal" />
-                            </div>
-                        </div>
-                        <!-- クレジットカード精算金額 (E-Money Settle Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700">精算</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine1CSettleAmount" id="Machine1CSettleAmount"
-                                    x-currency="data.Record.Machine1CSettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="16" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine2CSettleAmount" id="Machine2CSettleAmount"
-                                    x-currency="data.Record.Machine2CSettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="31" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine3CSettleAmount" id="Machine3CSettleAmount"
-                                    x-currency="data.Record.Machine3CSettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="46" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine4CSettleAmount" id="Machine4CSettleAmount"
-                                    x-currency="data.Record.Machine4CSettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="61" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off"
-                                    class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
-                                    name="Machine5CSettleAmount" id="Machine5CSettleAmount"
-                                    x-currency="data.Record.Machine5CSettleAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="76" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled id="CSettleAmountTotal" :value="Totals.CSettleAmountTotal" />
-                            </div>
-                        </div>
-                        <!-- クレジットカード合計件数 (クレジットカード Settle Count) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700">クレジット</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">枚数</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine1NetCCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine2NetCCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine3NetCCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine4NetCCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine5NetCCount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.NetCCountTotal" />
-                            </div>
-                        </div>
-                        <!-- クレジットカード合計金額 (クレジットカード Settle Amount) -->
-                        <div role="row" class="contents group">
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700">合計</div>
-                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1">金額</div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine1NetCAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine2NetCAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine3NetCAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine4NetCAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.Machine5NetCAmount" />
-                            </div>
-                            <div role="cell" class="border border-gray-400">
-                                <input type="text" autocomplete="off" class="w-full bg-gray-50 text-gray-500 numCell"
-                                    disabled :value="Totals.NetCAmountTotal" />
-                            </div>
-                        </div>
+                        <template
+                            x-for="meth in [{ code: 'Cash', name: '現金', offset: 0 }, { code: 'Qr', name: 'QR', offset: 6 }, { code: 'E', name: '電子マネ', offset: 10 }, { code: 'C', name: 'クレジット', offset: 14 }]"
+                            x-key="meth.code">
+                            <template
+                                x-for="mode in [{ code: '', name: '', offset: 0 }, { code: 'Settle', name: '精算', offset: 2 }, { code: 'Total', name: '合計' }, { code: 'Unsettled', name: '未精算', offset: 4 }]"
+                                x-key="mode.code">
+                                <template
+                                    x-for="countAmount in [{ code: 'Count', name: '枚数', offset: 0 }, { code: 'Amount', name: '金額', offset: 1 }]"
+                                    x-key="countAmount.code">
+                                    <template x-if="!(mode.code == 'Unsettled' && meth.code !== 'Cash')">
+                                        <div role="row" class="contents group">
+                                            <template x-if="countAmount.code === 'Count'">
+                                                <div role="cell"
+                                                    class="whitespace-nowrap font-medium text-gray-700 row-span-2 self-center"
+                                                    x-text="`${meth.name}${mode.name}`"></div>
+                                            </template>
+                                            <div role="cell" class="whitespace-nowrap font-medium text-gray-700 px-1"
+                                                x-text="countAmount.name"></div>
+                                            <template x-for="(machine, idx) in machines" :key="machine">
+                                                <div role="cell" class="border border-gray-400">
+                                                    <template x-if="mode.code !== 'Total'">
+                                                        <input type="text" autocomplete="off"
+                                                            class="w-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors numCell"
+                                                            name="Machine1CashCount" id="Machine1CashCount"
+                                                            :data-currency-key="machine + meth.code + mode.code + countAmount.code"
+                                                            
+                                                            :value="3 + idx * 18 + meth.offset + mode.offset + countAmount.offset"
+
+                                                            @keydown.enter="focusNextTabbable($el)" :tabindex="3 + idx * 18 + meth.offset + mode.offset + countAmount.offset" />
+                                                            <!-- x-currency2="data.Record[machine + meth.code + mode.code + countAmount.code]" -->
+                                                            <!-- <div x-text="3 + idx * 18 + meth.offset + mode.offset + countAmount.offset"></div> -->
+                                                    </template>
+                                                    <template x-if="mode.code === 'Total'">
+                                                        <input type="text" autocomplete="off"
+                                                            class="w-full bg-gray-50 text-gray-500 numCell" disabled
+                                                            :value="Totals[machine + 'Net' + meth.code + countAmount.code]" />
+                                                    </template>
+                                                </div>
+                                            </template>
+                                            <div role="cell" class="border border-gray-400">
+                                                <input type="text" autocomplete="off"
+                                                    class="w-full bg-gray-50 text-gray-500 numCell" disabled
+                                                    id="CashCountTotal"
+                                                    :value="Totals[meth.code + countAmount.code + 'Total']" />
+                                            </div>
+                                        </div>
+                                    </template>
+                                </template>
+                            </template>
+                        </template>
                         <!-- キャッシュレス合計金額 (キャッシュレス Settle Amount) -->
                         <div role="row" class="contents group">
                             <div role="cell" class="whitespace-nowrap font-medium text-gray-700">キャッシュレス</div>
@@ -1444,42 +450,42 @@
                             <div role="cell" class="whitespace-nowrap">釣銭(ﾌﾛﾝﾄ含む)</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.Change" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="78" /></div>
+                                    tabindex="93" /></div>
                             <div role="cell" class="w-full text-right">1,052,000</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">未清算(当社)</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="Totals.UnsettledAmountTotal" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="79" /></div>
+                                    tabindex="94" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">電話料投入</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.PhoneFee" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="80" /></div>
+                                    tabindex="95" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">本日未投入金額(未確定)</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.HonjitsuMitounyuuAmountUncertain"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="81" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="96" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">本日未投入金額(確定)</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.HonjitsuMitounyuuAmountCertain"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="82" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="97" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">過不足</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.Deficiency" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="83" /></div>
+                                    tabindex="98" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     disabled :value="Totals.TounyuuGoukei" />
                             </div>
@@ -1488,7 +494,7 @@
                             <div role="cell" class="whitespace-nowrap">前日未投入金額</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.ZenjitsuMitounyuuAmount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="84" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="99" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
@@ -1502,7 +508,7 @@
                             <div role="cell" class="whitespace-nowrap">投入ﾚｼｰﾄ合計金額</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.ReceiptTotalAmount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="85" /></div>
+                                    tabindex="100" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                     </div>
@@ -1515,7 +521,7 @@
                             <div role="cell" class="whitespace-nowrap">大人入浴券枚数</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.AdultTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="86" /></div>
+                                    tabindex="101" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1524,7 +530,7 @@
                             <div role="cell" class="whitespace-nowrap">大人入浴セット券枚数</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.AdultSetTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="87" /></div>
+                                    tabindex="102" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1533,7 +539,7 @@
                             <div role="cell" class="whitespace-nowrap">小人入浴券枚数</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.ChildTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="88" /></div>
+                                    tabindex="103" /></div>
                             <div role="cell" class="text-center">男</div>
                             <div role="cell" class="text-center">女</div>
                             <div role="cell">&nbsp;</div>
@@ -1542,7 +548,7 @@
                             <div role="cell" class="whitespace-nowrap">幼児入浴券枚数</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.InfantTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="89" /></div>
+                                    tabindex="104" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1551,31 +557,31 @@
                             <div role="cell" class="whitespace-nowrap">平日回数券回収(枚)</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.TicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="90" /></div>
+                                    tabindex="105" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.MaleTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="91" /></div>
+                                    tabindex="106" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.FemaleTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="92" /></div>
+                                    tabindex="107" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     disabled :value="TicketTotals.TicketCountTotal"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="93"></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="108"></div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">全日回数券回収（枚）</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.SixTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="94" /></div>
+                                    tabindex="109" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.SixMaleTicketCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="95" /></div>
+                                    tabindex="110" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.SixFemaleTicketCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="96" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="111" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     disabled :value="TicketTotals.SixTicketCountTotal"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="97"></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="112"></div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">福利厚生</div>
@@ -1591,33 +597,33 @@
                             <div role="cell" class="whitespace-nowrap">招待券回収</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.InvitationTicketCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="98" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="113" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     disabled :value="TicketTotals.MaleTicketCountTotal"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="99" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="114" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     disabled :value="TicketTotals.FemaleTicketCountTotal"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="100" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="115" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">優待券回収</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.YuutaikenTicketCount"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="101" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="116" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     disabled :value="TicketTotals.MaleTicketShare"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="102" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="117" /></div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     disabled :value="TicketTotals.FemaleTicketShare"
-                                    @keydown.enter="focusNextTabbable($el)" tabindex="103" /></div>
+                                    @keydown.enter="focusNextTabbable($el)" tabindex="118" /></div>
                             <div role="cell">&nbsp;</div>
                         </div>
                         <div role="row" class="contents">
                             <div role="cell" class="whitespace-nowrap">ﾎﾟｲﾝﾄｶｰﾄﾞ大人回収</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.PointCardAdultCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="104" /></div>
+                                    tabindex="119" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1626,7 +632,7 @@
                             <div role="cell" class="whitespace-nowrap">ﾎﾟｲﾝﾄｶｰﾄﾞﾞ小人回収</div>
                             <div role="cell"><input class="w-full text-right border" type="text" autocomplete="off"
                                     x-currency="data.Record.PointCardChildCount" @keydown.enter="focusNextTabbable($el)"
-                                    tabindex="105" /></div>
+                                    tabindex="120" /></div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
                             <div role="cell">&nbsp;</div>
@@ -1678,24 +684,27 @@
                                 <div role="cell">平日回数</div>
                                 <div role="cell"><input type="text" autocomplete="off"
                                         x-currency="data.Record.SalesNoStart" @keydown.enter="focusNextTabbable($el)"
-                                        tabindex="106" class="numCell border w-full" />
+                                        tabindex="121" class="numCell border w-full" />
                                 </div>
                                 <div role="cell"><input type="text" autocomplete="off"
                                         x-currency="data.Record.SalesNoEnd" @keydown.enter="focusNextTabbable($el)"
-                                        tabindex="107" class="numCell border w-full" /></div>
-                                <div role="cell"><input type="text" disabled autocomplete="off" class="numCell border w-full" :value="TicketTotals.SalesNoDiscrepancy" /></div>
+                                        tabindex="122" class="numCell border w-full" /></div>
+                                <div role="cell"><input type="text" disabled autocomplete="off"
+                                        class="numCell border w-full" :value="TicketTotals.SalesNoDiscrepancy" /></div>
 
                                 <div role="row" class="contents">
                                     <div role="cell">全日回数</div>
                                     <div role="cell"><input type="text" autocomplete="off"
                                             x-currency="data.Record.SixSalesNoStart"
-                                            @keydown.enter="focusNextTabbable($el)" tabindex="108"
+                                            @keydown.enter="focusNextTabbable($el)" tabindex="123"
                                             class="numCell border w-full" /></div>
                                     <div role="cell"><input type="text" autocomplete="off"
                                             x-currency="data.Record.SixSalesNoEnd"
-                                            @keydown.enter="focusNextTabbable($el)" tabindex="109"
+                                            @keydown.enter="focusNextTabbable($el)" tabindex="124"
                                             class="numCell border w-full" /></div>
-                                    <div role="cell"><input type="text" disabled autocomplete="off" class="numCell border w-full" :value="TicketTotals.SixSalesNoDiscrepancy" /></div>
+                                    <div role="cell"><input type="text" disabled autocomplete="off"
+                                            class="numCell border w-full" :value="TicketTotals.SixSalesNoDiscrepancy" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1718,11 +727,11 @@
                                 <div role="cell">優待券販売（金額）・（枚数）</div>
                                 <div role="cell"><input type="text" autocomplete="off"
                                         x-currency="data.Record.YuutaikenSalesAmount"
-                                        @keydown.enter="focusNextTabbable($el)" tabindex="110"
+                                        @keydown.enter="focusNextTabbable($el)" tabindex="125"
                                         class="w-full border text-right" /></div>
                                 <div role="cell"><input type="text" autocomplete="off"
                                         x-currency="data.Record.YuutaikenSalesCount"
-                                        @keydown.enter="focusNextTabbable($el)" tabindex="111"
+                                        @keydown.enter="focusNextTabbable($el)" tabindex="126"
                                         class="w-full border text-right" /></div>
                             </div>
                         </div>
@@ -1743,13 +752,13 @@
                             <div role="row" class="contents">
                                 <div role="cell"><input class="w-full border text-right" type="text" autocomplete="off"
                                         x-currency="data.Record.SCutMale" @keydown.enter="focusNextTabbable($el)"
-                                        tabindex="112" /></div>
+                                        tabindex="127" /></div>
                                 <div role="cell"><input class="w-full border text-right" type="text" autocomplete="off"
                                         x-currency="data.Record.SCutFemale" @keydown.enter="focusNextTabbable($el)"
-                                        tabindex="113" /></div>
+                                        tabindex="128" /></div>
                                 <div role="cell"><input class="w-full border text-right" type="text" autocomplete="off"
                                         x-currency="data.Record.SCutChild" @keydown.enter="focusNextTabbable($el)"
-                                        tabindex="114" /></div>
+                                        tabindex="129" /></div>
                                 <div role="cell"><input class="w-full border text-right" type="text" autocomplete="off"
                                         disabled :value="TicketTotals.SCutTotal" /></div>
                             </div>
@@ -1758,13 +767,13 @@
                 </div>
                 <div class="md:[grid-area:item6] p-4">
                     <h2>6. ｸｰﾎﾟﾝ回収</h2><input class="w-full border" type="text" autocomplete="off"
-                        x-currency="data.Record.CouponCount" @keydown.enter="focusNextTabbable($el)" tabindex="115" />
+                        x-currency="data.Record.CouponCount" @keydown.enter="focusNextTabbable($el)" tabindex="130" />
                 </div>
 
                 <div class="md:[grid-area:item7] p-4">
                     <h2>報告スペース</h2>
                     <textarea class="w-full border rounded-md p-2" x-model="data.Record.ReportSpace" rows="4"
-                        @keydown.enter="focusNextTabbable($el)" tabindex="116"></textarea>
+                        @keydown.enter="focusNextTabbable($el)" tabindex="131"></textarea>
 
                 </div>
             </div>
@@ -1775,7 +784,7 @@
             <div class="mt-2 w-[50em]">
                 <h2>備考</h2>
                 <textarea class="w-full border rounded-md p-2" x-model="data.Record.Remarks" rows="2"
-                    @keydown.enter="focusNextTabbable($el)" tabindex="77"></textarea>
+                    @keydown.enter="focusNextTabbable($el)" tabindex="132"></textarea>
 
             </div>
 
